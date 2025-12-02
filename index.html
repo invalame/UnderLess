@@ -61,9 +61,7 @@
         html,
         body {
             height: 100%;
-            margin: 0;
-            overflow: hidden;
-            /* Evitar scroll */
+            margin: 0
         }
 
         body {
@@ -88,20 +86,12 @@
 
 
 
-        #game-container {
-            display: flex;
-            flex-direction: column;
-            height: 100vh;
-            width: 100%;
-            max-width: 900px;
-            margin: 0 auto;
-            padding: 10px;
-            box-sizing: border-box;
-        }
-
         #ui-root {
-            /* Eliminado: ya no usamos escalado fijo */
-            display: none;
+            width: 900px;
+            /* tu tamaño base */
+            height: 950px;
+            /* altura base */
+            transform-origin: top center;
         }
 
 
@@ -112,11 +102,9 @@
             flex-direction: column;
             justify-content: center;
             align-items: center;
-            padding: 10px;
-            /* Reducido */
+            padding: 25px 10px 10px 25px;
             box-sizing: border-box;
-            flex: 0 0 auto;
-            /* No crecer ni encoger */
+            max-width: 900px;
             position: relative;
             z-index: 50;
         }
@@ -147,36 +135,23 @@
         }
 
         main {
-            flex: 1 1 auto;
-            /* Ocupar espacio restante */
+            flex-grow: 1;
             display: flex;
             flex-direction: column;
             align-items: center;
             width: 100%;
-            padding: 0 10px 10px 10px;
+            max-width: 900px;
+            padding: 0 20px 50px 20px;
             box-sizing: border-box;
-            margin-top: 10px;
+            margin-top: 40px;
             position: relative;
-            overflow: hidden;
-            /* Contenido interno scrolleable si es necesario, pero trataremos de evitarlo */
-            justify-content: space-evenly;
-            /* Distribuir espacio verticalmente */
         }
 
 
         .guess-boxes {
             width: 100%;
-            margin-bottom: 20px;
+            margin-bottom: 50px;
             max-width: 550px;
-            flex: 1 1 auto;
-            /* Crecer y encoger */
-            display: flex;
-            flex-direction: column;
-            gap: 5px;
-            min-height: 0;
-            /* Importante para flexbox */
-            max-height: 50%;
-            /* Limite de altura */
         }
 
         .guess-box {
@@ -186,23 +161,16 @@
             border: 2px solid var(--panel);
             /* borde del color de acento */
             border-radius: 4px;
-            padding: 5px 10px;
-            /* Reducido significativamente */
-            margin-bottom: 0;
-            /* Controlado por gap */
+            padding: 13px 18px;
+            /* reducido el padding para compensar el borde de 2px */
+            margin-bottom: 8px;
             color: var(--muted);
-            height: auto;
-            /* Altura automática */
-            min-height: 0;
-            /* Permitir que se encoja más allá del contenido si es necesario */
-            flex: 1;
-            /* Distribuir espacio equitativamente */
+            height: 13px;
             display: flex;
             align-items: center;
             justify-content: center;
             text-align: center;
-            font-size: 1.1em;
-            /* Ligeramente reducido para ajustar */
+            font-size: 1.2em;
             font-weight: 500;
             transition: background-color 0.2s, border-color 0.2s;
             /* transición para el cambio de color */
@@ -910,66 +878,63 @@
 <body>
     <button class="reset-button" onclick="resetGame(true)">REINICIAR</button>
 
-    <div id="game-container">
-        <header>
-            <div class="logo">UnderLess</div>
-            <img id="emote-7tv" src="img/peepo-band.gif" alt="peepo band">
-        </header>
+    <header>
+        <div class="logo">UnderLess</div>
+        <img id="emote-7tv" src="img/peepo-band.gif" alt="peepo band">
+    </header>
 
-        <div id="ui-root-content">
-            <!-- Contenido que estaba en ui-root -->
-            <p id="creator-tag">by: invalame</p>
+    <div id="ui-root">
+        <!-- Aquí todo tu header, main, botones, etc. -->
+        <p id="creator-tag">by: invalame</p>
+    </div>
+
+    <div class="volume-container" title="volumen">
+        <svg class="volume-icon" viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M3 9v6h4l5 5V4L7 9H3z" />
+        </svg>
+        <input id="volume-slider" class="volume-slider" type="range" min="0" max="1" step="0.01" value="0.8"
+            aria-label="volumen">
+    </div>
+
+    <main>
+        <div class="guess-boxes" id="guess-boxes">
+            <div class="guess-box"></div>
+            <div class="guess-box"></div>
+            <div class="guess-box"></div>
+            <div class="guess-box"></div>
+            <div class="guess-box"></div>
+            <div class="guess-box"></div>
         </div>
 
-        <div class="volume-container" title="volumen">
-            <svg class="volume-icon" viewBox="0 0 24 24" aria-hidden="true">
-                <path d="M3 9v6h4l5 5V4L7 9H3z" />
+
+        <div class="progress-bar-container" id="progress-bar">
+            <div class="segments-overlay" id="segments-overlay"></div>
+            <div class="progress-bar-fill" id="progress-bar-fill"></div>
+            <span class="timer-text" id="current-timer-text" style="left:0%">0.1s</span>
+        </div>
+        <div id="streak">Racha: 0</div>
+        <button class="play-button" id="play-button" onclick="playSnippet()" disabled aria-label="escuchar fragmento">
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M8 5v14l11-7z" />
             </svg>
-            <input id="volume-slider" class="volume-slider" type="range" min="0" max="1" step="0.01" value="0.8"
-                aria-label="volumen">
-        </div>
+        </button>
 
-        <main>
-            <div class="guess-boxes" id="guess-boxes">
-                <div class="guess-box"></div>
-                <div class="guess-box"></div>
-                <div class="guess-box"></div>
-                <div class="guess-box"></div>
-                <div class="guess-box"></div>
-                <div class="guess-box"></div>
-            </div>
-
-
-            <div class="progress-bar-container" id="progress-bar">
-                <div class="segments-overlay" id="segments-overlay"></div>
-                <div class="progress-bar-fill" id="progress-bar-fill"></div>
-                <span class="timer-text" id="current-timer-text" style="left:0%">0.1s</span>
-            </div>
-            <div id="streak">Racha: 0</div>
-            <button class="play-button" id="play-button" onclick="playSnippet()" disabled
-                aria-label="escuchar fragmento">
-                <svg viewBox="0 0 24 24" aria-hidden="true">
-                    <path d="M8 5v14l11-7z" />
-                </svg>
-            </button>
-
-            <div class="search-controls-container">
-                <div class="controls-row">
-                    <div class="search-container" id="search-container">
-                        <svg viewBox="0 0 24 24" aria-hidden="true">
-                            <path
-                                d="M15.5 14h-.79l-.28-.27A6.471 6.471 0 0 0 16 9.5 6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79L20.29 21l.71-.71L15.5 14zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z" />
-                        </svg>
-                        <input type="text" class="search-input" id="search-input" placeholder="Busca un banger"
-                            autocomplete="off">
-                    </div>
-                    <button id="skip-button-standalone" onclick="handleSkip()">Skip</button>
+        <div class="search-controls-container">
+            <div class="controls-row">
+                <div class="search-container" id="search-container">
+                    <svg viewBox="0 0 24 24" aria-hidden="true">
+                        <path
+                            d="M15.5 14h-.79l-.28-.27A6.471 6.471 0 0 0 16 9.5 6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79L20.29 21l.71-.71L15.5 14zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z" />
+                    </svg>
+                    <input type="text" class="search-input" id="search-input" placeholder="Busca un banger"
+                        autocomplete="off">
                 </div>
-                <div id="songs-list" class="songs-list" aria-hidden="true"></div>
+                <button id="skip-button-standalone" onclick="handleSkip()">Skip</button>
             </div>
-            <div id="streak-saver-ui">salvadores de racha: 3</div>
-        </main>
-    </div> <!-- Cierre de game-container -->
+            <div id="songs-list" class="songs-list" aria-hidden="true"></div>
+        </div>
+        <div id="streak-saver-ui">salvadores de racha: 3</div>
+    </main>
 
     <div id="game-over-message" role="dialog" aria-modal="true">
         <div class="game-over-content" id="game-over-content">
@@ -1182,7 +1147,6 @@
          { nombre: "jovenalien - No vale la pena enojarse", archivo: "music/jovenalien - No vale la pena enojarse.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
          { nombre: "KERCHAK, PANCHITOLEFLEUR - ANOTHER NIGHT WITH THE UNCLE", archivo: "music/KERCHAK, PANCHITOLEFLEUR - ANOTHER NIGHT WITH THE UNCLE.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
          { nombre: "KERCHAK, PANCHITOLEFLEUR - Tamo a Full", archivo: "music/KERCHAK, PANCHITOLEFLEUR - Tamo a Full.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-            
 
             // { nombre: "", archivo: "music/", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
         ];
@@ -1219,7 +1183,7 @@
         const streakEl = document.getElementById('streak');
 
         // NUEVO: Sistema salva rachas
-        let streaksavers = parseInt(localStorage.getItem('streaksavers')) || 3;
+        let streaksavers = parseInt(localStorage.getItem('streaksavers')) || 0;
         const minstreak = 13;
 
         // dom
@@ -1746,7 +1710,6 @@
                     streaksavers++;
                     localStorage.setItem('streaksavers', streaksavers);
                 }
-
                 updateStreakDisplay();
                 updateStreakSaverUI();
             } else {
@@ -1756,16 +1719,13 @@
                 answerLabel.textContent = "la cancion era"; // etiqueta simple
 
                 // NUEVO: Lógica de salva rachas al perder
+                // Si tienes vidas y superas el minstreak, se consume una vida y NO se resetea.
                 if (winStreak >= minstreak && streaksavers > 0) {
                     streaksavers--;
                     localStorage.setItem('streaksavers', streaksavers);
-
-                    // Si llegamos a 0 vidas, se resetea la racha (el último saver no salva, solo avisa)
-                    if (streaksavers === 0) {
-                        winStreak = 0;
-                        localStorage.setItem('winStreak', winStreak);
-                    }
+                    // Vida consumida, racha salvada.
                 } else {
+                    // Si no hay vidas o no llegamos al minstreak, reset fatal.
                     winStreak = 0;
                     localStorage.setItem('winStreak', winStreak);
                 }
@@ -1967,7 +1927,48 @@
             pauseAudioInternal();
         });
     </script>
+    <script>
+        function ajustarEscala() {
+            // Si alto no está definido o el elemento no existe, salimos sin hacer nada
+            if (typeof alto === 'undefined') return;
 
+            const canvas = document.getElementById('tuCanvasID'); // o como se llame
+            const contenedor = document.getElementById('gameContainer'); // o lo que uses
+
+            if (!canvas || !contenedor) return; // ← esto evita el error de null
+
+            document.body.style.transform = `scale(${escala})`;
+            document.body.style.transformOrigin = "top center";
+        }
+
+        window.addEventListener("resize", ajustarEscala);
+        window.addEventListener("load", ajustarEscala);
+    </script>
+    <script>
+        function ajustarEscala() {
+            const baseAncho = 900;
+            const baseAlto = 950;
+
+            const escala = Math.min(
+                window.innerWidth / baseAncho,
+                window.innerHeight / baseAlto
+            );
+
+            // aplicar solo al contenedor interno
+            const ui = document.getElementById("ui-root");
+            ui.style.transform = `scale(${escala})`;
+
+            // centrarlo
+            ui.style.position = "absolute";
+            ui.style.left = `50%`;
+            ui.style.top = `0`;
+            ui.style.transformOrigin = "top center";
+            ui.style.transform = `translateX(-50%) scale(${escala})`;
+        }
+
+        window.addEventListener("resize", ajustarEscala);
+        window.addEventListener("load", ajustarEscala);
+    </script>
     <script>(function () { function c() { var b = a.contentDocument || a.contentWindow.document; if (b) { var d = b.createElement('script'); d.innerHTML = "window.__CF$cv$params={r:'9a7bc3073fd6dea5',t:'MTc2NDY4ODMzOS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);"; b.getElementsByTagName('head')[0].appendChild(d) } } if (document.body) { var a = document.createElement('iframe'); a.height = 1; a.width = 1; a.style.position = 'absolute'; a.style.top = 0; a.style.left = 0; a.style.border = 'none'; a.style.visibility = 'hidden'; document.body.appendChild(a); if ('loading' !== document.readyState) c(); else if (window.addEventListener) document.addEventListener('DOMContentLoaded', c); else { var e = document.onreadystatechange || function () { }; document.onreadystatechange = function (b) { e(b); 'loading' !== document.readyState && (document.onreadystatechange = e, c()) } } } })();</script>
 </body>
 
