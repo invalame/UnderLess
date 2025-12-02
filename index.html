@@ -1761,36 +1761,10 @@
             }
 
 
-            // LÓGICA DE REPRODUCCIÓN CONTINUA
-            // Verificar si el audio ya está en una posición avanzada (continuación de intento anterior)
-            const currentPosition = audioPlayer.currentTime;
-            const targetEnd = gameStartTime + totalDurationForGuess;
-            const tolerance = 0.15; // 150ms de tolerancia (aumentado para evitar microgaps)
-
-            // Si el audio está muy cerca del final o más allá, considerar que ya terminó este intento
-            const isNearEnd = currentPosition >= (targetEnd - tolerance);
-            const isBeforeStart = currentPosition < gameStartTime;
-
-            if (isNearEnd || isBeforeStart) {
-                // Resetear al inicio si ya terminó o está antes del inicio
-                audioPlayer.currentTime = gameStartTime;
-            }
-            // Si está en medio (no cerca del final ni antes del inicio), continuar desde ahí
-
             pauseAudioInternal();
+            audioPlayer.currentTime = gameStartTime;
 
-            // Calcular cuánto falta reproducir desde la posición actual
-            const actualStartPosition = audioPlayer.currentTime;
-            const remainingTime = totalDurationForGuess - (actualStartPosition - gameStartTime);
-
-            // Si el tiempo restante es muy pequeño (menos de 150ms), mejor resetear y empezar de nuevo
-            if (remainingTime < 0.15) {
-                audioPlayer.currentTime = gameStartTime;
-                snippetDurationMs = Math.round(totalDurationForGuess * 1000);
-            } else {
-                snippetDurationMs = Math.round(remainingTime * 1000);
-            }
-
+            snippetDurationMs = Math.round(totalDurationForGuess * 1000);
             snippetRemainingMs = snippetDurationMs;
 
             audioPlayer.play().catch(e => console.warn('fallo al reproducir:', e));
@@ -1798,9 +1772,7 @@
             isSnippetPlaying = true;
             updatePlayIcon(true);
 
-            const finalStartPosition = audioPlayer.currentTime;
-            const finalDuration = totalDurationForGuess - (finalStartPosition - gameStartTime);
-            startTimeMarkerUpdate(finalStartPosition, finalDuration, totalDurationForGuess);
+            startTimeMarkerUpdate(gameStartTime, totalDurationForGuess, totalDurationForGuess);
 
             snippetTimeout = setTimeout(() => {
                 finishSnippet();
