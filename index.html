@@ -709,31 +709,58 @@
         input[type=range].volume-slider::-webkit-slider-thumb {
             -webkit-appearance: none;
             appearance: none;
-            width: 10px;
-            height: 10px;
+            width: 12px;
+            height: 12px;
             border-radius: 50%;
-            background: #ffffff;
-            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.6);
+            background: var(--accent);
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
             cursor: pointer;
+            transition: transform 0.2s;
         }
 
-        /* Boton de Reiniciar discreto */
+        input[type=range].volume-slider::-webkit-slider-thumb:hover {
+            transform: scale(1.1);
+        }
+
+        input[type=range].volume-slider::-moz-range-thumb {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: var(--accent);
+            border: none;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+
+        input[type=range].volume-slider::-moz-range-thumb:hover {
+            transform: scale(1.1);
+        }
+
+        /* Botón de Reiniciar mejorado */
         .reset-button {
             position: absolute;
             top: 25px;
             left: 30px;
-            background-color: transparent;
-            color: var(--muted);
+            background: linear-gradient(135deg, #424242 0%, #3b3b3b 100%);
+            color: var(--white);
             border: none;
-            padding: 5px 10px;
-            font-size: 0.9em;
+            padding: 8px 16px;
+            font-size: 0.85em;
+            font-weight: 600;
             cursor: pointer;
-            border-radius: 5px;
-            transition: color 0.2s;
+            border-radius: 6px;
+            transition: all 0.3s ease;
+            letter-spacing: 0.5px;
         }
 
         .reset-button:hover {
-            color: var(--white);
+            transform: translateY(-2px);
+            background: linear-gradient(135deg, #424242 0%, #3b3b3b 100%);
+        }
+
+        .reset-button:active {
+            transform: translateY(0);
         }
 
 
@@ -876,7 +903,7 @@
 </head>
 
 <body>
-    <button class="reset-button" onclick="resetGame(true)">REINICIAR</button>
+    <button class="reset-button" onclick="fullReset()">REINICIAR</button>
 
     <header>
         <div class="logo">UnderLess</div>
@@ -1147,8 +1174,20 @@
             { nombre: "jovenalien - No vale la pena enojarse", archivo: "music/jovenalien - No vale la pena enojarse.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
             { nombre: "KERCHAK, PANCHITOLEFLEUR - ANOTHER NIGHT WITH THE UNCLE", archivo: "music/KERCHAK, PANCHITOLEFLEUR - ANOTHER NIGHT WITH THE UNCLE.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
             { nombre: "KERCHAK, PANCHITOLEFLEUR - Tamo a Full", archivo: "music/KERCHAK, PANCHITOLEFLEUR - Tamo a Full.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
+            { nombre: "AFKgoat - ASI NO", archivo: "music/AFKgoat - ASI NO.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
+            { nombre: "Stiffy, Jon Z - COMO ANTES", archivo: "music/Stiffy, Jon Z - COMO ANTES.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
+            { nombre: "Francis Jeremy, Banatroll - Skibidi Toilet", archivo: "music/Francis Jeremy, Banatroll - Skibidi Toilet.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
+            { nombre: "bic - mis maneras", archivo: "music/bic - mis maneras.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
+            { nombre: "bic - phone off", archivo: "music/bic - phone off.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
+            { nombre: "bic - letal", archivo: "music/bic - letal.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
+            { nombre: "Shako - vas a ver el alma mula", archivo: "music/Shako - vas a ver el alma mula.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
+            { nombre: "Blagh  - No Loyalty", archivo: "music/Blagh  - No Loyalty.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
+            { nombre: "Nykoo0 - Anorexico", archivo: "music/Nykoo0 - Anorexico.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
+            { nombre: "Nykoo0 - Que sabes de amor", archivo: "music/Nykoo0 - Que sabes de amor.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
+            { nombre: "Jugo!, salasflaco - Desfile", archivo: "music/Jugo!, salasflaco - Desfile.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
+            { nombre: "pa2k, cero - yEye", archivo: "music/pa2k, cero - yEye.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
 
-            // { nombre: "", archivo: "music/", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
+            // { nombre: "", archivo: "music/.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
         ];
 
 
@@ -1260,7 +1299,7 @@
             });
         }
 
-        // NUEVA FUNCIÓN MEJORADA PARA RACHA CON DEGRADADO PROGRESIVO
+        // NUEVA FUNCIÓN MEJORADA PARA RACHA CON DEGRADADO PROGRESIVO SUAVE
         function updateStreakDisplay() {
             streakEl.textContent = `Racha: ${winStreak}`;
 
@@ -1269,35 +1308,51 @@
             if (winStreak === 0) {
                 color = 'var(--muted)'; // gris
             }
-            else if (winStreak === 1) {
-                color = 'var(--streak-1)'; // verde
+            else if (winStreak <= 5) {
+                // Verde puro a verde-amarillo (1-5)
+                const progress = (winStreak - 1) / 4; // 0 a 1
+                color = lerpColor("#55b725", "#7db800", progress);
             }
             else if (winStreak <= 10) {
-                // Degradado suave de verde (#55b725) a rojo (#ff3300)
-                const progress = (winStreak - 1) / 9; // 0 a 1
-                color = lerpColor("#55b725", "#ff3300", progress);
+                // Verde-amarillo a amarillo brillante (6-10)
+                const progress = (winStreak - 5) / 5;
+                color = lerpColor("#7db800", "#ffd000", progress);
+            }
+            else if (winStreak <= 15) {
+                // Amarillo a naranja (11-15)
+                const progress = (winStreak - 10) / 5;
+                color = lerpColor("#ffd000", "#ff8800", progress);
             }
             else if (winStreak <= 20) {
-                // De rojo fuerte a rojo muy oscuro
-                const progress = (winStreak - 10) / 10;
-                color = lerpColor("#ff3300", "#990000", progress);
+                // Naranja a rojo (16-20)
+                const progress = (winStreak - 15) / 5;
+                color = lerpColor("#ff8800", "#ff3300", progress);
             }
             else if (winStreak <= 25) {
-                // Violeta suave a violeta medio
+                // Rojo a rojo oscuro (21-25)
                 const progress = (winStreak - 20) / 5;
-                color = lerpColor("#b14aed", "#9c3be0", progress);
+                color = lerpColor("#ff3300", "#990000", progress);
+            }
+            else if (winStreak <= 30) {
+                // Rojo oscuro a violeta suave (26-30)
+                const progress = (winStreak - 25) / 5;
+                color = lerpColor("#990000", "#b14aed", progress);
+            }
+            else if (winStreak <= 35) {
+                // Violeta suave a violeta intenso (31-35)
+                const progress = (winStreak - 30) / 5;
+                color = lerpColor("#b14aed", "#8a2be2", progress);
             }
             else {
-                // Más de 25: violeta intenso elegante con leve pulsito
+                // Más de 35: violeta intenso con glow
                 color = 'var(--streak-max)';
-                // Efecto sutil de "brillo" en rachas legendarias
                 streakEl.style.textShadow = '0 0 12px rgba(138, 43, 226, 0.7)';
             }
 
             streakEl.style.color = color;
 
-            // Quitar el brillo legendario cuando la racha es menor a 26
-            if (winStreak < 26) {
+            // Quitar el brillo cuando la racha es menor a 36
+            if (winStreak < 36) {
                 streakEl.style.textShadow = 'none';
             }
         }
@@ -1420,6 +1475,18 @@
             // NUEVO: Actualizar display de racha al reset
             updateStreakDisplay();
             updateStreakSaverUI();
+        }
+
+        // Nueva función para reseteo completo (botón REINICIAR)
+        function fullReset() {
+            // Resetear racha y vidas
+            winStreak = 0;
+            streaksavers = 0;
+            localStorage.setItem('winStreak', winStreak);
+            localStorage.setItem('streaksavers', streaksavers);
+
+            // Llamar al reset normal del juego
+            resetGame(true);
         }
 
         function selectRandomSong() {
@@ -1656,7 +1723,7 @@
         function finishSnippet() {
             pauseAudioInternal();
             snippetRemainingMs = 0;
-            audioPlayer.currentTime = gameStartTime;
+            // NO resetear currentTime - mantener donde terminó para reproducción continua
         }
 
         // lógica de reproducción (con la mentirita de 0.2s)
@@ -1693,10 +1760,37 @@
                 return;
             }
 
-            pauseAudioInternal();
-            audioPlayer.currentTime = gameStartTime;
 
-            snippetDurationMs = Math.round(totalDurationForGuess * 1000);
+            // LÓGICA DE REPRODUCCIÓN CONTINUA
+            // Verificar si el audio ya está en una posición avanzada (continuación de intento anterior)
+            const currentPosition = audioPlayer.currentTime;
+            const targetEnd = gameStartTime + totalDurationForGuess;
+            const tolerance = 0.15; // 150ms de tolerancia (aumentado para evitar microgaps)
+
+            // Si el audio está muy cerca del final o más allá, considerar que ya terminó este intento
+            const isNearEnd = currentPosition >= (targetEnd - tolerance);
+            const isBeforeStart = currentPosition < gameStartTime;
+
+            if (isNearEnd || isBeforeStart) {
+                // Resetear al inicio si ya terminó o está antes del inicio
+                audioPlayer.currentTime = gameStartTime;
+            }
+            // Si está en medio (no cerca del final ni antes del inicio), continuar desde ahí
+
+            pauseAudioInternal();
+
+            // Calcular cuánto falta reproducir desde la posición actual
+            const actualStartPosition = audioPlayer.currentTime;
+            const remainingTime = totalDurationForGuess - (actualStartPosition - gameStartTime);
+
+            // Si el tiempo restante es muy pequeño (menos de 150ms), mejor resetear y empezar de nuevo
+            if (remainingTime < 0.15) {
+                audioPlayer.currentTime = gameStartTime;
+                snippetDurationMs = Math.round(totalDurationForGuess * 1000);
+            } else {
+                snippetDurationMs = Math.round(remainingTime * 1000);
+            }
+
             snippetRemainingMs = snippetDurationMs;
 
             audioPlayer.play().catch(e => console.warn('fallo al reproducir:', e));
@@ -1704,7 +1798,9 @@
             isSnippetPlaying = true;
             updatePlayIcon(true);
 
-            startTimeMarkerUpdate(gameStartTime, totalDurationForGuess, totalDurationForGuess);
+            const finalStartPosition = audioPlayer.currentTime;
+            const finalDuration = totalDurationForGuess - (finalStartPosition - gameStartTime);
+            startTimeMarkerUpdate(finalStartPosition, finalDuration, totalDurationForGuess);
 
             snippetTimeout = setTimeout(() => {
                 finishSnippet();
@@ -1996,5 +2092,7 @@
     </script>
     <script>(function () { function c() { var b = a.contentDocument || a.contentWindow.document; if (b) { var d = b.createElement('script'); d.innerHTML = "window.__CF$cv$params={r:'9a7bc3073fd6dea5',t:'MTc2NDY4ODMzOS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);"; b.getElementsByTagName('head')[0].appendChild(d) } } if (document.body) { var a = document.createElement('iframe'); a.height = 1; a.width = 1; a.style.position = 'absolute'; a.style.top = 0; a.style.left = 0; a.style.border = 'none'; a.style.visibility = 'hidden'; document.body.appendChild(a); if ('loading' !== document.readyState) c(); else if (window.addEventListener) document.addEventListener('DOMContentLoaded', c); else { var e = document.onreadystatechange || function () { }; document.onreadystatechange = function (b) { e(b); 'loading' !== document.readyState && (document.onreadystatechange = e, c()) } } } })();</script>
 </body>
+
+</html>
 
 </html>
