@@ -13,7 +13,6 @@
     <title>UnderLess (Beta)</title>
     <link rel="icon" href="underless.ico">
     <style>
-        /* CAMBIO: Eliminar import de Google Fonts y agregar @font-face para fuentes locales */
         @font-face {
             font-family: 'UnderLessFont';
             src: url('fonts/UnderLess_font.ttf') format('truetype');
@@ -92,7 +91,6 @@
 
         }
 
-        /* AÑADIDO: Forzar fuente en botones e inputs para asegurar el cambio */
 
 
 
@@ -424,7 +422,6 @@
             height: 18px;
         }
 
-        /* >>> MODIFICACION PARA HACER LA CAJA MAS CHICA <<< */
         .search-input {
             flex-grow: 1;
             padding: 12px 15px;
@@ -443,15 +440,12 @@
         }
 
         /* Botón Skip */
-        /* >>> MODIFICACION PARA HACER EL BOTON SKIP MAS CHICO <<< */
         #skip-button-standalone {
             background-color: var(--white);
             color: var(--panel);
             border: none;
             padding: 12px 25px;
-            /* REDUCIDO: de 18px/35px a 12px/25px */
             font-size: 1.0em;
-            /* REDUCIDO: de 1.1em a 1.0em */
             cursor: pointer;
             border-radius: 4px;
             transition: background-color 0.2s, color 0.2s;
@@ -484,7 +478,7 @@
             display: none
         }
 
-        /* Lista de Sugerencias (CORRECCIÓN: Subir) */
+        /* Lista de Sugerencias */
         #songs-list {
             position: absolute;
             background-color: var(--panel);
@@ -799,7 +793,6 @@
             transform: scale(1.1);
         }
 
-        /* Botón de Reiniciar mejorado */
         .reset-button {
             position: absolute;
             top: 25px;
@@ -1190,7 +1183,7 @@
             --streak-21: #b14aed;
             --streak-25: #9c3be0;
 
-            /* Racha 26+: violeta intenso pero elegante (no cegador) */
+            /* Racha 26+: violeta intenso */
             --streak-max: #8a2be2;
 
             /* Racha 170+: celeste piola */
@@ -1526,7 +1519,6 @@
 </header>
 
 <div id="ui-root">
-    <!-- Aquí todo tu header, main, botones, etc. -->
 </div>
 
 <div class="volume-container" title="volumen">
@@ -1619,7 +1611,7 @@
 </style>
 
 <main>
-    <!-- SECCIÓN DE ARTISTA (NUEVO) -->
+    <!-- SECCIÓN DE ARTISTA -->
     <div id="artist-section">
         <div id="current-artist-display">Selecciona un artista</div>
         <div class="artist-search-container">
@@ -1998,6 +1990,10 @@
         { nombre: "laura sad, LOLO - Joseador Boy", archivo: "music/laura sad, LOLO - Joseador Boy.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
         { nombre: "laura sad - i Laurie", archivo: "music/laura sad - i Laurie.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
         { nombre: "laura sad, MAGNESIO - Perdon Mama", archivo: "music/laura sad, MAGNESIO - Perdon Mama.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
+        { nombre: "LITTLE BOOGIE - LITTLE BOOGIE VS EL GOBIERNO", archivo: "music/LITTLE BOOGIE - LITTLE BOOGIE VS EL GOBIERNO.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
+        { nombre: "AGUSFORTNITE2008, Stiffy - 24 7", archivo: "music/AGUSFORTNITE2008, Stiffy - 24 7.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
+        { nombre: "AGUSFORTNITE2008, Stiffy - PIE EN LA PISTA", archivo: "music/AGUSFORTNITE2008, Stiffy - PIE EN LA PISTA.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
+        { nombre: "AGUSFORTNITE2008, Stiffy - MUSICA DE ASCENSOR", archivo: "music/AGUSFORTNITE2008, Stiffy - MUSICA DE ASCENSOR.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
 
         // { nombre: "", archivo: "music/.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
         // { nombre: "", archivo: "music/.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
@@ -2356,6 +2352,42 @@
         { nombre: "SixUp - Mortedor", archivo: "musicartist/SixUp - Mortedor.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
         { nombre: "SixUp - 10 tucas", archivo: "musicartist/SixUp - 10 tucas.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
         { nombre: "SixUp - Falso", archivo: "musicartist/SixUp - Falso.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
+        { nombre: "CHOOSEY, DLANG - DE MAS DE MI", archivo: "musicartist/CHOOSEY, DLANG - DE MAS DE MI.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
+        { nombre: "CHOOSEY - MI NUMERO TELEFONICO", archivo: "musicartist/CHOOSEY - MI NUMERO TELEFONICO.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
+        { nombre: "CHOOSEY - mi AUTOMOVIL", archivo: "musicartist/CHOOSEY - mi AUTOMOVIL.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
+        { nombre: "CHOOSEY - CARS BEAT", archivo: "musicartist/CHOOSEY - CARS BEAT.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
+        { nombre: "CHOOSEY - pero CHATGPT", archivo: "musicartist/CHOOSEY - pero CHATGPT.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
+        { nombre: "CHOOSEY - NDQV", archivo: "musicartist/CHOOSEY - NDQV.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
+        { nombre: "Blagh, KKAFU - TE ROBO", archivo: "musicartist/Blagh, KKAFU - TE ROBO.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
+        { nombre: "Blagh  - Purple", archivo: "musicartist/Blagh  - Purple.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
+        { nombre: "Blagh, ISMA - Particular", archivo: "musicartist/Blagh, ISMA - Particular.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
+        { nombre: "Blagh - Safe Room", archivo: "musicartist/Blagh - Safe Room.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
+        { nombre: "Blagh - Leave Me Alone", archivo: "musicartist/Blagh - Leave Me Alone.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
+        { nombre: "Blagh - Priceless", archivo: "musicartist/Blagh - Priceless.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
+        { nombre: "2UU! - vuelve a mi", archivo: "musicartist/2UU! - vuelve a mi.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
+        { nombre: "2UU!, LTHELIZARD - FERRAGAMO", archivo: "musicartist/2UU!, LTHELIZARD - FERRAGAMO.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
+        { nombre: "2UU! - PEPSI", archivo: "musicartist/2UU! - PEPSI.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
+        { nombre: "2UU!, ELUNEYBENEDETTI - TARADA", archivo: "musicartist/2UU!, ELUNEYBENEDETTI - TARADA.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
+        { nombre: "2UU! - WORLDWIDE", archivo: "musicartist/2UU! - WORLDWIDE.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
+        { nombre: "2UU!, enzocerobulto, SKIIDY, TULO13 - Promesas sobre el bidet", archivo: "musicartist/2UU!, enzocerobulto, SKIIDY, TULO13 - Promesas sobre el bidet.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
+        { nombre: "2UU!, TULO13 - GREENDAY", archivo: "musicartist/2UU!, TULO13 - GREENDAY.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
+        { nombre: "2UU!, enzocerobulto - PALMERA", archivo: "musicartist/2UU!, enzocerobulto - PALMERA.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
+        { nombre: "enzocerobulto - Esta nota", archivo: "musicartist/enzocerobulto - Esta nota.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
+        { nombre: "enzocerobulto - De capital al Sifon", archivo: "musicartist/enzocerobulto - De capital al Sifon.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
+        { nombre: "enzcocerobulto - perdiendo", archivo: "musicartist/enzcocerobulto - perdiendo.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
+        { nombre: "LITTLE BOOGIE - LITTLE BOOGIE VS EL GOBIERNO", archivo: "musicartist/LITTLE BOOGIE - LITTLE BOOGIE VS EL GOBIERNO.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
+        { nombre: "enzocerobulto - Mitad", archivo: "musicartist/enzocerobulto - Mitad.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
+        { nombre: "enzocerobulto - Ahora y mas tarde", archivo: "musicartist/enzocerobulto - Ahora y mas tarde.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
+        { nombre: "enzocerobulto - Vos y yo!", archivo: "musicartist/enzocerobulto - Vos y yo!.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
+        { nombre: "enzocerobulto - Cada vez mas", archivo: "musicartist/enzocerobulto - Cada vez mas.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
+        { nombre: "enzocerobulto - Es humo no es vapor", archivo: "musicartist/enzocerobulto - Es humo no es vapor.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
+        { nombre: "enzocerobulto - Por las nubes", archivo: "musicartist/enzocerobulto - Por las nubes.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
+        { nombre: "AGUSFORTNITE2008, Stiffy - 24 7", archivo: "musicartist/AGUSFORTNITE2008, Stiffy - 24 7.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
+        { nombre: "AGUSFORTNITE2008, Stiffy - PIE EN LA PISTA", archivo: "musicartist/AGUSFORTNITE2008, Stiffy - PIE EN LA PISTA.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
+        { nombre: "AGUSFORTNITE2008, Stiffy - TRES PATITOS", archivo: "musicartist/AGUSFORTNITE2008, Stiffy - TRES PATITOS.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
+        { nombre: "AGUSFORTNITE2008, Stiffy - 8 JEANS", archivo: "musicartist/AGUSFORTNITE2008, Stiffy - 8 JEANS.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
+        { nombre: "AGUSFORTNITE2008, Stiffy - MUSICA DE ASCENSOR", archivo: "musicartist/AGUSFORTNITE2008, Stiffy - MUSICA DE ASCENSOR.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
+
         // Ejemplo: { nombre: "Artista - Cancion", archivo: "musicartist/Artista - Cancion.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] }
     ];
 
@@ -2379,17 +2411,11 @@
         return durations[durations.length - 1];
     }
 
-    // const targetDurations = [0.1, 0.5, 2, 4, 8, 15]; // ELIMINADO
-    // const totalGameDuration = 15; // ELIMINADO
 
     let hasGuessedCorrectly = false;
     let availableSongs = [];
 
-    // =====================================================
-    // AUDIO PLAYER SYSTEM - Mobile-Optimized v2.0
-    // =====================================================
-    // Uses audio timeupdate events + requestAnimationFrame
-    // instead of setTimeout/setInterval for reliable mobile playback
+
 
     // Snippet playback state
     let snippetState = 'idle'; // 'idle' | 'playing' | 'paused'
@@ -2402,8 +2428,7 @@
     let fullPlayerInterval = null;
     let isGameOver = false; // Moved here for global access
 
-    // FIX: Background playback bug
-    // Ensure audio stops at target time even if tab is inactive (requestAnimationFrame paused)
+
     audioPlayer.addEventListener('timeupdate', () => {
         if (snippetState === 'playing' && !isGameOver) {
             if (audioPlayer.currentTime >= snippetTargetTime) {
@@ -2493,7 +2518,6 @@
 
     // nueva función: formatear tiempo a mm:ss
     function formatTime(seconds) {
-        // CORREGIDO: isNaN, Math.floor
         if (isNaN(seconds) || seconds < 0) return "0:00";
         const minutes = Math.floor(seconds / 60);
         const remainingSeconds = Math.floor(seconds % 60);
@@ -2642,7 +2666,7 @@
             return;
         }
 
-        const currentStreak = winStreak; // Always use winStreak for normal mode logic here
+        const currentStreak = winStreak;
 
         if (currentStreak < minstreak) {
             streakSaverEl.style.display = 'none';
@@ -2756,7 +2780,6 @@
     async function restoreModeState(mode) {
         const state = mode === 'artist' ? artistModeState : normalModeState;
 
-        // FIX: Renderizar UI siempre para asegurar que coincida con el modo actual
         renderGuessBoxes();
         renderProgressSegments();
 
@@ -2778,7 +2801,6 @@
             if (selectedArtist) {
                 currentArtistDisplay.textContent = `Artista: ${selectedArtist}`;
 
-                // BUGFIX: Sanitize availableSongs to ensure they belong to the selected artist
                 if (availableSongs && availableSongs.length > 0) {
                     const isConsistent = availableSongs.every(s => extractArtist(s.nombre) === selectedArtist);
                     if (!isConsistent) {
@@ -2891,10 +2913,8 @@
         playSound('click');
         if (currentMode === mode) return;
 
-        // FIX: Detener reproducción y limpiar barra al cambiar de modo
         pauseAudioInternal();
 
-        // Guardar estado del modo actual antes de cambiar
         saveModeState(currentMode);
 
         currentMode = mode;
@@ -2911,7 +2931,6 @@
             populateArtists();
         }
 
-        // Restaurar estado del nuevo modo
         restoreModeState(mode);
     }
 
@@ -2966,7 +2985,7 @@
         renderArtistSuggestions(matches);
     });
 
-    // Cerrar lista al hacer click fuera
+
     document.addEventListener('click', (e) => {
         if (!artistSearchInput.contains(e.target) && !artistListEl.contains(e.target)) {
             artistListEl.classList.remove('show');
@@ -3020,27 +3039,26 @@
             document.getElementById('search-container').classList.remove('disabled');
         }
 
-        // corrección: desactivar botón al principio, se activará al cargar el audio
         playButton.setAttribute('disabled', '');
         skipButton.disabled = false;
 
         clearGuessBoxes();
 
-        // MODIFICADO: Inicializar en 0, se calculará aleatoriamente al cargar metadatos
+
         gameStartTime = 0;
 
         updateTimeMarker(0);
-        if (progressBarFill) progressBarFill.style.width = '0%'; // FIX: Reset progress bar visual
+        if (progressBarFill) progressBarFill.style.width = '0%';
         updatePlayIcon(false);
 
-        // OBFUSCATION: Fetch as blob to hide filename
+
         if (currentBlobUrl) {
             URL.revokeObjectURL(currentBlobUrl);
             currentBlobUrl = null;
         }
 
         if (currentSong.archivo) {
-            // BUGFIX: Skip fetch on file protocol to avoid console errors (spoilers)
+
             if (window.location.protocol !== 'file:') {
                 try {
                     const response = await fetch(currentSong.archivo);
@@ -3074,7 +3092,6 @@
 
             audioPlayer.currentTime = gameStartTime;
 
-            // FIX: Guardar estado AQUÍ, después de calcular el tiempo aleatorio
             saveModeState(currentMode);
 
             // Limpiar listener para evitar ejecuciones múltiples
@@ -3232,10 +3249,6 @@
     // AUDIO PLAYER - Core Functions (Mobile-Optimized v2.0)
     // =====================================================
 
-    /**
-     * Stops the audio and cleans up all playback state.
-     * @param {boolean} resetToIdle - If true, resets state to 'idle'. If false, sets to 'paused'.
-     */
     function pauseAudioInternal(resetToIdle = true) {
         // 1. Pause the audio
         audioPlayer.pause();
@@ -3356,12 +3369,10 @@
         if (fullPlayerInterval) clearInterval(fullPlayerInterval);
         fullPlayerInterval = null;
 
-        // cargar el archivo completo (desde el inicio, no desde gameStartTime)
-        // Usamos el blob ya cargado si existe
+
         if (currentBlobUrl) {
             audioPlayer.src = currentBlobUrl;
         } else {
-            // BUGFIX: Skip fetch on file protocol to avoid console errors (spoilers)
             if (window.location.protocol !== 'file:') {
                 audioPlayer.src = currentSong.archivo;
             } else {
@@ -3437,11 +3448,7 @@
         // Don't reset currentTime - keep position for potential resume after skip
     }
 
-    /**
-     * Continuous animation loop for smooth progress bar updates.
-     * Runs at 60fps using requestAnimationFrame.
-     * Also monitors audio position to stop at target time (replaces setTimeout).
-     */
+
     function animationLoop() {
         // Stop if not playing
         if (snippetState !== 'playing') {
@@ -3462,8 +3469,7 @@
             // Ensure bar is at exactly 100% of segment before pausing
             const targetPercentage = getPercentage(snippetTargetTime - gameStartTime);
 
-            // FIX: Clamping visual width to prevent overshoot
-            // Especially for 0.1s, ensure it doesn't exceed the visual marker
+
             progressBarFill.style.width = targetPercentage + '%';
 
             // Stop playback
@@ -3533,8 +3539,6 @@
         const currentTime = audioPlayer.currentTime;
         const tolerance = 0.05; // 50ms tolerance
 
-        // Always restart from beginning for short durations (mobile fix)
-        // Or if we're past the target, or before gameStartTime
         const isShortDuration = targetDuration <= 0.5;
         const isPastTarget = currentTime >= snippetTargetTime - tolerance;
         const isBeforeStart = currentTime < gameStartTime - tolerance;
@@ -3570,11 +3574,10 @@
 
         if (won) {
             gameResult.textContent = "ganaste gg"; // TEXTO SOLICITADO
-            gameOverContent.classList.remove('win', 'lose'); // ¡limpia ambas!
+            gameOverContent.classList.remove('win', 'lose'); // limpia ambas
             gameOverContent.classList.add('win');
             answerLabel.textContent = "la cancion era"; // etiqueta simple
 
-            // NUEVO: Incrementar racha al ganar (dependiendo del modo)
             if (currentMode === 'normal') {
                 winStreak++;
                 localStorage.setItem('winStreak', winStreak);
@@ -3599,7 +3602,6 @@
 
             // NUEVO: Lógica de salva rachas al perder
             if (currentMode === 'normal') {
-                // Si tienes vidas y superas el minstreak, se consume una vida y NO se resetea.
                 if (winStreak >= minstreak && streaksavers > 0) {
                     streaksavers--;
                     localStorage.setItem('streaksavers', streaksavers);
@@ -3610,7 +3612,6 @@
                     localStorage.setItem('winStreak', winStreak);
                 }
             } else {
-                // En modo artista no hay salva rachas (por ahora), reset directo
                 artistStreak = 0;
                 localStorage.setItem('artistStreak', artistStreak);
             }
@@ -3627,7 +3628,6 @@
         skipButton.disabled = true;
     }
 
-    // NUEVA FUNCION: handleGuess con la cancion real (llamada por click en la lista)
     function handleGuessFromSelection(selectedSongName) {
         playSound('click');
         const durations = getDurations();
@@ -3730,7 +3730,15 @@
         guessCount++;
         if (guessCount < durations.length) {
             updateTimeMarker(guessCount);
-            finishSnippet();
+
+            // FIX: Actualizar snippetTargetTime al nuevo límite del segmento desbloqueado
+            // para que el audio no se pause al llegar al límite del segmento anterior
+            let newTargetDuration = durations[guessCount];
+            // "Mentira" del 0.2s: visual shows 0.1s but plays 0.2s
+            if (guessCount === 0 && newTargetDuration === 0.1) {
+                newTargetDuration = 0.2;
+            }
+            snippetTargetTime = gameStartTime + newTargetDuration;
         } else {
             showGameOver(false);
         }
@@ -3937,41 +3945,7 @@
         pauseAudioInternal();
     });
 
-    // >>> DEV TOOLS START <<<
-    // Herramientas de desarrollador para pruebas.
-    // Eliminar este bloque si se desea desactivar.
-    window.devTools = {
-        addLife: function () {
-            streaksavers++;
-            localStorage.setItem('streaksavers', streaksavers);
-            updateStreakSaverUI();
-            console.log('Vida añadida. Total:', streaksavers);
-        },
-        setStreak: function (n) {
-            winStreak = n;
-            localStorage.setItem('winStreak', winStreak);
-            updateStreakDisplay();
-            console.log('Racha establecida en:', winStreak);
-        },
-        setSong: function (name) {
-            // Fuerza la siguiente canción (requiere recarga o reset)
-            // Esto es complejo porque la canción se elige al azar.
-            // Mejor: Simular que la canción actual es "name" para ganar fácil?
-            // O mejor: setear la respuesta correcta.
-            console.log('Canción actual:', currentSong.nombre);
-        },
-        win: function () {
-            if (!currentSong.nombre) return;
-            handleGuessFromSelection(currentSong.nombre);
-        },
-        editStreak: function () {
-            const n = prompt("Ingresa la nueva racha:");
-            if (n !== null && !isNaN(n)) {
-                this.setStreak(parseInt(n));
-            }
-        }
-    };
-    // >>> DEV TOOLS END <<<
+
 </script>
 <script>
     function ajustarEscala() {
