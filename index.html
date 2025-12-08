@@ -3095,7 +3095,7 @@
 
         updateTimeMarker(0);
         if (progressBarFill) progressBarFill.style.width = '0%';
-        updatePlayIcon(false);
+        // updatePlayIcon(false); // REMOVED: This was overwriting the loader immediately!
 
 
         if (currentBlobUrl) {
@@ -3104,16 +3104,18 @@
         }
 
         if (currentSong.archivo) {
+            // FIX: Encode URL to handle spaces and special chars on GitHub Pages
+            const encodedPath = encodeURI(currentSong.archivo);
 
             if (window.location.protocol !== 'file:') {
                 try {
-                    const response = await fetch(currentSong.archivo);
+                    const response = await fetch(encodedPath);
                     const blob = await response.blob();
                     currentBlobUrl = URL.createObjectURL(blob);
                     audioPlayer.src = currentBlobUrl;
                 } catch (e) {
                     console.error("Error loading audio blob:", e);
-                    audioPlayer.src = currentSong.archivo; // Fallback
+                    audioPlayer.src = encodedPath; // Fallback
                 }
             } else {
                 // Local file: use direct path
