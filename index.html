@@ -50,6 +50,7 @@
             --white: #ffffff;
             --bar-active: #ffffff;
             --grisesito: #575757;
+            --artist_header: #91ff00c5;
 
             --modal-win: var(--accent);
             --modal-lose: #b42828;
@@ -263,15 +264,24 @@
 
 
         /* Barra de Progreso */
-        .progress-bar-container {
+        /* Barra de Progreso */
+        .progress-wrapper {
+            position: relative;
             width: 100%;
             max-width: 900px;
+            margin-bottom: 25px;
+            /* Reducido para subir el botón Play */
+        }
+
+        .progress-bar-container {
+            width: 100%;
             height: 25px;
             background-color: var(--bar-bg);
-            border-radius: 0;
+            border-radius: 4px;
+            /* Sutil */
             position: relative;
-            margin-bottom: 40px;
-            overflow: visible;
+            overflow: hidden;
+            /* Recorta los bordes rectos del hijo */
         }
 
         .progress-bar-fill {
@@ -281,7 +291,8 @@
             height: 100%;
             background-color: var(--bar-active);
             width: 0%;
-            /* REMOVED: transition causes lag on mobile - now using requestAnimationFrame */
+            border-radius: 0;
+            /* Recto, el padre recorta */
             z-index: 1;
         }
 
@@ -344,16 +355,19 @@
         button.play-button {
             background-color: var(--accent);
             border-radius: 50%;
-            width: 60px;
-            height: 60px;
+            width: 65px;
+            /* Un pelin más grande (antes 60) */
+            height: 65px;
             display: flex;
             justify-content: center;
             align-items: center;
             cursor: pointer;
             box-shadow: 0px 4px 15px rgba(0, 0, 0, 0.4);
             position: relative;
-            margin-top: 10px;
-            margin-bottom: 40px;
+            margin-top: 5px;
+            /* Más arriba */
+            margin-bottom: 15px;
+            /* Espacio para la racha */
             opacity: 1;
             border: none;
         }
@@ -370,9 +384,10 @@
 
         button.play-button svg {
             fill: white;
-            width: 28px;
-            height: 28px;
-            margin-left: 2px
+            width: 32px;
+            /* Ajustado proporcionalmente */
+            height: 32px;
+            margin-left: 3px;
         }
 
         /* Controles de Busqueda */
@@ -1331,7 +1346,9 @@
         #streak {
             font-size: 1.2em;
             font-weight: bold;
-            margin-top: 10px;
+            margin-top: 5px;
+            margin-bottom: 25px;
+            /* Espacio antes del buscador */
             color: var(--accent);
             user-select: none;
             pointer-events: none;
@@ -1412,19 +1429,39 @@
             display: flex;
             flex-direction: column;
             align-items: center;
-            background: var(--panel);
-            padding: 8px 12px;
-            border-radius: 10px;
+            background: transparent;
+            padding: 0;
             margin-top: 15px;
-            gap: 8px;
+            gap: 0;
             width: fit-content;
-            /* Se amolda al contenido */
         }
 
         /* === ESTILOS PARA EL SELECTOR DE MODO === */
         .mode-selector {
             display: flex;
             gap: 10px;
+            /* Remove explicit bg, use pseudo for layering */
+            /* background: var(--panel); STACKING FIX */
+            padding: 8px 12px;
+            border-radius: 10px;
+            position: relative;
+            /* Allow children to interleave */
+            z-index: auto;
+            transform: none;
+            isolation: auto;
+        }
+
+        /* Create the gray background as a separate layer (Z=1) */
+        .mode-selector::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: var(--panel);
+            border-radius: 10px;
+            z-index: 1;
         }
 
         .mode-button {
@@ -1437,6 +1474,9 @@
             border-radius: 6px;
             transition: all 0.2s;
             font-family: 'OtherTextFont', sans-serif;
+            position: relative;
+            z-index: 3;
+            /* Z=3: On top of everything */
         }
 
         .mode-button:hover {
@@ -1451,7 +1491,6 @@
         /* === DISPLAY DEL ARTISTA EN HEADER === */
         #current-artist-display-header {
             display: none;
-            background: var(--accent);
             color: var(--white);
             font-size: 1em;
             font-weight: bold;
@@ -1459,10 +1498,22 @@
             border-radius: 6px;
             text-align: center;
             font-family: 'OtherTextFont', sans-serif;
+            white-space: nowrap;
+            /* Fondo verde */
+            background: var(--accent);
+            /* Contorno gris propio que se amolda al nombre */
+            box-shadow: 0 0 0 8px var(--panel), 0 4px 0 8px var(--panel);
+            margin-top: 0px;
+            /* Ligeramente más abajo que antes (-6px) */
+            margin-bottom: 8px;
+            position: relative;
+            z-index: 2;
+            /* Z=2: Sandwich (Over bg, under text) */
+            transform: none;
         }
 
         #current-artist-display-header.show {
-            display: block;
+            display: inline-block;
         }
 
         /* === ESTILOS PARA LA SECCIÓN DE ARTISTA === */
@@ -1880,17 +1931,19 @@
     </div>
 
 
-    <div class="progress-bar-container" id="progress-bar">
-        <div class="segments-overlay" id="segments-overlay"></div>
-        <div class="progress-bar-fill" id="progress-bar-fill"></div>
+    <div class="progress-wrapper">
+        <div class="progress-bar-container" id="progress-bar">
+            <div class="segments-overlay" id="segments-overlay"></div>
+            <div class="progress-bar-fill" id="progress-bar-fill"></div>
+        </div>
         <span class="timer-text" id="current-timer-text" style="left:0%">0.1s</span>
     </div>
-    <div id="streak">Racha: 0</div>
     <button class="play-button" id="play-button" onclick="playSnippet()" disabled aria-label="escuchar fragmento">
         <svg viewBox="0 0 24 24" aria-hidden="true">
             <path d="M8 5v14l11-7z" />
         </svg>
     </button>
+    <div id="streak">Racha: 0</div>
 
     <div class="search-controls-container">
         <div class="controls-row">
@@ -2636,7 +2689,7 @@
         { nombre: "Banatroll, LOLO - CALIFORNIA", archivo: "musicartist/Banatroll, LOLO - CALIFORNIA.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
         { nombre: "AGUSFORTNITE2008, Stiffy - PETER GRIFFIN", archivo: "musicartist/AGUSFORTNITE2008, Stiffy - PETER GRIFFIN.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
         { nombre: "AGUSFORTNITE2008, Stiffy - DESDE LOS 14", archivo: "musicartist/AGUSFORTNITE2008, Stiffy - DESDE LOS 14.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "", archivo: "musicartist/.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
+        { nombre: "EL DOCTOR, FALA FABIO - BARCELONA 90", archivo: "musicartist/EL DOCTOR, FALA FABIO - BARCELONA 90.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
         { nombre: "", archivo: "musicartist/.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
         { nombre: "", archivo: "musicartist/.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
         { nombre: "", archivo: "musicartist/.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
@@ -3228,7 +3281,12 @@
     function filterArtists(query) {
         if (!query) return [];
         const lowerQuery = query.toLowerCase();
-        return artistList.filter(artist => artist.toLowerCase().includes(lowerQuery));
+        const queryTerms = lowerQuery.split(/\s+/);
+
+        return artistList.filter(artist => {
+            const lowerArtist = artist.toLowerCase();
+            return queryTerms.every(term => lowerArtist.includes(term));
+        });
     }
 
     function selectArtist(artist) {
@@ -3285,6 +3343,11 @@
     });
 
     async function resetGame(forceNew = false) {
+        // STOP CONFETTI: Immediately clear when starting new round
+        if (typeof confetti !== 'undefined' && confetti.reset) {
+            confetti.reset();
+        }
+
         // CRITICAL: Reset game over and full song playback state
         audioPlayer.pause();
         isGameOver = false;
@@ -3920,7 +3983,7 @@
             playSound('gameover');
 
             // Mensajes aleatorios de derrota
-            const loseMessages = ["PERDISTE", "MAL AHI", "NECESITÁS MEJORAR", "DEDICATE AL PADEL", ":(", "SAJ"];
+            const loseMessages = ["PERDISTE", "MAL AHI", "NECESITÁS MEJORAR", "DEDICATE AL PADEL", "NAAH :(", "SAJ", "FAKE FAN"];
             const randomMsg = loseMessages[Math.floor(Math.random() * loseMessages.length)];
             gameResult.textContent = randomMsg;
 
@@ -4151,7 +4214,13 @@
             pool = pool.filter(s => extractArtist(s.nombre) === selectedArtist);
         }
 
-        const filtered = pool.filter(s => s.nombre.toLowerCase().includes(query));
+        // MEJORADO: Búsqueda por palabras clave independientes (fuzzy-like)
+        const queryTerms = query.split(/\s+/); // Separar por espacios
+        const filtered = pool.filter(s => {
+            const songName = s.nombre.toLowerCase();
+            // Verificar si TODAS las palabras de la búsqueda están en el nombre
+            return queryTerms.every(term => songName.includes(term));
+        });
         if (filtered.length > 0) {
             // CORREGIDO: forEach, appendChild, slice
             filtered.forEach(song => {
