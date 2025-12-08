@@ -547,12 +547,19 @@
             background-color: var(--modal-bg-body);
             padding: 0;
             border-radius: 10px;
+            overflow: hidden;
+            /* Esto asegura que el header respete los bordes redondeados */
             box-shadow: 0 5px 20px rgba(0, 0, 0, 0.5);
             max-width: 90%;
             width: 400px;
             display: flex;
             flex-direction: column;
+            transform: scale(0.9);
+            transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
 
+        #game-over-message.show .game-over-content {
+            transform: scale(1);
         }
 
         .game-over-header {
@@ -730,67 +737,231 @@
         }
 
 
-        /* volumen style */
-        .volume-container {
+        /* recommend button style */
+        .recommend-btn {
             position: fixed;
-            top: 20px;
-            right: 30px;
-            width: 160px;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            background: transparent;
-            justify-content: flex-end;
-            padding: 0;
-            z-index: 100;
-        }
-
-        .volume-icon {
-            width: 18px;
-            height: 18px;
-            opacity: 0.9;
-            fill: #bfbfbf
-        }
-
-        input[type=range].volume-slider {
-            -webkit-appearance: none;
-            appearance: none;
-            width: 120px;
-            height: 4px;
-            background: var(--bar-bg);
-            border-radius: 999px;
-            outline: none;
-        }
-
-        input[type=range].volume-slider::-webkit-slider-thumb {
-            -webkit-appearance: none;
-            appearance: none;
-            width: 12px;
-            height: 12px;
-            border-radius: 50%;
-            background: var(--accent);
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
-            cursor: pointer;
-            transition: transform 0.2s;
-        }
-
-        input[type=range].volume-slider::-webkit-slider-thumb:hover {
-            transform: scale(1.1);
-        }
-
-        input[type=range].volume-slider::-moz-range-thumb {
-            width: 12px;
-            height: 12px;
-            border-radius: 50%;
-            background: var(--accent);
+            top: 15px;
+            right: 145px;
+            background: var(--panel);
+            color: var(--muted);
             border: none;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+            padding: 8px 14px;
+            font-size: 0.85em;
+            font-weight: 600;
             cursor: pointer;
-            transition: transform 0.2s;
+            border-radius: 6px;
+            z-index: 100;
+            font-family: 'PoppinsFont', sans-serif;
         }
 
-        input[type=range].volume-slider::-moz-range-thumb:hover {
-            transform: scale(1.1);
+        .recommend-btn:hover {
+            color: var(--white);
+        }
+
+        /* bugs button style */
+        .bugs-btn {
+            position: fixed;
+            top: 15px;
+            right: 75px;
+            background: var(--panel);
+            color: var(--muted);
+            border: none;
+            padding: 8px 14px;
+            font-size: 0.85em;
+            font-weight: 600;
+            cursor: pointer;
+            border-radius: 6px;
+            z-index: 100;
+            font-family: 'PoppinsFont', sans-serif;
+        }
+
+        .bugs-btn:hover {
+            color: var(--white);
+        }
+
+
+        /* bugs modal */
+        #bugs-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.7);
+            display: flex;
+            /* Flex siempre para centrar, controlamos visibilidad */
+            justify-content: center;
+            align-items: center;
+            z-index: 3000;
+            opacity: 0;
+            visibility: hidden;
+            pointer-events: none;
+            transition: opacity 0.3s ease, visibility 0.3s ease;
+        }
+
+        #bugs-modal.show {
+            opacity: 1;
+            visibility: visible;
+            pointer-events: auto;
+        }
+
+        #bugs-modal .modal-box {
+            background-color: var(--panel);
+            border: 1px solid var(--grisesito);
+            border-radius: 12px;
+            padding: 30px 35px;
+            max-width: 400px;
+            width: 90%;
+            text-align: center;
+            font-family: 'PoppinsFont', sans-serif;
+            position: relative;
+            transform: scale(0.9);
+            transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        #bugs-modal.show .modal-box {
+            transform: scale(1);
+        }
+
+        #bugs-modal .close-x {
+            position: absolute;
+            top: 12px;
+            right: 15px;
+            background: none;
+            border: none;
+            color: var(--muted);
+            font-size: 1.4em;
+            cursor: pointer;
+            line-height: 1;
+            padding: 0;
+        }
+
+        #bugs-modal .close-x:hover {
+            color: var(--white);
+        }
+
+        #bugs-modal h3 {
+            margin: 0 0 20px 0;
+            color: var(--white);
+            font-size: 1.2em;
+        }
+
+        #bugs-modal p {
+            color: var(--muted);
+            font-size: 0.9em;
+            margin: 0 0 18px 0;
+            line-height: 1.5;
+        }
+
+        #bugs-modal kbd {
+            background: var(--bg);
+            padding: 4px 10px;
+            border-radius: 4px;
+            font-family: monospace;
+            color: var(--white);
+            font-size: 0.85em;
+        }
+
+        #bugs-modal .twitter-link {
+            display: inline-block;
+            background: var(--bg);
+            color: var(--muted);
+            padding: 8px 16px;
+            border-radius: 6px;
+            text-decoration: none;
+            font-size: 0.85em;
+            margin-top: 5px;
+        }
+
+        #bugs-modal .twitter-link:hover {
+            color: var(--white);
+        }
+
+        /* recommend modal - reuses same styles as bugs modal */
+        #recommend-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.7);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 3000;
+            opacity: 0;
+            visibility: hidden;
+            pointer-events: none;
+            transition: opacity 0.3s ease, visibility 0.3s ease;
+        }
+
+        #recommend-modal.show {
+            opacity: 1;
+            visibility: visible;
+            pointer-events: auto;
+        }
+
+        #recommend-modal .modal-box {
+            background-color: var(--panel);
+            border: 1px solid var(--grisesito);
+            border-radius: 12px;
+            padding: 30px 35px;
+            max-width: 400px;
+            width: 90%;
+            text-align: center;
+            font-family: 'PoppinsFont', sans-serif;
+            position: relative;
+            transform: scale(0.9);
+            transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        #recommend-modal.show .modal-box {
+            transform: scale(1);
+        }
+
+        #recommend-modal .close-x {
+            position: absolute;
+            top: 12px;
+            right: 15px;
+            background: none;
+            border: none;
+            color: var(--muted);
+            font-size: 1.4em;
+            cursor: pointer;
+            line-height: 1;
+            padding: 0;
+        }
+
+        #recommend-modal .close-x:hover {
+            color: var(--white);
+        }
+
+        #recommend-modal h3 {
+            margin: 0 0 20px 0;
+            color: var(--white);
+            font-size: 1.2em;
+        }
+
+        #recommend-modal p {
+            color: var(--muted);
+            font-size: 0.9em;
+            margin: 0 0 18px 0;
+            line-height: 1.5;
+        }
+
+        #recommend-modal .twitter-link {
+            display: inline-block;
+            background: var(--bg);
+            color: var(--muted);
+            padding: 8px 16px;
+            border-radius: 6px;
+            text-decoration: none;
+            font-size: 0.85em;
+            margin-top: 5px;
+        }
+
+        #recommend-modal .twitter-link:hover {
+            color: var(--white);
         }
 
         .reset-button {
@@ -1236,14 +1407,24 @@
             vertical-align: middle;
         }
 
+        /* === CONTENEDOR UNIFICADO MODO + ARTISTA === */
+        .mode-artist-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            background: var(--panel);
+            padding: 8px 12px;
+            border-radius: 10px;
+            margin-top: 15px;
+            gap: 8px;
+            width: fit-content;
+            /* Se amolda al contenido */
+        }
+
         /* === ESTILOS PARA EL SELECTOR DE MODO === */
         .mode-selector {
             display: flex;
             gap: 10px;
-            margin-top: 15px;
-            background: var(--panel);
-            padding: 5px;
-            border-radius: 8px;
         }
 
         .mode-button {
@@ -1267,10 +1448,28 @@
             color: var(--white);
         }
 
+        /* === DISPLAY DEL ARTISTA EN HEADER === */
+        #current-artist-display-header {
+            display: none;
+            background: var(--accent);
+            color: var(--white);
+            font-size: 1em;
+            font-weight: bold;
+            padding: 6px 16px;
+            border-radius: 6px;
+            text-align: center;
+            font-family: 'OtherTextFont', sans-serif;
+        }
+
+        #current-artist-display-header.show {
+            display: block;
+        }
+
         /* === ESTILOS PARA LA SECCIÓN DE ARTISTA === */
         #artist-section {
             width: 100%;
-            max-width: 600px;
+            max-width: 300px;
+            /* REDUCIDO: más angosto */
             margin-bottom: 20px;
             display: none;
             /* Oculto por defecto */
@@ -1289,6 +1488,8 @@
         }
 
         #current-artist-display {
+            display: none;
+            /* OCULTO: ahora usamos el del header */
             font-size: 1.2em;
             color: var(--accent);
             font-weight: bold;
@@ -1511,23 +1712,45 @@
     <div class="logo">UnderLess</div>
     <img id="emote-7tv" src="img/peepo-band.gif" alt="peepo band">
 
-    <!-- MODE SELECTOR -->
-    <div class="mode-selector">
-        <button id="mode-normal" class="mode-button active" onclick="switchMode('normal')">Normal</button>
-        <button id="mode-artist" class="mode-button" onclick="switchMode('artist')">Artista</button>
+    <!-- MODE SELECTOR + ARTIST DISPLAY CONTAINER -->
+    <div class="mode-artist-container">
+        <div class="mode-selector">
+            <button id="mode-normal" class="mode-button active" onclick="switchMode('normal')">Normal</button>
+            <button id="mode-artist" class="mode-button" onclick="switchMode('artist')">Artista</button>
+        </div>
+        <!-- CURRENT ARTIST DISPLAY (below mode selector) -->
+        <div id="current-artist-display-header"></div>
     </div>
 </header>
 
 <div id="ui-root">
 </div>
 
-<div class="volume-container" title="volumen">
-    <svg class="volume-icon" viewBox="0 0 24 24" aria-hidden="true">
-        <path d="M3 9v6h4l5 5V4L7 9H3z" />
-    </svg>
-    <input id="volume-slider" class="volume-slider" type="range" min="0" max="1" step="0.01" value="0.8"
-        aria-label="volumen">
+<button class="recommend-btn" onclick="openRecommendModal()">recomendar</button>
+<button class="bugs-btn" onclick="openBugsModal()">bugs</button>
+
+<!-- RECOMMEND MODAL -->
+<div id="recommend-modal">
+    <div class="modal-box">
+        <button class="close-x" onclick="closeRecommendModal()">×</button>
+        <h3>recomendar artistas/canciones</h3>
+        <p>¿tenés artistas o canciones para agregar al juego?</p>
+        <p>comentalas en este tweet:</p>
+        <a href="https://x.com/Invalame/status/1997739527235047739" target="_blank" class="twitter-link">abrir tweet</a>
+    </div>
 </div>
+
+<!-- BUGS MODAL -->
+<div id="bugs-modal">
+    <div class="modal-box">
+        <button class="close-x" onclick="closeBugsModal()">×</button>
+        <h3>arreglar bugs</h3>
+        <p>apretá <kbd>Ctrl</kbd> + <kbd>Shift</kbd> + <kbd>R</kbd> para borrar el caché y recargar.</p>
+        <p>otros bugs? comentalos en este tweet:</p>
+        <a href="https://x.com/Invalame/status/1997739583501717877" target="_blank" class="twitter-link">abrir tweet</a>
+    </div>
+</div>
+
 
 <!-- YOUTUBE BUTTON -->
 <div class="youtube-container">
@@ -1543,9 +1766,9 @@
 <style>
     .youtube-container {
         position: fixed;
-        top: 50px;
+        top: 15px;
         right: 30px;
-        z-index: 1000;
+        z-index: 100;
         display: flex;
         flex-direction: column;
         align-items: flex-end;
@@ -1638,7 +1861,7 @@
             <div class="search-container">
                 <svg viewBox="0 0 24 24" aria-hidden="true">
                     <path
-                        d="M15.5 14h-.79l-.28-.27A6.471 6.471 0 0 0 16 9.5 6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79L20.29 21l.71-.71L15.5 14zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 14z" />
+                        d="M15.5 14h-.79l-.28-.27A6.471 6.471 0 0 0 16 9.5 6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79L20.29 21l.71-.71L15.5 14zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5z" />
                 </svg>
                 <input type="text" class="search-input" id="artist-search-input" placeholder="Buscar artista..."
                     autocomplete="off">
@@ -1770,7 +1993,9 @@
         </div>
     </div>
 </div>
+</div>
 <!-- Removed audio tag from DOM -->
+<script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
 
 <script>
     // -----------------------------------------------------
@@ -1975,7 +2200,7 @@
         { nombre: "cero - xq soy el villano", archivo: "music/cero - xq soy el villano.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
         { nombre: "cero, knak - TOA", archivo: "music/cero, knak - TOA.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
         { nombre: "CHOOSEY - 1-2 groupie", archivo: "music/CHOOSEY - 1-2 groupie.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "CHOOSEY - 100 LUCHA", archivo: "music/CHOOSEY - 100 LUCHA.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
+        { nombre: "CHOOSEY - 100% LUCHA", archivo: "music/CHOOSEY - 100 LUCHA.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
         { nombre: "ISMA, LOLO  - CUAL ES TU PLAN", archivo: "music/ISMA, LOLO  - CUAL ES TU PLAN.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
         { nombre: "LITTLE BOOGIE - COMPA LO HICIMOS", archivo: "music/LITTLE BOOGIE - COMPA LO HICIMOS.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
         { nombre: "LITTLE BOOGIE - DEJA DE SUFRIR", archivo: "music/LITTLE BOOGIE - DEJA DE SUFRIR.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
@@ -2219,7 +2444,7 @@
         { nombre: "cero - xq soy el villano", archivo: "musicartist/cero - xq soy el villano.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
         { nombre: "cero, knak - TOA", archivo: "musicartist/cero, knak - TOA.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
         { nombre: "CHOOSEY - 1-2 groupie", archivo: "musicartist/CHOOSEY - 1-2 groupie.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "CHOOSEY - 100 LUCHA", archivo: "musicartist/CHOOSEY - 100 LUCHA.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
+        { nombre: "CHOOSEY - 100% LUCHA", archivo: "musicartist/CHOOSEY - 100 LUCHA.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
         { nombre: "ISMA, LOLO  - CUAL ES TU PLAN", archivo: "musicartist/ISMA, LOLO  - CUAL ES TU PLAN.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
         { nombre: "LITTLE BOOGIE - COMPA LO HICIMOS", archivo: "musicartist/LITTLE BOOGIE - COMPA LO HICIMOS.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
         { nombre: "LITTLE BOOGIE - DEJA DE SUFRIR", archivo: "musicartist/LITTLE BOOGIE - DEJA DE SUFRIR.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
@@ -2530,6 +2755,7 @@
     const artistSearchInput = document.getElementById('artist-search-input');
     const artistListEl = document.getElementById('artist-list');
     const currentArtistDisplay = document.getElementById('current-artist-display');
+    const currentArtistDisplayHeader = document.getElementById('current-artist-display-header');
     const modeNormalBtn = document.getElementById('mode-normal');
     const modeArtistBtn = document.getElementById('mode-artist');
 
@@ -2570,6 +2796,19 @@
     // calcula el porcentaje en la barra basado en el tiempo total del juego
     function getPercentage(timeinseconds) {
         return (timeinseconds / getTotalGameDuration()) * 100;
+    }
+
+    // NUEVO: Helper para actualizar el display del artista en el header
+    function updateArtistHeaderDisplay(artistName) {
+        if (!currentArtistDisplayHeader) return;
+
+        if (artistName && currentMode === 'artist') {
+            currentArtistDisplayHeader.textContent = artistName;
+            currentArtistDisplayHeader.classList.add('show');
+        } else {
+            currentArtistDisplayHeader.textContent = '';
+            currentArtistDisplayHeader.classList.remove('show');
+        }
     }
 
     // visual: renderiza las divisiones de la barra de progreso
@@ -2843,6 +3082,7 @@
             selectedArtist = state.selectedArtist;
             if (selectedArtist) {
                 currentArtistDisplay.textContent = `Artista: ${selectedArtist}`;
+                updateArtistHeaderDisplay(selectedArtist); // Actualizar header
 
                 if (availableSongs && availableSongs.length > 0) {
                     const isConsistent = availableSongs.every(s => extractArtist(s.nombre) === selectedArtist);
@@ -2853,8 +3093,12 @@
                 }
             } else {
                 currentArtistDisplay.textContent = "Selecciona un artista";
+                updateArtistHeaderDisplay(null); // Ocultar header
                 availableSongs = [];
             }
+        } else {
+            // Modo normal: ocultar el display del artista
+            updateArtistHeaderDisplay(null);
         }
 
         // Restaurar casillas visualmente
@@ -2952,11 +3196,14 @@
     }
 
 
-    function switchMode(mode) {
+    async function switchMode(mode) {
         playSound('click');
         if (currentMode === mode) return;
 
         pauseAudioInternal();
+
+        // FIX: Reset progress bar visually when switching modes
+        if (progressBarFill) progressBarFill.style.width = '0%';
 
         saveModeState(currentMode);
 
@@ -2967,6 +3214,7 @@
             modeNormalBtn.classList.add('active');
             modeArtistBtn.classList.remove('active');
             artistSection.classList.remove('show');
+            updateArtistHeaderDisplay(null); // Ocultar header del artista
         } else {
             modeNormalBtn.classList.remove('active');
             modeArtistBtn.classList.add('active');
@@ -2974,7 +3222,7 @@
             populateArtists();
         }
 
-        restoreModeState(mode);
+        await restoreModeState(mode);
     }
 
     function filterArtists(query) {
@@ -2986,6 +3234,7 @@
     function selectArtist(artist) {
         selectedArtist = artist;
         currentArtistDisplay.textContent = `Artista: ${artist}`;
+        updateArtistHeaderDisplay(artist); // Actualizar header
         artistSearchInput.value = "";
         artistListEl.classList.remove('show');
 
@@ -3035,17 +3284,19 @@
         }
     });
 
-    // -----------------------------------------------------
-    // game / audio logic
     async function resetGame(forceNew = false) {
+        // CRITICAL: Reset game over and full song playback state
+        audioPlayer.pause();
         isGameOver = false;
-        pauseAudioInternal();
         isFullSongPlaying = false;
+        snippetState = 'idle';
 
-        // nuevo: limpiar el intervalo del reproductor completo
-        if (fullPlayerInterval) clearInterval(fullPlayerInterval);
-        fullPlayerInterval = null;
-        if (fullSongSeeker) fullSongSeeker.value = 0;
+        // Clear full player interval if running
+        if (fullPlayerInterval) {
+            clearInterval(fullPlayerInterval);
+            fullPlayerInterval = null;
+        }
+
         if (fullSongTime) fullSongTime.textContent = '0:00 / 0:00';
         audioPlayer.onloadedmetadata = null; // limpiar listeners
         audioPlayer.onended = null;
@@ -3519,9 +3770,10 @@
 
         // Check if we've reached or passed the target time
         if (currentTime >= snippetTargetTime) {
-            // Ensure bar is at exactly 100% of segment before pausing
-            const targetPercentage = getPercentage(snippetTargetTime - gameStartTime);
-
+            // FIX: Use VISUAL duration (0.1s) not actual playback duration (0.2s) for progress bar
+            const durations = getDurations();
+            const visualDuration = durations[guessCount] || getTotalGameDuration();
+            const targetPercentage = getPercentage(visualDuration);
 
             progressBarFill.style.width = targetPercentage + '%';
 
@@ -3532,12 +3784,19 @@
 
         // Update progress bar
         const elapsedFromStart = Math.max(0, currentTime - gameStartTime);
-        const targetDuration = snippetTargetTime - gameStartTime;
 
-        // FIX: Clamp elapsed time to target duration to prevent visual overshoot during frame interpolation
-        const clampedElapsed = Math.min(elapsedFromStart, targetDuration);
+        // FIX: Use VISUAL duration for progress bar, not actual playback duration
+        // This prevents the bar from overshooting the visual 0.1s divider when playing 0.2s
+        const durations = getDurations();
+        const visualDuration = durations[guessCount] || getTotalGameDuration();
+        const actualDuration = snippetTargetTime - gameStartTime;
 
-        const percentage = getPercentage(clampedElapsed);
+        // Scale elapsed time to visual duration
+        // If we're playing 0.2s but showing 0.1s, scale proportionally
+        const scaleFactor = visualDuration / actualDuration;
+        const visualElapsed = Math.min(elapsedFromStart * scaleFactor, visualDuration);
+
+        const percentage = getPercentage(visualElapsed);
         progressBarFill.style.width = percentage + '%';
 
         // Continue the loop
@@ -3646,9 +3905,25 @@
 
             updateStreakDisplay();
             updateStreakSaverUI();
+
+            // Confeti sutil y breve
+            confetti({
+                particleCount: 70,
+                spread: 70,
+                origin: { y: 0.6 },
+                ticks: 200, // Duración breve
+                gravity: 1.2,
+                scalar: 0.9
+            });
+
         } else {
             playSound('gameover');
-            gameResult.textContent = "perdiste crack"; // "game over" o similar
+
+            // Mensajes aleatorios de derrota
+            const loseMessages = ["PERDISTE", "MAL AHI", "NECESITÁS MEJORAR", "DEDICATE AL PADEL", ":(", "SAJ"];
+            const randomMsg = loseMessages[Math.floor(Math.random() * loseMessages.length)];
+            gameResult.textContent = randomMsg;
+
             gameOverContent.classList.remove('win', 'lose'); // ¡limpia ambas!
             gameOverContent.classList.add('lose');
             answerLabel.textContent = "la cancion era"; // etiqueta simple
@@ -3675,6 +3950,13 @@
 
         correctAnswerEl.textContent = (currentSong.nombre || "");
         gameOverMessage.classList.add('show');
+
+        // Randomizar texto del botón "una ma"
+        const playAgainBtn = document.querySelector('.play-again-button');
+        if (playAgainBtn) {
+            const btnMessages = ["una ma", "otra?", "la seguimos?", "siguiente", "continuar"];
+            playAgainBtn.textContent = btnMessages[Math.floor(Math.random() * btnMessages.length)];
+        }
 
         document.getElementById('search-container').classList.add('disabled');
         playButton.setAttribute('disabled', '');
@@ -3968,6 +4250,47 @@
         const popup = document.getElementById('streak-claim-popup');
         if (popup) popup.style.display = 'none';
     }
+
+    // LÓGICA MODAL BUGS
+    function openBugsModal() {
+        const modal = document.getElementById('bugs-modal');
+        if (modal) {
+            // Asegurar display flex antes de la animación (aunque ya debería estar por CSS)
+            // pero para esta implementación basada en CSS opacity, flex está siempre.
+            // Solo necesitamos togglear la clase.
+            modal.classList.add('show');
+        }
+    }
+
+    function closeBugsModal() {
+        const modal = document.getElementById('bugs-modal');
+        if (modal) modal.classList.remove('show');
+    }
+
+    // Cerrar modal bugs al hacer click fuera
+    window.addEventListener('click', (e) => {
+        const modal = document.getElementById('bugs-modal');
+        if (e.target === modal) closeBugsModal();
+    });
+
+    // LÓGICA MODAL RECOMENDAR
+    function openRecommendModal() {
+        playSound('click');
+        const modal = document.getElementById('recommend-modal');
+        if (modal) modal.classList.add('show');
+    }
+
+    function closeRecommendModal() {
+        playSound('click');
+        const modal = document.getElementById('recommend-modal');
+        if (modal) modal.classList.remove('show');
+    }
+
+    // Cerrar modal recomendar al hacer click fuera
+    window.addEventListener('click', (e) => {
+        const modal = document.getElementById('recommend-modal');
+        if (e.target === modal) closeRecommendModal();
+    });
 
     // LÓGICA MODAL INFO VIDAS
     function openLifeModal() {
