@@ -1755,6 +1755,131 @@
         .close-modal:hover {
             color: var(--white);
         }
+
+        /* === VOLUMEN Y MENÚ MÓVIL === */
+        .volume-container-desktop {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            z-index: 1000;
+        }
+
+        #volume-slider {
+            width: 100px;
+            height: 4px;
+            border-radius: 2px;
+            accent-color: var(--grisesito);
+            cursor: pointer;
+            visibility: visible;
+        }
+
+        .mobile-menu-container {
+            position: fixed;
+            top: 15px;
+            right: 15px;
+            z-index: 2000;
+            display: none;
+        }
+
+        #mobile-menu-btn {
+            background: var(--panel);
+            border: none;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: var(--white);
+            cursor: pointer;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+        }
+
+        #mobile-menu-dropdown {
+            position: absolute;
+            top: 50px;
+            right: 0;
+            background: var(--panel);
+            border-radius: 8px;
+            padding: 10px;
+            display: none;
+            flex-direction: column;
+            gap: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+            min-width: 140px;
+        }
+
+        #mobile-menu-dropdown.show {
+            display: flex;
+        }
+
+        #mobile-menu-dropdown button {
+            background: transparent;
+            border: none;
+            color: var(--white);
+            text-align: left;
+            padding: 8px 12px;
+            font-family: 'PoppinsFont', sans-serif;
+            font-size: 0.95em;
+            cursor: pointer;
+            border-radius: 4px;
+        }
+
+        #mobile-menu-dropdown button:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        /* Responsive Visibility */
+        @media (max-width: 768px) {
+            .volume-container-desktop {
+                display: none;
+            }
+
+            .mobile-menu-container {
+                display: block;
+            }
+
+            .desktop-only {
+                display: none !important;
+            }
+        }
+
+        /* Mobile Layout Fixes */
+        @media (max-width: 480px) {
+            .progress-wrapper {
+                max-width: 100%;
+                box-sizing: border-box;
+                padding: 0 10px;
+                margin-bottom: 20px;
+            }
+
+            .mode-artist-container {
+                max-width: 100%;
+            }
+
+            /* Tighten up layout to avoid scroll */
+            header .logo {
+                font-size: 2.2em;
+                margin-bottom: 0;
+            }
+
+            main {
+                margin-top: 5px;
+                padding-bottom: 10px;
+            }
+
+            #streak {
+                margin-bottom: 15px;
+                margin-top: 0;
+            }
+
+            .play-button {
+                margin-bottom: 15px;
+                margin-top: 0;
+            }
+
+            /* Adjust buttons inside menu if needed, but they are in dropdown now */
+        }
     </style>
 </head>
 
@@ -1777,8 +1902,27 @@
 <div id="ui-root">
 </div>
 
-<button class="recommend-btn" onclick="openRecommendModal()">recomendar</button>
-<button class="bugs-btn" onclick="openBugsModal()">bugs</button>
+<!-- VOLUME SLIDER (DESKTOP) -->
+<div class="volume-container-desktop">
+    <input type="range" id="volume-slider" min="0" max="1" step="0.05" value="1" title="Volumen">
+</div>
+
+<!-- MOBILE MENU (PHONE) -->
+<div class="mobile-menu-container" id="mobile-menu-container">
+    <button id="mobile-menu-btn" onclick="toggleMobileMenu()">
+        <svg viewBox="0 0 24 24" fill="currentColor" width="24" height="24">
+            <path
+                d="M12 8c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm0 2c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm0 6c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z" />
+        </svg>
+    </button>
+    <div id="mobile-menu-dropdown">
+        <button onclick="openRecommendModal(); toggleMobileMenu()">Recomendar</button>
+        <button onclick="openBugsModal(); toggleMobileMenu()">Bugs</button>
+    </div>
+</div>
+
+<button class="recommend-btn desktop-only" onclick="openRecommendModal()">recomendar</button>
+<button class="bugs-btn desktop-only" onclick="openBugsModal()">bugs</button>
 
 <!-- RECOMMEND MODAL -->
 <div id="recommend-modal">
@@ -4426,6 +4570,39 @@
             ui.style.transform = `translateX(-50%) scale(${escala})`;
         }
     }
+
+
+
+    // === NEW LOGIC: Volume & Mobile Menu ===
+    // Volume Control
+    const volSlider = document.getElementById('volume-slider');
+    if (volSlider) {
+        // Init logic: audioPlayer is already global
+        volSlider.value = audioPlayer.volume;
+        volSlider.addEventListener('input', (e) => {
+            audioPlayer.volume = e.target.value;
+        });
+
+        // Update slider if volume changes elsewhere (e.g. from existing slider if any)
+        audioPlayer.addEventListener('volumechange', () => {
+            volSlider.value = audioPlayer.volume;
+        });
+    }
+
+    // Mobile Menu Toggle
+    function toggleMobileMenu() {
+        const d = document.getElementById('mobile-menu-dropdown');
+        if (d) d.classList.toggle('show');
+    }
+
+    // Close menu when clicking outside
+    document.addEventListener('click', (e) => {
+        const menuContainer = document.getElementById('mobile-menu-container');
+        if (menuContainer && !menuContainer.contains(e.target)) {
+            const d = document.getElementById('mobile-menu-dropdown');
+            if (d) d.classList.remove('show');
+        }
+    });
 
     window.addEventListener("resize", ajustarEscala);
     window.addEventListener("load", ajustarEscala);
