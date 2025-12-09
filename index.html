@@ -59,10 +59,10 @@
             --modal-bg-header: #962020;
             --modal-bg-body: #212425;
 
-            /* NUEVO COLOR PARA SKIP (GRIS OSCURO) */
+            /* COLOR PARA SKIP (GRIS OSCURO) */
             --skip-color: #313536;
 
-            /* NUEVOS COLORES PARA RACHA */
+            /* COLORES PARA RACHA */
             --streak-zero: var(--muted);
             --streak-low: #ec9a00;
             --streak-medium: #ff6600;
@@ -79,7 +79,7 @@
             background-color: var(--bg);
             color: var(--white);
             font-family: 'OtherTextFont', sans-serif;
-            /* CAMBIO: Fuente local para todo el body */
+            /* Fuente local para todo el body */
             margin: 0;
             display: flex;
             flex-direction: column;
@@ -104,8 +104,14 @@
             transform-origin: top center;
         }
 
+        @media (min-width: 1024px) {
+            #ui-root {
+                width: 1200px;
+            }
+        }
 
-        /* CAMBIO EN HEADER PARA CENTRAR EL LOGO Y EL EMOTE VERTICALMENTE */
+
+        /* HEADER PARA CENTRAR EL LOGO Y EL EMOTE VERTICALMENTE */
         header {
             width: 100%;
             display: flex;
@@ -121,13 +127,13 @@
 
         header .logo {
             font-family: 'UnderLessFont', sans-serif;
-            /* CAMBIO: Fuente local para el logo */
+            /* Fuente local para el logo */
             font-size: 3.8em;
             font-weight: 800;
             letter-spacing: -1px;
             cursor: default;
             text-transform: none;
-            /* CAMBIO: No uppercase para permitir U mayúscula y resto minúscula */
+            /* No uppercase para permitir U mayúscula y resto minúscula */
             --colorunder: #0082c4;
             user-select: none;
             -webkit-user-select: none;
@@ -153,8 +159,17 @@
             max-width: 900px;
             padding: 0 20px 50px 20px;
             box-sizing: border-box;
-            margin-top: 40px;
             position: relative;
+        }
+
+        @media (min-width: 1024px) {
+
+            header,
+            main,
+            .progress-wrapper,
+            .search-controls-container {
+                max-width: 1200px;
+            }
         }
 
 
@@ -252,7 +267,7 @@
             /* Texto negro para contraste */
         }
 
-        /* NUEVO ESTADO PARA SKIP */
+        /* ESTADO PARA SKIP */
         .guess-box.skipped {
             background-color: var(--skip-color);
             /* Gris oscuro */
@@ -477,7 +492,7 @@
             opacity: 0.5;
         }
 
-        /* NUEVO: Modo "Mandale" (Submit) */
+        /* Modo "Mandale" (Submit) */
         #skip-button-standalone.submit-mode {
             background-color: var(--accent);
             /* Verde */
@@ -672,7 +687,7 @@
         /* Ajuste de hover para contraste en estado WIN (verde) */
 
 
-        /* NUEVOS ESTILOS PARA REPRODUCTOR COMPLETO */
+        /* ESTILOS PARA REPRODUCTOR COMPLETO */
         .full-player-container {
             width: 100%;
             display: flex;
@@ -684,7 +699,7 @@
             margin-top: 10px;
         }
 
-        /* CAMBIO: Centrar botón y apilar tiempo debajo */
+        /* Centrar botón y apilar tiempo debajo */
         .full-player-controls {
             display: flex;
             flex-direction: column;
@@ -1342,7 +1357,7 @@
             }
         }
 
-        /* NUEVO ESTILO PARA RACHA */
+        /* ESTILO PARA RACHA */
         #streak {
             font-size: 1.2em;
             font-weight: bold;
@@ -1354,7 +1369,7 @@
             pointer-events: none;
         }
 
-        /* === NUEVO SISTEMA DE COLORES PARA RACHA (reemplaza el anterior) === */
+        /* SISTEMA DE COLORES PARA RACHA (reemplaza el anterior) */
         :root {
             /* Racha 1-10: de verde a rojo */
             --streak-1: #55b725;
@@ -1388,7 +1403,7 @@
             /* animación suave al cambiar racha */
         }
 
-        /* NUEVO: Estilo para etiqueta de creador */
+        /* Estilo para etiqueta de creador */
         #creator-tag {
             font-size: 0.8em;
             color: var(--muted);
@@ -1397,7 +1412,7 @@
             padding: 0;
         }
 
-        /* NUEVO: Estilo para streak-saver-ui */
+        /* Estilo para streak-saver-ui */
         #streak-saver-ui {
             font-size: 1.0em;
             color: var(--white);
@@ -2482,7 +2497,7 @@
         { nombre: "cero - Sonajero", archivo: "music/cero - Sonajero.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
         { nombre: "cero - Con frio y calor", archivo: "music/cero - Con frio y calor.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
         { nombre: "cero - Mr wow", archivo: "music/cero - Mr wow.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "cero, enzocerobulto  - De concierto en concierto", archivo: "music/cero, enzocerobulto  - De concierto en concierto.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
+        { nombre: "cero, enzocerobulto - De concierto en concierto", archivo: "music/cero, enzocerobulto - De concierto en concierto.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
         { nombre: "Stiffy - GUASO BALLS Z", archivo: "music/Stiffy - GUASO BALLS Z.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
         { nombre: "Stiffy - FARANDULERO", archivo: "music/Stiffy - FARANDULERO.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
         { nombre: "Stiffy - SANDRO", archivo: "music/Stiffy - SANDRO.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
@@ -2494,7 +2509,7 @@
         { nombre: "SixUp - TripleVaso", archivo: "music/SixUp - TripleVaso.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
         { nombre: "SixUp - TikiTime", archivo: "music/SixUp - TikiTime.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
         { nombre: "SixUp - Anti", archivo: "music/SixUp - Anti.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "huntr - babyboo", archivo: "music/huntr - babyboo.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
+        { nombre: "huntr - baby boo", archivo: "music/huntr - baby boo.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
         { nombre: "huntr - esta va porque te quiero", archivo: "music/huntr - esta va porque te quiero.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
         { nombre: "huntr - partydanc3", archivo: "music/huntr - partydanc3.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
         { nombre: "elchombapolo - Estoy En Tu Cesped", archivo: "music/elchombapolo - Estoy En Tu Cesped.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
@@ -2726,7 +2741,7 @@
         { nombre: "cero - Sonajero", archivo: "musicartist/cero - Sonajero.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
         { nombre: "cero - Con frio y calor", archivo: "musicartist/cero - Con frio y calor.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
         { nombre: "cero - Mr wow", archivo: "musicartist/cero - Mr wow.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "cero, enzocerobulto  - De concierto en concierto", archivo: "musicartist/cero, enzocerobulto  - De concierto en concierto.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
+        { nombre: "cero, enzocerobulto - De concierto en concierto", archivo: "musicartist/cero, enzocerobulto - De concierto en concierto.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
         { nombre: "Stiffy - GUASO BALLS Z", archivo: "musicartist/Stiffy - GUASO BALLS Z.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
         { nombre: "Stiffy - FARANDULERO", archivo: "musicartist/Stiffy - FARANDULERO.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
         { nombre: "Stiffy - SANDRO", archivo: "musicartist/Stiffy - SANDRO.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
@@ -2738,7 +2753,7 @@
         { nombre: "SixUp - TripleVaso", archivo: "musicartist/SixUp - TripleVaso.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
         { nombre: "SixUp - TikiTime", archivo: "musicartist/SixUp - TikiTime.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
         { nombre: "SixUp - Anti", archivo: "musicartist/SixUp - Anti.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "huntr - babyboo", archivo: "musicartist/huntr - babyboo.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
+        { nombre: "huntr - baby boo", archivo: "musicartist/huntr - baby boo.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
         { nombre: "huntr - esta va porque te quiero", archivo: "musicartist/huntr - esta va porque te quiero.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
         { nombre: "huntr - partydanc3", archivo: "musicartist/huntr - partydanc3.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
         { nombre: "elchombapolo - Estoy En Tu Cesped", archivo: "musicartist/elchombapolo - Estoy En Tu Cesped.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
@@ -3139,7 +3154,7 @@
         return (timeinseconds / getTotalGameDuration()) * 100;
     }
 
-    // NUEVO: Helper para actualizar el display del artista en el header
+    // Helper para actualizar el display del artista en el header
     function updateArtistHeaderDisplay(artistName) {
         if (!currentArtistDisplayHeader) return;
 
@@ -3203,7 +3218,7 @@
         }
     }
 
-    // NUEVA FUNCIÓN MEJORADA PARA RACHA CON DEGRADADO PROGRESIVO SUAVE
+    // FUNCIÓN MEJORADA PARA RACHA CON DEGRADADO PROGRESIVO SUAVE
     function updateStreakDisplay() {
         const currentStreak = currentMode === 'normal' ? winStreak : artistStreak;
         streakEl.textContent = `Racha: ${currentStreak}`;
@@ -3527,7 +3542,7 @@
         updateStreakDisplay();
         updateStreakSaverUI();
 
-        // NUEVO: Si el juego terminó, mostrar el modal de nuevo
+        // Si el juego terminó, mostrar el modal de nuevo
         if (hasGuessedCorrectly) {
             showGameOver(true);
         } else if (guessCount >= getDurations().length) {
@@ -3769,7 +3784,7 @@
             audioPlayer.oncanplaythrough = null; // limpiar el listener
         };
 
-        // NUEVO: Actualizar display de racha al reset
+        // Actualizar display de racha al reset
         updateStreakDisplay();
         updateStreakSaverUI();
 
@@ -3862,7 +3877,7 @@
         // 6. Agregar al historial persistente y guardar
         persistentHistory.push(currentSong.nombre);
 
-        // NUEVO: Limitar historial a las últimas 20 canciones
+        // Limitar historial a las últimas 20 canciones
         if (persistentHistory.length > 20) {
             persistentHistory.shift(); // Eliminar la más antigua
         }
@@ -3883,7 +3898,7 @@
             box.classList.remove('correct');
             box.classList.remove('incorrect');
             box.classList.remove('skipped');
-            box.classList.remove('partial'); // CORRECCION: Limpiar también la clase partial (amarillo)
+            // Limpiar también la clase partial (amarillo)
         });
     }
 
@@ -3998,7 +4013,7 @@
     function initializeFullPlayer() {
         // CONTINUOUS PLAYBACK: If game over, don't stop audio, just sync UI
         if (isGameOver) {
-            // NEW: Auto-resume if paused
+            // Auto-resume if paused
             if (audioPlayer.paused) {
                 audioPlayer.play().catch(e => console.warn('Auto-resume failed:', e));
             }
@@ -4127,7 +4142,7 @@
 
         // Check if we've reached or passed the target time
         if (currentTime >= snippetTargetTime) {
-            // FIX: Use VISUAL duration (0.1s) not actual playback duration (0.2s) for progress bar
+            // Use VISUAL duration (0.1s) not actual playback duration (0.2s) for progress bar
             const durations = getDurations();
             const visualDuration = durations[guessCount] || getTotalGameDuration();
             const targetPercentage = getPercentage(visualDuration);
@@ -4142,7 +4157,7 @@
         // Update progress bar
         const elapsedFromStart = Math.max(0, currentTime - gameStartTime);
 
-        // FIX: Use VISUAL duration for progress bar, not actual playback duration
+        // Use VISUAL duration for progress bar, not actual playback duration
         // This prevents the bar from overshooting the visual 0.1s divider when playing 0.2s
         const durations = getDurations();
         const visualDuration = durations[guessCount] || getTotalGameDuration();
@@ -4285,7 +4300,7 @@
             gameOverContent.classList.add('lose');
             answerLabel.textContent = "la cancion era"; // etiqueta simple
 
-            // NUEVO: Lógica de salva rachas al perder
+            // Lógica de salva rachas al perder
             if (currentMode === 'normal') {
                 // Ocultar UI de share por defecto al perder (se muestra solo si es fatal)
                 const shareCont = document.getElementById('share-container');
@@ -4418,7 +4433,7 @@
         const durations = getDurations();
         if (hasGuessedCorrectly || guessCount >= durations.length) return;
 
-        // NUEVO: Si está en modo Mandale, enviar intento
+        // Si está en modo Mandale, enviar intento
         if (isSubmitMode) {
             // No reproducir sonido aquí, ya lo hace handleGuessFromSelection
             const val = searchInput.value.trim();
@@ -4480,7 +4495,7 @@
         const targetTime = durations[safeIndex];
         const percentage = getPercentage(targetTime);
 
-        // FIX: Ajuste visual para que la flecha no parezca adelantada en 0.1s
+        // Ajuste visual para que la flecha no parezca adelantada en 0.1s
         // Si es el primer segmento (0.1s), le restamos un pelín
         let visualPercentage = percentage;
         if (safeIndex === 0) visualPercentage -= 0.5; // Ajuste fino
@@ -4491,7 +4506,7 @@
         const prevDuration = safeIndex > 0 ? durations[safeIndex - 1] : 0;
 
         const startPercentage = getPercentage(prevDuration);
-        // FIX: Don't update progress bar fill on skip, only the arrow.
+        // Don't update progress bar fill on skip, only the arrow.
         // progressBarFill.style.width = startPercentage + '%';
     }
 
@@ -4616,7 +4631,7 @@
     function claimStreak() {
         playSound('click');
         winStreak += 25;
-        streaksavers += 2; // NUEVO: Regalar 2 vidas
+        streaksavers += 2; // Regalar 2 vidas
         localStorage.setItem('winStreak', winStreak);
         localStorage.setItem('streaksavers', streaksavers);
         updateStreakDisplay();
