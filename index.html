@@ -1028,7 +1028,7 @@
             }
 
             .progress-bar-container {
-                max-width: 90%;
+                max-width: 100%;
             }
 
             .search-controls-container {
@@ -1880,6 +1880,129 @@
 
             /* Adjust buttons inside menu if needed, but they are in dropdown now */
         }
+
+
+
+        /* === SHARE CARD STYLES === */
+        #share-container {
+            position: fixed;
+            right: 20px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: var(--panel);
+            border: 2px solid var(--accent);
+            border-radius: 12px;
+            padding: 20px;
+            z-index: 2147483647;
+            /* MAX INT to ensure visibility over any modal */
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            gap: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            animation: slideInRight 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            max-width: 300px;
+        }
+
+        @keyframes slideInRight {
+            from {
+                opacity: 0;
+                transform: translate(100%, -50%);
+            }
+
+            to {
+                opacity: 1;
+                transform: translate(0, -50%);
+            }
+        }
+
+        #share-container h2 {
+            margin: 0;
+            color: var(--white);
+            font-size: 1.2em;
+            text-align: center;
+        }
+
+        #canvas-preview-wrapper {
+            background: #1e1e1e;
+            padding: 5px;
+            border-radius: 8px;
+            width: 100%;
+            display: flex;
+            justify-content: center;
+        }
+
+        #share-preview {
+            max-width: 100%;
+            border-radius: 4px;
+            display: block;
+            width: 200px;
+            /* Tamaño preview */
+            height: auto;
+        }
+
+        .share-buttons {
+            display: flex;
+            gap: 10px;
+            width: 100%;
+        }
+
+        .share-btn {
+            flex: 1;
+            padding: 10px;
+            border: none;
+            border-radius: 6px;
+            font-weight: bold;
+            cursor: pointer;
+            font-family: 'PoppinsFont', sans-serif;
+            font-size: 0.9em;
+            color: white;
+            transition: opacity 0.2s;
+        }
+
+        #btn-share-twitter {
+            background: #000000;
+        }
+
+        /* X black */
+        #btn-download-img {
+            background: var(--accent);
+        }
+
+        .share-btn:hover {
+            opacity: 0.9;
+        }
+
+        /* Mobile Share Button (Inside Modal) */
+        .share-button-mobile {
+            background-color: #000000;
+            color: white;
+            margin-top: 10px;
+            border: 1px solid #333;
+            display: none;
+            /* Controlled by JS via media query logic? No, JS will toggle display */
+        }
+
+        /* Mobile Share Button Custom Style */
+        .share-button-mobile-style {
+            background-color: #1e1e1e !important;
+            color: var(--white) !important;
+            font-family: 'PoppinsFont', sans-serif !important;
+            border: 1px solid #333 !important;
+        }
+
+        /* Hide Desktop Container on Mobile */
+        @media (max-width: 768px) {
+            #share-container {
+                display: none;
+                left: 50%;
+                right: auto;
+                top: 50%;
+                transform: translate(-50%, -50%);
+                width: 90%;
+                max-width: 350px;
+            }
+        }
     </style>
 </head>
 
@@ -2187,10 +2310,26 @@
                 </div>
             </div>
             <button class="action-button play-again-button" onclick="resetGame(true)">una ma</button>
+            <button id="mobile-share-btn" class="action-button share-button-mobile-style"
+                style="display:none; margin-top: 10px;" onclick="triggerMobileShare()">compartir racha</button>
         </div>
     </div>
 </div>
 </div>
+<!-- SHARE CONTAINER (DESKTOP) -->
+<div id="share-container">
+    <button class="close-popup" onclick="closeShareContainer()">×</button>
+    <h2>¡Compartí tu racha!</h2>
+    <div id="canvas-preview-wrapper">
+        <img id="share-preview" alt="Resultado">
+    </div>
+    <div class="share-buttons">
+        <button id="btn-download-img" class="share-btn">Descargar</button>
+    </div>
+</div>
+<!-- CANVAS OCULTO PARA GENERACIÓN -->
+<canvas id="share-canvas" width="600" height="750" style="display: none;"></canvas>
+
 <!-- Removed audio tag from DOM -->
 <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
 
@@ -2837,7 +2976,7 @@
         { nombre: "cybernene, roomtrash6 - MEJOR NO", archivo: "musicartist/cybernene, roomtrash6 - MEJOR NO.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
         { nombre: "cybernene - MTGA", archivo: "musicartist/cybernene - MTGA.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
         { nombre: "cybernene - PRIMERA DAMA (CYBERSEXO)", archivo: "musicartist/cybernene - PRIMERA DAMA (CYBERSEXO).mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "", archivo: "musicartist/.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
+        { nombre: "cybernene, roomtrash6 - KENNEDY", archivo: "musicartist/cybernene, roomtrash6 - KENNEDY.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
         { nombre: "", archivo: "musicartist/.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
         { nombre: "", archivo: "musicartist/.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
         { nombre: "", archivo: "musicartist/.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
@@ -3527,7 +3666,14 @@
         hasGuessedCorrectly = false;
         searchInput.value = "";
         songsList.classList.remove('show');
+        songsList.classList.remove('show');
         gameOverMessage.classList.remove('show');
+
+        // Hide share container
+        const shareCont = document.getElementById('share-container');
+        if (shareCont) shareCont.style.display = 'none';
+        const mobBtn = document.getElementById('mobile-share-btn');
+        if (mobBtn) mobBtn.style.display = 'none';
 
         // DELAYED: Clean up colors (so they don't flash during fade out)
         setTimeout(() => {
@@ -4138,12 +4284,35 @@
 
             // NUEVO: Lógica de salva rachas al perder
             if (currentMode === 'normal') {
+                // Ocultar UI de share por defecto al perder (se muestra solo si es fatal)
+                const shareCont = document.getElementById('share-container');
+                if (shareCont) shareCont.style.display = 'none';
+                const mobBtn = document.getElementById('mobile-share-btn');
+                if (mobBtn) mobBtn.style.display = 'none';
+
                 if (winStreak >= minstreak && streaksavers > 0) {
                     streaksavers--;
                     localStorage.setItem('streaksavers', streaksavers);
                     // Vida consumida, racha salvada.
                 } else {
                     // Si no hay vidas o no llegamos al minstreak, reset fatal.
+
+                    // === SHARE CARD TRIGGER (FATAL LOSS ONLY) ===
+                    // Capturamos el streak antes de resetearlo
+                    if (winStreak > 15) {
+                        try {
+                            generateShareCard(currentSong.nombre, winStreak);
+                            // Mostrar UI según dispositivo
+                            if (window.innerWidth > 768) {
+                                if (shareCont) shareCont.style.display = 'flex';
+                            } else {
+                                if (mobBtn) mobBtn.style.display = 'block';
+                            }
+                        } catch (err) {
+                            console.error("Error generating share card:", err);
+                        }
+                    }
+
                     winStreak = 0;
                     localStorage.setItem('winStreak', winStreak);
                 }
@@ -4604,6 +4773,163 @@
             if (d) d.classList.remove('show');
         }
     });
+
+    // === SHARE CARD LOGIC ===
+    let lastGeneratedDataUrl = null;
+    let lastShareStreak = 0;
+
+    function generateShareCard(songName, streak) {
+        lastShareStreak = streak;
+        const canvas = document.getElementById('share-canvas');
+        if (!canvas) return;
+        const ctx = canvas.getContext('2d');
+
+        // Helper private function to save/preview
+        const updatePreview = () => {
+            try {
+                lastGeneratedDataUrl = canvas.toDataURL('image/png');
+                const preview = document.getElementById('share-preview');
+                if (preview) preview.src = lastGeneratedDataUrl;
+            } catch (e) {
+                console.error("Error exporting to DataURL (Security/Tainted):", e);
+                // Si falla (ej. canvas sucio), nullificamos para que no se intente compartir basura
+                lastGeneratedDataUrl = null;
+            }
+        };
+
+        // 1. Background
+        ctx.fillStyle = '#1e1e1e';
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+        // 2. Logo/Title
+        ctx.font = 'bold 50px "PoppinsFont", sans-serif';
+        ctx.fillStyle = '#ffffff';
+        ctx.textAlign = 'center';
+        ctx.fillText('UnderLess', canvas.width / 2, 60);
+
+        // 4. "Perdiste con:" (Move UP slightly)
+        ctx.font = '30px "OtherTextFont", sans-serif';
+        ctx.fillStyle = '#888888';
+        ctx.fillText('Perdiste con:', canvas.width / 2, 290);
+
+        // 5. Song Name (Move UP)
+        ctx.font = 'bold 36px "OtherTextFont", sans-serif';
+        ctx.fillStyle = '#ffffff';
+        wrapText(ctx, songName, canvas.width / 2, 340, 500, 45);
+
+        // 6. Streak (Move UP significantly for centering)
+        ctx.font = 'bold 100px "PoppinsFont", sans-serif';
+
+        // LOGICA DE COLOR IDENTICA A LA DEL JUEGO
+        let color = '#55b725'; // Default
+        if (streak <= 5) {
+            const progress = (streak - 1) / 4;
+            color = lerpColor("#55b725", "#7db800", progress);
+        } else if (streak <= 10) {
+            const progress = (streak - 5) / 5;
+            color = lerpColor("#7db800", "#ffd000", progress);
+        } else if (streak <= 15) {
+            const progress = (streak - 10) / 5;
+            color = lerpColor("#ffd000", "#ff8800", progress);
+        } else if (streak <= 20) {
+            const progress = (streak - 15) / 5;
+            color = lerpColor("#ff8800", "#ff3300", progress);
+        } else if (streak <= 25) {
+            const progress = (streak - 20) / 5;
+            color = lerpColor("#ff3300", "#990000", progress);
+        } else if (streak <= 30) {
+            const progress = (streak - 25) / 5;
+            color = lerpColor("#990000", "#b14aed", progress);
+        } else if (streak <= 35) {
+            const progress = (streak - 30) / 5;
+            color = lerpColor("#b14aed", "#8a2be2", progress);
+        } else if (streak <= 99) {
+            color = '#8a2be2'; // Violeta intenso
+        } else {
+            color = '#00d4ff'; // Cyan
+        }
+
+        ctx.fillStyle = color;
+        ctx.fillText(`RACHA: ${streak}`, canvas.width / 2, 480);
+
+        // 7. Footer
+        ctx.fillStyle = '#555555';
+        ctx.font = '24px sans-serif';
+        ctx.fillText('invalame.github.io/UnderLess', canvas.width / 2, 700);
+
+        // 3. Image (Peepo) - skip if local file to avoid tainted canvas
+        if (window.location.protocol === 'file:') {
+            console.warn("Working locally: Skipping image draw to avoid Tainted Canvas.");
+            updatePreview();
+            return;
+        }
+
+        const sourceImg = document.getElementById('emote-7tv');
+        if (sourceImg && sourceImg.src) {
+            const img = new Image();
+            img.crossOrigin = "Anonymous"; // CRITICAL FOR CANVAS EXPORT
+            img.onload = () => {
+                const imgW = 200;
+                const imgH = imgW * (img.naturalHeight / img.naturalWidth) || 200;
+                ctx.drawImage(img, (canvas.width - imgW) / 2, 80, imgW, imgH);
+                updatePreview(); // Update preview ONLY after image is drawn
+            };
+            img.onerror = () => {
+                console.warn("Failed to load share image (CORS/Network). Generating text-only card.");
+                updatePreview(); // Update even if image fails
+            };
+            img.src = sourceImg.src;
+        } else {
+            // No image source, just update
+            updatePreview();
+        }
+    }
+
+    function wrapText(ctx, text, x, y, maxWidth, lineHeight) {
+        const words = text.split(' ');
+        let line = '';
+        for (let n = 0; n < words.length; n++) {
+            const testLine = line + words[n] + ' ';
+            const metrics = ctx.measureText(testLine);
+            const testWidth = metrics.width;
+            if (testWidth > maxWidth && n > 0) {
+                ctx.fillText(line, x, y);
+                line = words[n] + ' ';
+                y += lineHeight;
+            } else {
+                line = testLine;
+            }
+        }
+        ctx.fillText(line, x, y);
+    }
+
+    // Button Listeners
+    const btnDown = document.getElementById('btn-download-img');
+    if (btnDown) {
+        btnDown.onclick = () => {
+            if (!lastGeneratedDataUrl) return;
+            const a = document.createElement('a');
+            a.href = lastGeneratedDataUrl;
+            a.download = `UnderLess-Racha-${lastShareStreak}.png`;
+            a.click();
+        };
+    }
+
+
+
+    function triggerMobileShare() {
+        const shareCont = document.getElementById('share-container');
+        if (shareCont) {
+            shareCont.style.display = 'flex';
+        }
+    }
+
+    function closeShareContainer() {
+        const shareCont = document.getElementById('share-container');
+        if (shareCont) {
+            shareCont.style.display = 'none';
+        }
+    }
 
     window.addEventListener("resize", ajustarEscala);
     window.addEventListener("load", ajustarEscala);
