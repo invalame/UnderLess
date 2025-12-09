@@ -2006,16 +2006,45 @@
             border: 1px solid #333 !important;
         }
 
-        /* Hide Desktop Container on Mobile */
+        /* Hide Desktop Container on Mobile - REPLACED WITH ANIMATION LOGIC */
         @media (max-width: 768px) {
             #share-container {
-                display: none;
+                /* display controlled by JS (flex/none) */
                 left: 50%;
                 right: auto;
                 top: 50%;
                 transform: translate(-50%, -50%);
                 width: 90%;
                 max-width: 350px;
+                animation: fadeInModal 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+                box-shadow: 0 10px 30px rgba(0, 0, 0, 0.8);
+            }
+
+            /* Backdrop for mobile */
+            #share-container::before {
+                content: "";
+                position: fixed;
+                top: -100vh;
+                left: -100vw;
+                width: 300vw;
+                height: 300vh;
+                background: rgba(0, 0, 0, 0.6);
+                backdrop-filter: blur(5px);
+                -webkit-backdrop-filter: blur(5px);
+                z-index: -1;
+                pointer-events: all;
+            }
+        }
+
+        @keyframes fadeInModal {
+            from {
+                opacity: 0;
+                transform: translate(-50%, -50%) scale(0.9);
+            }
+
+            to {
+                opacity: 1;
+                transform: translate(-50%, -50%) scale(1);
             }
         }
     </style>
@@ -2054,8 +2083,8 @@
         </svg>
     </button>
     <div id="mobile-menu-dropdown">
-        <button onclick="openRecommendModal(); toggleMobileMenu()">Recomendar</button>
-        <button onclick="openBugsModal(); toggleMobileMenu()">Bugs</button>
+        <button onclick="openRecommendModal(); toggleMobileMenu()">Recomendar temas</button>
+        <button onclick="openBugsModal(); toggleMobileMenu()">Report bugs</button>
     </div>
 </div>
 
@@ -3898,6 +3927,7 @@
             box.classList.remove('correct');
             box.classList.remove('incorrect');
             box.classList.remove('skipped');
+            box.classList.remove('partial');
             // Limpiar también la clase partial (amarillo)
         });
     }
