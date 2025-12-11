@@ -3023,7 +3023,29 @@
         { nombre: "kino frizza - SHAKIRA  BZRP", archivo: "musicartist/kino frizza - SHAKIRA  BZRP.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
         { nombre: "kino frizza - LUCK RA  BZRP", archivo: "musicartist/kino frizza - LUCK RA  BZRP.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
         { nombre: "kino frizza, Nico Melo - ENTRE NOSOTROS", archivo: "musicartist/kino frizza, Nico Melo - ENTRE NOSOTROS.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-
+        { nombre: "bic, Jugo! - paintball", archivo: "musicartist/bic, Jugo! - paintball.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
+        { nombre: "pabloxo - Una mas por mis amigos", archivo: "musicartist/pabloxo - Una mas por mis amigos.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
+        { nombre: "pabloxo - dB", archivo: "musicartist/pabloxo - dB.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
+        { nombre: "pabloxo - Astigmatismo", archivo: "musicartist/pabloxo - Astigmatismo.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
+        { nombre: "pabloxo - Plata con lo que me gusta", archivo: "musicartist/pabloxo - Plata con lo que me gusta.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
+        { nombre: "pabloxo - COMIDA POR PESO", archivo: "musicartist/pabloxo - COMIDA POR PESO.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
+        { nombre: "Francis Jeremy, enzocerobulto - DEUCOTOS", archivo: "musicartist/Francis Jeremy, enzocerobulto - DEUCOTOS.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
+        { nombre: "Francsi Jeremy, Komp - MILAGROSA X SAYAGO", archivo: "musicartist/Francsi Jeremy, Komp - MILAGROSA X SAYAGO.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
+        { nombre: "Francis Jeremy - SAYAGLO", archivo: "musicartist/Francis Jeremy - SAYAGLO.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
+        { nombre: "Francis Jeremy, Doly Flackko  - SAYAGO Y RIO GALLEGOS", archivo: "musicartist/Francis Jeremy, Doly Flackko  - SAYAGO Y RIO GALLEGOS.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
+        { nombre: "Francis Jeremy - RIP SURF Y RIP SURFISTAS", archivo: "musicartist/Francis Jeremy - RIP SURF Y RIP SURFISTAS.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
+        { nombre: "Francis Jeremy - BIGGEST PLAYERS", archivo: "musicartist/Francis Jeremy - BIGGEST PLAYERS.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
+        { nombre: "Francis Jeremy - NEGRA DE MIERDA", archivo: "musicartist/Francis Jeremy - NEGRA DE MIERDA.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
+        { nombre: "Francis Jeremy - CUMPLEAÑOS DEL MEJOR RAPERO EN URUGUAY", archivo: "musicartist/Francis Jeremy - CUMPLEAÑOS DEL MEJOR RAPERO EN URUGUAY.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
+        { nombre: "Francis Jeremy, underaiki - BLUE DREAM", archivo: "musicartist/Francis Jeremy, underaiki - BLUE DREAM.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
+        { nombre: "Francis Jeremy - YO LE DIJE WEPA UEPA!", archivo: "musicartist/Francis Jeremy - YO LE DIJE WEPA UEPA!.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
+        { nombre: "underaiki - Majora", archivo: "musicartist/underaiki - Majora.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
+        { nombre: "Zell - ᐸ3", archivo: "musicartist/Zell - ᐸ3.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
+        { nombre: "MAGNESIO, jovenalien - ROBANDO EN EL CARRE", archivo: "musicartist/MAGNESIO, jovenalien - ROBANDO EN EL CARRE.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
+        { nombre: "", archivo: "musicartist/.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
+        { nombre: "", archivo: "musicartist/.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
+        { nombre: "", archivo: "musicartist/.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
+        { nombre: "", archivo: "musicartist/.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
 
         // Ejemplo: { nombre: "Artista - Cancion", archivo: "musicartist/Artista - Cancion.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] }
     ];
@@ -3886,39 +3908,37 @@
     }
 
     function selectRandomSong() {
-        // 1. Determinar qué historial usar
+        // 1. Determinar qué historial usar y referencia a la variable global correspondiente
         let persistentHistory = currentMode === 'normal' ? playedSongsNormal : playedSongsArtist;
-        const currentLib = currentMode === 'artist' ? bibliotecaArtist : biblioteca;
+        const persistentHistoryKey = currentMode === 'normal' ? 'playedSongsNormal' : 'playedSongsArtist';
 
-        // 2. Si availableSongs está vacío, llenarlo filtrando las ya jugadas
+        // 2. Si availableSongs está vacío, llenarlo
         if (!availableSongs || availableSongs.length === 0) {
             let fullPool = [];
             if (currentMode === 'artist') {
                 if (selectedArtist) {
+                    // MODO ARTISTA: Comportamiento de "Lista/Playlist" -> Cargar TODAS las canciones
+                    // No filtramos por historial aquí para permitir que las canciones vuelvan a sonar en la siguiente vuelta
                     fullPool = bibliotecaArtist.filter(song => extractArtist(song.nombre) === selectedArtist);
+                    availableSongs = [...fullPool];
                 } else {
-                    fullPool = [];
+                    availableSongs = [];
                 }
             } else {
+                // MODO NORMAL: Comportamiento original
                 fullPool = [...biblioteca];
-            }
+                // Filtrar las que ya están en el historial para dar variedad
+                availableSongs = fullPool.filter(song => !persistentHistory.includes(song.nombre));
 
-            // Filtrar las que ya están en el historial persistente
-            availableSongs = fullPool.filter(song => !persistentHistory.includes(song.nombre));
-
-            // Si después de filtrar no queda ninguna (ya se jugaron todas), reiniciamos el historial
-            if (availableSongs.length === 0 && fullPool.length > 0) {
-                // Reiniciar historial
-                persistentHistory = [];
-                if (currentMode === 'normal') {
+                // Si se agotan (ya se jugaron todas las posibles menos las del historial), reiniciamos
+                if (availableSongs.length === 0 && fullPool.length > 0) {
+                    persistentHistory = []; // Reiniciar historial local
+                    // Actualizar variable global y storage
                     playedSongsNormal = [];
                     localStorage.setItem('playedSongsNormal', JSON.stringify([]));
-                } else {
-                    playedSongsArtist = [];
-                    localStorage.setItem('playedSongsArtist', JSON.stringify([]));
+
+                    availableSongs = [...fullPool];
                 }
-                // Volver a llenar con todas
-                availableSongs = [...fullPool];
             }
         }
 
@@ -3928,25 +3948,44 @@
             return;
         }
 
-        // 3. Elegir canción aleatoria de las disponibles
-        // CORREGIDO: Math.floor, Math.random
-        const randomIndexInAvailable = Math.floor(Math.random() * availableSongs.length);
-        const selectedSongCandidate = availableSongs[randomIndexInAvailable];
+        // 3. Elegir canción aleatoria
+        let randomIndexInAvailable = Math.floor(Math.random() * availableSongs.length);
+        let selectedSongCandidate = availableSongs[randomIndexInAvailable];
 
-        // 4. Actualizar canción actual
-        currentSong = selectedSongCandidate;
+        // 4. MODO ARTISTA: Evitar repetición en lapso corto (Constraint check)
+        // Aunque availableSongs garantiza no repetición DENTRO de la ronda, 
+        // al resetear la lista (nueva ronda) podría tocar una que recién sonó.
+        if (currentMode === 'artist') {
+            const SHORT_LAPSE = 12; // Cantidad de canciones recientes a evitar
+            const recentSongs = persistentHistory.slice(-SHORT_LAPSE);
 
-        // 5. Sacarla de availableSongs (para esta sesión)
-        availableSongs.splice(randomIndexInAvailable, 1);
-
-        // 6. Agregar al historial persistente y guardar
-        persistentHistory.push(currentSong.nombre);
-
-        // Limitar historial a las últimas 20 canciones
-        if (persistentHistory.length > 20) {
-            persistentHistory.shift(); // Eliminar la más antigua
+            // Solo intentamos buscar otra si hay suficientes opciones
+            if (availableSongs.length > 1) {
+                let attempts = 0;
+                // Mientras la candidata esté en las recientes, buscamos otra
+                while (recentSongs.includes(selectedSongCandidate.nombre) && attempts < 20) {
+                    randomIndexInAvailable = Math.floor(Math.random() * availableSongs.length);
+                    selectedSongCandidate = availableSongs[randomIndexInAvailable];
+                    attempts++;
+                }
+            }
         }
 
+        // 5. Asignar canción final
+        currentSong = selectedSongCandidate;
+
+        // 6. Sacarla de availableSongs (para esta sesión/ronda)
+        availableSongs.splice(randomIndexInAvailable, 1);
+
+        // 7. Actualizar historial persistente
+        persistentHistory.push(currentSong.nombre);
+
+        // Limitar historial (mantener solo las últimas 20 para referencia)
+        if (persistentHistory.length > 20) {
+            persistentHistory.shift();
+        }
+
+        // Guardar cambios en las variables globales y localStorage
         if (currentMode === 'normal') {
             playedSongsNormal = persistentHistory;
             localStorage.setItem('playedSongsNormal', JSON.stringify(playedSongsNormal));
