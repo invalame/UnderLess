@@ -41,6 +41,13 @@
             font-style: normal;
         }
 
+        @font-face {
+            font-family: 'PoppinsFont';
+            src: url('fonts/Poppins-Bold.ttf') format('truetype');
+            font-weight: bold;
+            font-style: normal;
+        }
+
         :root {
             --bg: #161819;
             --panel: #242829;
@@ -462,6 +469,14 @@
             font-size: 1.0em;
             /* REDUCIDO: de 1.1em a 1.0em */
             outline: none;
+        }
+
+        .centered-text {
+            text-align: center;
+            font-family: 'PoppinsFont', sans-serif !important;
+            font-weight: bold;
+            padding-right: 30px;
+            /* Balance icon width to visually center */
         }
 
 
@@ -1454,82 +1469,48 @@
         /* === ESTILOS PARA EL SELECTOR DE MODO === */
         .mode-selector {
             display: flex;
-            gap: 10px;
-            /* Remove explicit bg, use pseudo for layering */
-            /* background: var(--panel); STACKING FIX */
-            padding: 8px 12px;
-            border-radius: 10px;
+            background-color: #202020;
+            /* Dark container like visual reference */
+            padding: 4px;
+            border-radius: 8px;
             position: relative;
-            /* Allow children to interleave */
-            z-index: auto;
-            transform: none;
-            isolation: auto;
+            gap: 2px;
         }
 
-        /* Create the gray background as a separate layer (Z=1) */
+        /* Remove the old layered background approach */
         .mode-selector::before {
-            content: "";
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: var(--panel);
-            border-radius: 10px;
-            z-index: 1;
+            display: none;
         }
 
         .mode-button {
             background: transparent;
             border: none;
-            color: var(--muted);
-            padding: 8px 16px;
+            color: #666;
+            /* Muted text */
+            padding: 6px 20px;
             cursor: pointer;
-            font-weight: bold;
+            font-weight: 600;
             border-radius: 6px;
             transition: all 0.2s;
-            font-family: 'OtherTextFont', sans-serif;
+            font-family: 'PoppinsFont', sans-serif;
+            /* Clean font */
+            font-size: 0.9em;
             position: relative;
-            z-index: 3;
-            /* Z=3: On top of everything */
+            z-index: 2;
         }
 
-        .mode-button:hover {
-            color: var(--white);
+        .mode-button:hover:not(.active) {
+            color: #aaa;
         }
 
         .mode-button.active {
-            background: var(--accent);
-            color: var(--white);
+            background: #55b725;
+            /* Lighter dark grey */
+            color: #ffffff;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
         }
 
-        /* === DISPLAY DEL ARTISTA EN HEADER === */
-        #current-artist-display-header {
-            display: none;
-            color: var(--white);
-            font-size: 1em;
-            font-weight: bold;
-            padding: 6px 16px;
-            border-radius: 6px;
-            text-align: center;
-            font-family: 'OtherTextFont', sans-serif;
-            white-space: nowrap;
-            /* Fondo verde */
-            background: var(--accent);
-            /* Contorno gris propio que se amolda al nombre */
-            box-shadow: 0 0 0 8px var(--panel), 0 4px 0 8px var(--panel);
-            margin-top: 0px;
-            /* Ligeramente más abajo que antes (-6px) */
-            margin-bottom: 8px;
-            position: relative;
-            z-index: 2;
-            /* Z=2: Sandwich (Over bg, under text) */
-            transform: none;
-        }
 
-        #current-artist-display-header.show {
-            display: inline-block;
-        }
 
         /* === ESTILOS PARA LA SECCIÓN DE ARTISTA === */
         #artist-section {
@@ -1555,12 +1536,6 @@
 
         #current-artist-display {
             display: none;
-            /* OCULTO: ahora usamos el del header */
-            font-size: 1.2em;
-            color: var(--accent);
-            font-weight: bold;
-            margin-bottom: 5px;
-            text-align: center;
         }
 
         #artist-list {
@@ -2061,8 +2036,6 @@
             <button id="mode-normal" class="mode-button active" onclick="switchMode('normal')">Normal</button>
             <button id="mode-artist" class="mode-button" onclick="switchMode('artist')">Artista</button>
         </div>
-        <!-- CURRENT ARTIST DISPLAY (below mode selector) -->
-        <div id="current-artist-display-header"></div>
     </div>
 </header>
 
@@ -2263,7 +2236,7 @@
                     <path
                         d="M15.5 14h-.79l-.28-.27A6.471 6.471 0 0 0 16 9.5 6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79L20.29 21l.71-.71L15.5 14zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z" />
                 </svg>
-                <input type="text" class="search-input" id="search-input" placeholder="Busca un banger"
+                <input type="text" class="search-input" id="search-input" placeholder="Busca un banger..."
                     autocomplete="off">
                 <div id="songs-list" class="songs-list" aria-hidden="true"></div>
             </div>
@@ -3507,8 +3480,13 @@
         if (mode === 'artist') {
             selectedArtist = state.selectedArtist;
             if (selectedArtist) {
-                currentArtistDisplay.textContent = `Artista: ${selectedArtist}`;
-                updateArtistHeaderDisplay(selectedArtist); // Actualizar header
+                // currentArtistDisplay.textContent = `Artista: ${selectedArtist}`; 
+                // updateArtistHeaderDisplay(selectedArtist); 
+                // Set input value to selected artist
+                if (artistSearchInput) {
+                    artistSearchInput.value = selectedArtist;
+                    artistSearchInput.classList.add('centered-text');
+                }
 
                 if (availableSongs && availableSongs.length > 0) {
                     const isConsistent = availableSongs.every(s => extractArtist(s.nombre) === selectedArtist);
@@ -3518,13 +3496,14 @@
                     }
                 }
             } else {
-                currentArtistDisplay.textContent = "Selecciona un artista";
-                updateArtistHeaderDisplay(null); // Ocultar header
+                // currentArtistDisplay.textContent = "Selecciona un artista";
+                // updateArtistHeaderDisplay(null); 
+                if (artistSearchInput) artistSearchInput.value = "";
                 availableSongs = [];
             }
         } else {
-            // Modo normal: ocultar el display del artista
-            updateArtistHeaderDisplay(null);
+            // Modo normal
+            // updateArtistHeaderDisplay(null);
         }
 
         // Restaurar casillas visualmente
@@ -3640,7 +3619,7 @@
             modeNormalBtn.classList.add('active');
             modeArtistBtn.classList.remove('active');
             artistSection.classList.remove('show');
-            updateArtistHeaderDisplay(null); // Ocultar header del artista
+            // updateArtistHeaderDisplay(null);
         } else {
             modeNormalBtn.classList.remove('active');
             modeArtistBtn.classList.add('active');
@@ -3664,9 +3643,13 @@
 
     function selectArtist(artist) {
         selectedArtist = artist;
-        currentArtistDisplay.textContent = `Artista: ${artist}`;
-        updateArtistHeaderDisplay(artist); // Actualizar header
-        artistSearchInput.value = "";
+        // currentArtistDisplay.textContent = `Artista: ${artist}`;
+        // updateArtistHeaderDisplay(artist); 
+
+        // FUSED: Update search input to show selected artist
+        artistSearchInput.value = artist;
+        artistSearchInput.classList.add('centered-text');
+
         artistListEl.classList.remove('show');
 
         // Resetear juego para empezar con el artista seleccionado
@@ -3703,9 +3686,20 @@
 
     // Mostrar todos al hacer click (focus)
     artistSearchInput.addEventListener('click', () => {
+        artistSearchInput.classList.remove('centered-text'); // Align left for editing
         const query = artistSearchInput.value;
         const matches = query ? filterArtists(query) : artistList;
         renderArtistSuggestions(matches);
+    });
+
+    artistSearchInput.addEventListener('focus', () => {
+        artistSearchInput.classList.remove('centered-text');
+    });
+
+    artistSearchInput.addEventListener('blur', () => {
+        if (selectedArtist && artistSearchInput.value === selectedArtist) {
+            artistSearchInput.classList.add('centered-text');
+        }
     });
 
 
