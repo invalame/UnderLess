@@ -104,8 +104,10 @@
 
 
         #ui-root {
-            width: 900px;
-            /* tu tamaño base */
+            width: 100%;
+            /* changed from fixed 900px to use full width */
+            max-width: 1400px;
+            /* set a reasonable max-width for very large screens */
             height: 950px;
             /* altura base */
             transform-origin: top center;
@@ -175,15 +177,19 @@
             main,
             .progress-wrapper,
             .search-controls-container {
-                max-width: 1200px;
+                max-width: 100%;
+                /* Let containers fill the parent ui-root */
             }
         }
 
 
         .guess-boxes {
             width: 100%;
-            margin-bottom: 50px;
-            max-width: 550px;
+            margin-bottom: 30px;
+            max-width: 650px;
+            /* Narrower than previous 900px, but wider than original 550px? 
+               User said "mas angostas" (narrower) and "mas ancha" (wider) for progress. 
+               Let's go 650px for guess boxes. */
         }
 
         .guess-box {
@@ -193,8 +199,9 @@
             border: 2px solid var(--panel);
             /* borde del color de acento */
             border-radius: 4px;
-            padding: 13px 18px;
-            /* reducido el padding para compensar el borde de 2px */
+            border-radius: 4px;
+            padding: 16px 18px;
+            /* Increased vertical padding (was 13px) for "un pelin mas altas" */
             margin-bottom: 8px;
             color: var(--muted);
             height: 13px;
@@ -245,7 +252,7 @@
         .guess-box.partial {
             animation: popIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
             /* Pop effect */
-            border: none;
+            /* border: none; REMOVED to prevent layout jump (keeps 2px border from base class) */
         }
 
         .guess-box.correct {
@@ -290,9 +297,12 @@
         .progress-wrapper {
             position: relative;
             width: 100%;
-            max-width: 900px;
+            max-width: 1050px;
+            /* Slightly narrower as requested (1050px vs 1100px) */
             margin-bottom: 25px;
             /* Reducido para subir el botón Play */
+            margin-top: 50px;
+            /* Bajalo un poco nomás */
         }
 
         .progress-bar-container {
@@ -436,6 +446,7 @@
             display: flex;
             flex-grow: 1;
             max-width: 600px;
+            /* Keep search bar somewhat compact as requested */
             background-color: var(--panel);
             border-radius: 4px;
             opacity: 1;
@@ -3030,7 +3041,7 @@
         { nombre: "pabloxo - Plata con lo que me gusta", archivo: "musicartist/pabloxo - Plata con lo que me gusta.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
         { nombre: "pabloxo - COMIDA POR PESO", archivo: "musicartist/pabloxo - COMIDA POR PESO.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
         { nombre: "Francis Jeremy, enzocerobulto - DEUCOTOS", archivo: "musicartist/Francis Jeremy, enzocerobulto - DEUCOTOS.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "Francsi Jeremy, Komp - MILAGROSA X SAYAGO", archivo: "musicartist/Francsi Jeremy, Komp - MILAGROSA X SAYAGO.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
+        { nombre: "Francis Jeremy, Komp - MILAGROSA X SAYAGO", archivo: "musicartist/Francis Jeremy, Komp - MILAGROSA X SAYAGO.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
         { nombre: "Francis Jeremy - SAYAGLO", archivo: "musicartist/Francis Jeremy - SAYAGLO.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
         { nombre: "Francis Jeremy, Doly Flackko  - SAYAGO Y RIO GALLEGOS", archivo: "musicartist/Francis Jeremy, Doly Flackko  - SAYAGO Y RIO GALLEGOS.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
         { nombre: "Francis Jeremy - RIP SURF Y RIP SURFISTAS", archivo: "musicartist/Francis Jeremy - RIP SURF Y RIP SURFISTAS.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
@@ -3590,6 +3601,11 @@
             // No reproducimos automáticamente, el usuario debe dar play
         } else {
             // Si no había canción (ej. artista no seleccionado), resetear UI
+            audioPlayer.src = "";
+            playButton.setAttribute('disabled', '');
+            skipButton.disabled = true;
+            if (fullSongTime) fullSongTime.textContent = '0:00 / 0:00';
+
             if (mode === 'artist' && !selectedArtist) {
                 document.getElementById('search-container').classList.add('disabled');
             }
@@ -4587,8 +4603,9 @@
         // CORREGIDO: parseFloat
         audioPlayer.volume = parseFloat(volumeSlider.value);
         volumeSlider.addEventListener("input", e => {
-            // CORREGIDO: parseFloat
-            audioPlayer.volume = parseFloat(e.target.value);
+            const vol = parseFloat(e.target.value);
+            audioPlayer.volume = vol;
+            localStorage.setItem('volume', vol);
         });
     }
 
@@ -4700,7 +4717,15 @@
         renderGuessBoxes(); // Inicializar cajas
         renderProgressSegments();
         updateTimeMarker(0);
-        if (volumeSlider) audioPlayer.volume = parseFloat(volumeSlider.value);
+
+        // Restore volume
+        const savedVol = localStorage.getItem('volume');
+        if (savedVol !== null && volumeSlider) {
+            volumeSlider.value = savedVol;
+            audioPlayer.volume = parseFloat(savedVol);
+        } else if (volumeSlider) {
+            audioPlayer.volume = parseFloat(volumeSlider.value);
+        }
 
         // PERSISTENCIA: Cargar estado guardado
         loadFromLocalStorage();
