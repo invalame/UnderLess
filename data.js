@@ -3393,9 +3393,142 @@ const bibliotecaArtist = [
         "archivo": "musicartist/elaiyah - Evocar.mp3"
     },
     {
+        "nombre": "CHOOSEY, Yvng Jorge - Le TOTO",
+        "archivo": "musicartist/CHOOSEY, Yvng Jorge - Le TOTO.mp3"
+    },
+    {
+        "nombre": "CHOOSEY - X Belgrano",
+        "archivo": "musicartist/CHOOSEY - X Belgrano.mp3"
+    },
+    {
+        "nombre": "CHOOSEY - DITOYS",
+        "archivo": "musicartist/CHOOSEY - DITOYS.mp3"
+    },
+    {
+        "nombre": "CHOOSEY - 3 MONITOS",
+        "archivo": "musicartist/CHOOSEY - 3 MONITOS.mp3"
+    },
+    {
+        "nombre": "CHOOSEY - BANCO",
+        "archivo": "musicartist/CHOOSEY - BANCO.mp3"
+    },
+    {
+        "nombre": "CHOOSEY - QUE CONCHA QUERES",
+        "archivo": "musicartist/CHOOSEY - QUE CONCHA QUERES.mp3"
+    },
+    {
+        "nombre": "CHOOSEY - SIGAN SIN MI",
+        "archivo": "musicartist/CHOOSEY - SIGAN SIN MI.mp3"
+    },
+    {
+        "nombre": "CHOOSEY, n0tgiova - DON ROKE",
+        "archivo": "musicartist/CHOOSEY, n0tgiova - DON ROKE.mp3"
+    },
+    {
+        "nombre": "CHOOSEY - ORISHINAL",
+        "archivo": "musicartist/CHOOSEY - ORISHINAL.mp3"
+    },
+    {
         "nombre": "",
         "archivo": "musicartist/"
     },
+    {
+        "nombre": "",
+        "archivo": "musicartist/"
+    },
+    {
+        "nombre": "",
+        "archivo": "musicartist/"
+    },
+    {
+        "nombre": "",
+        "archivo": "musicartist/"
+    },
+    {
+        "nombre": "",
+        "archivo": "musicartist/"
+    },
+    {
+        "nombre": "",
+        "archivo": "musicartist/"
+    },
+    {
+        "nombre": "",
+        "archivo": "musicartist/"
+    },
+    {
+        "nombre": "",
+        "archivo": "musicartist/"
+    },
+    {
+        "nombre": "",
+        "archivo": "musicartist/"
+    },
+    {
+        "nombre": "",
+        "archivo": "musicartist/"
+    },
+    {
+        "nombre": "",
+        "archivo": "musicartist/"
+    },
+    {
+        "nombre": "",
+        "archivo": "musicartist/"
+    },
+    {
+        "nombre": "",
+        "archivo": "musicartist/"
+    },
+    {
+        "nombre": "",
+        "archivo": "musicartist/"
+    },
+    {
+        "nombre": "",
+        "archivo": "musicartist/"
+    },
+    {
+        "nombre": "",
+        "archivo": "musicartist/"
+    },
+    {
+        "nombre": "",
+        "archivo": "musicartist/"
+    },
+    {
+        "nombre": "",
+        "archivo": "musicartist/"
+    },
+    {
+        "nombre": "",
+        "archivo": "musicartist/"
+    },
+    {
+        "nombre": "",
+        "archivo": "musicartist/"
+    },
+    {
+        "nombre": "",
+        "archivo": "musicartist/"
+    },
+    {
+        "nombre": "",
+        "archivo": "musicartist/"
+    },
+    {
+        "nombre": "",
+        "archivo": "musicartist/"
+    },
+    {
+        "nombre": "",
+        "archivo": "musicartist/"
+    },
+    {
+        "nombre": "",
+        "archivo": "musicartist/"
+    },
+
 
 
 
@@ -3628,7 +3761,7 @@ const albumsData = [
     },
     {
         "name": "Big Moli 3",
-        "cover": "albums/big moli 3/img_bigmoli.png",
+        "cover": "albums/Big Moli 3/img_bigmoli.png",
         "songs": [
             { "nombre": "rageylo - coscu army", "archivo": "albums/Big Moli 3/rageylo - coscu army.mp3" },
             { "nombre": "rageylo - Dinero Llueve", "archivo": "albums/Big Moli 3/rageylo - Dinero Llueve.mp3" },
@@ -3840,7 +3973,7 @@ const albumsData = [
     },
     {
         "name": "mecanico",
-        "cover": "albums/mecanico/img_mecanico.png",
+        "cover": "albums/Mecanico/img_mecanico.png",
         "songs": [
             { "nombre": "cero - 2 Sedas", "archivo": "albums/mecanico/cero - 2 Sedas.mp3" },
             { "nombre": "cero - Cabra", "archivo": "albums/mecanico/cero - Cabra.mp3" },
@@ -3890,6 +4023,32 @@ const albumsData = [
             { "nombre": "eluney benedetti, TULO13 - Che", "archivo": "albums/El Morfon/eluney benedetti, TULO13 - Che.mp3" },
             { "nombre": "eluney benedetti, elaiyah - A los palomos", "archivo": "albums/El Morfon/eluney benedetti, elaiyah - A los palomos.mp3" },
             { "nombre": "eluney benedetti, elaiyah - El morfon", "archivo": "albums/El Morfon/eluney benedetti, elaiyah - El morfon.mp3" },
+
+        ]
+    },
+
+    {
+        "name": "Pekelandia",
+        "cover": "albums/Pekelandia/img_pekelandia.png",
+        "songs": [
+            { "nombre": "CHOOSEY, Yvng Jorge - Le TOTO", "archivo": "albums/Pekelandia/CHOOSEY, Yvng Jorge - Le TOTO.mp3" },
+            { "nombre": "CHOOSEY, n0tgiova - DON ROKE", "archivo": "albums/Pekelandia/CHOOSEY, n0tgiova - DON ROKE.mp3" },
+            { "nombre": "CHOOSEY, DLANG - DE MAS DE MI", "archivo": "albums/Pekelandia/CHOOSEY, DLANG - DE MAS DE MI.mp3" },
+            { "nombre": "CHOOSEY - X Belgrano", "archivo": "albums/Pekelandia/CHOOSEY - X Belgrano.mp3" },
+            { "nombre": "CHOOSEY - SIGAN SIN MI", "archivo": "albums/Pekelandia/CHOOSEY - SIGAN SIN MI.mp3" },
+            { "nombre": "CHOOSEY - ROMPEDISKOTECA", "archivo": "albums/Pekelandia/CHOOSEY - ROMPEDISKOTECA.mp3" },
+            { "nombre": "CHOOSEY - QUE CONCHA QUERES", "archivo": "albums/Pekelandia/CHOOSEY - QUE CONCHA QUERES.mp3" },
+            { "nombre": "CHOOSEY - pero CHATGPT", "archivo": "albums/Pekelandia/CHOOSEY - pero CHATGPT.mp3" },
+            { "nombre": "CHOOSEY - ORISHINAL", "archivo": "albums/Pekelandia/CHOOSEY - ORISHINAL.mp3" },
+            { "nombre": "CHOOSEY - MI NUMERO TELEFONICO", "archivo": "albums/Pekelandia/CHOOSEY - MI NUMERO TELEFONICO.mp3" },
+            { "nombre": "CHOOSEY - mi AUTOMOVIL", "archivo": "albums/Pekelandia/CHOOSEY - mi AUTOMOVIL.mp3" },
+            { "nombre": "CHOOSEY - DITOYS", "archivo": "albums/Pekelandia/CHOOSEY - DITOYS.mp3" },
+            { "nombre": "CHOOSEY - CARS BEAT", "archivo": "albums/Pekelandia/CHOOSEY - CARS BEAT.mp3" },
+            { "nombre": "CHOOSEY - BANCO", "archivo": "albums/Pekelandia/CHOOSEY - BANCO.mp3" },
+            { "nombre": "CHOOSEY - 100 LUCHA", "archivo": "albums/Pekelandia/CHOOSEY - 100 LUCHA.mp3" },
+            { "nombre": "CHOOSEY - 3 MONITOS", "archivo": "albums/Pekelandia/CHOOSEY - 3 MONITOS.mp3" },
+            { "nombre": "CHOOSEY - 2 SAMPLEOS", "archivo": "albums/Pekelandia/CHOOSEY - 2 SAMPLEOS.mp3" },
+            { "nombre": "CHOOSEY - 1-2 groupie", "archivo": "albums/Pekelandia/CHOOSEY - 1-2 groupie.mp3" },
 
         ]
     },
