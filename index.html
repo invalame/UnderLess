@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="es">
 
 <head>
@@ -10,8 +10,12 @@
     <meta http-equiv="Expires" content="0" />
     <meta http-equiv="Permissions-Policy"
         content="autoplay=*, encrypted-media=*, accelerometer=*, gyroscope=*, picture-in-picture=*, clipboard-write=*, web-share=*">
-    <title>UnderLess (Beta)</title>
+    <title>UnderLess</title>
+    <meta name="description" content="en UnderLess tenés que adivinar artistas y canciones del under argentino.">
+    <meta property="og:title" content="UnderLess">
+    <meta name="application-name" content="UnderLess">
     <link rel="icon" href="underless.ico">
+    <link rel="icon" href="favicon.ico" type="image/x-icon">
     <style>
         @font-face {
             font-family: 'UnderLessFont';
@@ -48,6 +52,8 @@
             font-style: normal;
         }
 
+
+
         :root {
             --bg: #161819;
             --panel: #242829;
@@ -74,12 +80,67 @@
             --streak-low: #ec9a00;
             --streak-medium: #ff6600;
             --streak-high: #ff0000;
+
+        }
+
+        /* GLOBAL SCROLLBAR (Internal elements default to Green) */
+        ::-webkit-scrollbar {
+            width: 10px;
+            height: 10px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background-color: var(--accent);
+            border-radius: 5px;
+            border: 2px solid transparent;
+            background-clip: content-box;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background-color: #4a9e20;
+        }
+
+        /* CUSTOM SCROLLBAR BODY ONLY (Overrides global to Gray) */
+        html::-webkit-scrollbar,
+        body::-webkit-scrollbar {
+            width: 10px !important;
+            height: 10px !important;
+        }
+
+        html::-webkit-scrollbar-track,
+        body::-webkit-scrollbar-track {
+            background: transparent !important;
+        }
+
+        html::-webkit-scrollbar-thumb,
+        body::-webkit-scrollbar-thumb {
+            background-color: var(--grisesito) !important;
+            border-radius: 5px !important;
+            border: 2px solid transparent !important;
+            background-clip: content-box !important;
+        }
+
+        html::-webkit-scrollbar-thumb:hover,
+        body::-webkit-scrollbar-thumb:hover {
+            background-color: #777 !important;
+        }
+
+        /* STANDARD SCROLLBAR SUPPORT (FireFox, etc) */
+        html,
+        body {
+            scrollbar-color: var(--grisesito) transparent !important;
+            scrollbar-width: thin !important;
         }
 
         html,
         body {
             height: 100%;
-            margin: 0
+            margin: 0;
+            overflow-x: hidden;
         }
 
         body {
@@ -104,8 +165,10 @@
 
 
         #ui-root {
-            width: 900px;
-            /* tu tamaño base */
+            width: 100%;
+            /* changed from fixed 900px to use full width */
+            max-width: 1400px;
+            /* set a reasonable max-width for very large screens */
             height: 950px;
             /* altura base */
             transform-origin: top center;
@@ -140,7 +203,7 @@
             letter-spacing: -1px;
             cursor: default;
             text-transform: none;
-            /* No uppercase para permitir U mayúscula y resto minúscula */
+            /* No uppercase para permitir U mayÃÂºscula y resto minÃÂºscula */
             --colorunder: #0082c4;
             user-select: none;
             -webkit-user-select: none;
@@ -175,15 +238,19 @@
             main,
             .progress-wrapper,
             .search-controls-container {
-                max-width: 1200px;
+                max-width: 100%;
+                /* Let containers fill the parent ui-root */
             }
         }
 
 
         .guess-boxes {
             width: 100%;
-            margin-bottom: 50px;
-            max-width: 550px;
+            margin-bottom: 30px;
+            max-width: 650px;
+            /* Narrower than previous 900px, but wider than original 550px? 
+               User said "mas angostas" (narrower) and "mas ancha" (wider) for progress. 
+               Let's go 650px for guess boxes. */
         }
 
         .guess-box {
@@ -193,8 +260,10 @@
             border: 2px solid var(--panel);
             /* borde del color de acento */
             border-radius: 4px;
-            padding: 13px 18px;
-            /* reducido el padding para compensar el borde de 2px */
+            border-radius: 6px;
+            /* un poquito de borde redondo, no exagerado (previously 4px) */
+            padding: 16px 18px;
+            /* Increased vertical padding (was 13px) for "un pelin mas altas" */
             margin-bottom: 8px;
             color: var(--muted);
             height: 13px;
@@ -205,10 +274,10 @@
             font-size: 1.2em;
             font-weight: 500;
             transition: background-color 0.2s, border-color 0.2s;
-            /* transición para el cambio de color */
+            /* transiciÃÂ³n para el cambio de color */
         }
 
-        /* ESTADO POR DEFECTO: CASILLA VACÍA */
+        /* ESTADO POR DEFECTO: CASILLA VACÃÂA */
         .guess-box:empty {
             background-color: var(--bg);
             border: 2px solid var(--panel);
@@ -221,7 +290,7 @@
             border-color: var(--panel);
         }
 
-        /* ANIMACIÓN POP GLOBAL */
+        /* ANIMACIÃâN POP GLOBAL */
         @keyframes popIn {
             0% {
                 transform: scale(0.9);
@@ -245,7 +314,7 @@
         .guess-box.partial {
             animation: popIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
             /* Pop effect */
-            border: none;
+            /* border: none; REMOVED to prevent layout jump (keeps 2px border from base class) */
         }
 
         .guess-box.correct {
@@ -258,6 +327,19 @@
             text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
         }
 
+        * {
+            /* Scrollbar styles */
+            scrollbar-width: thin;
+            scrollbar-color: var(--accent) var(--panel);
+        }
+
+        /* CUSTOM SELECTION COLOR (Grisesito) */
+        ::selection {
+            background-color: #41414177;
+            /* Gris */
+            color: #ffffff;
+        }
+
         .guess-box.incorrect {
             background-color: #ff3333;
             /* Rojo */
@@ -267,7 +349,7 @@
         }
 
         .guess-box.partial {
-            background-color: #e9ab00;
+            background-color: #ca9400;
             /* Amarillo */
             border-color: #e6c200;
             color: #ffffff;
@@ -290,9 +372,12 @@
         .progress-wrapper {
             position: relative;
             width: 100%;
-            max-width: 900px;
+            max-width: 1050px;
+            /* Slightly narrower as requested (1050px vs 1100px) */
             margin-bottom: 25px;
-            /* Reducido para subir el botón Play */
+            /* Reducido para subir el botÃÂ³n Play */
+            margin-top: 50px;
+            /* Bajalo un poco nomÃ¡s */
         }
 
         .progress-bar-container {
@@ -346,7 +431,7 @@
             transform: translateX(-50%);
         }
 
-        /* Marcador de tiempo (flecha estática) */
+        /* Marcador de tiempo (flecha estÃ¡tica) */
         .timer-text {
             position: absolute;
             top: -35px;
@@ -378,7 +463,7 @@
             background-color: var(--accent);
             border-radius: 50%;
             width: 65px;
-            /* Un pelin más grande (antes 60) */
+            /* Un pelin mÃ¡s grande (antes 60) */
             height: 65px;
             display: flex;
             justify-content: center;
@@ -387,7 +472,7 @@
             box-shadow: 0px 4px 15px rgba(0, 0, 0, 0.4);
             position: relative;
             margin-top: 5px;
-            /* Más arriba */
+            /* MÃ¡s arriba */
             margin-bottom: 15px;
             /* Espacio para la racha */
             opacity: 1;
@@ -436,6 +521,7 @@
             display: flex;
             flex-grow: 1;
             max-width: 600px;
+            /* Keep search bar somewhat compact as requested */
             background-color: var(--panel);
             border-radius: 4px;
             opacity: 1;
@@ -489,12 +575,18 @@
             background-color: var(--white);
             color: var(--panel);
             border: none;
-            padding: 12px 25px;
+            padding: 12px 10px;
             font-size: 1.0em;
             cursor: pointer;
             border-radius: 4px;
             transition: background-color 0.2s, color 0.2s;
-            font-weight: bold;
+            font-weight: bold !important;
+            font-family: 'PoppinsFont', sans-serif !important;
+
+            min-width: 110px;
+            text-align: center;
+            user-select: none;
+            -webkit-user-select: none;
         }
 
 
@@ -516,7 +608,7 @@
 
         #skip-button-standalone.submit-mode:hover {
             background-color: #4a9e20;
-            /* Verde más oscuro */
+            /* Verde mÃ¡s oscuro */
         }
 
         #audio-player {
@@ -537,7 +629,7 @@
             bottom: 100%;
             /* Pegado al borde superior del input */
             margin-bottom: 5px;
-            /* Pequeño espacio */
+            /* PequeÃÂ±o espacio */
             z-index: 1000;
             max-height: 200px;
             overflow-y: auto;
@@ -625,7 +717,7 @@
             gap: 20px;
         }
 
-        /* Estilos de título */
+        /* Estilos de tÃÂ­tulo */
         #game-result {
             font-size: 2.2em;
             font-weight: 600;
@@ -633,17 +725,25 @@
             margin: 0;
         }
 
-        /* Color dinámico para el header */
+        /* Color dinÃ¡mico para el header */
         .game-over-content.win .game-over-header {
             background-color: var(--modal-win);
             /* Verde */
             color: var(--modal-title-win);
         }
 
+        .game-over-content.win {
+            border: 2px solid var(--modal-win);
+        }
+
         .game-over-content.lose .game-over-header {
             background-color: var(--modal-lose);
             /* Rojo */
             color: var(--modal-title-lose);
+        }
+
+        .game-over-content.lose {
+            border: 2px solid var(--modal-lose);
         }
 
         /* Estilo de la respuesta */
@@ -710,18 +810,18 @@
             gap: 10px;
             padding: 15px 0 5px 0;
             border-top: 1px solid #444;
-            /* Separador visual más claro */
+            /* Separador visual mÃ¡s claro */
             margin-top: 10px;
         }
 
-        /* Centrar botón y apilar tiempo debajo */
+        /* Centrar botÃÂ³n y apilar tiempo debajo */
         .full-player-controls {
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
             gap: 5px;
-            /* Espacio entre el botón y el tiempo */
+            /* Espacio entre el botÃÂ³n y el tiempo */
         }
 
         .mini-play-button {
@@ -749,7 +849,7 @@
         }
 
 
-        /* Slider de Búsqueda (Seeker) */
+        /* Slider de BÃÂºsqueda (Seeker) */
         #full-song-seeker {
             -webkit-appearance: none;
             appearance: none;
@@ -1042,7 +1142,7 @@
 
         .game-over-content.lose .play-again-button:hover {
             background-color: #570600;
-            /* Rojo más oscuro para hover/interacción */
+            /* Rojo mÃ¡s oscuro para hover/interacciÃÂ³n */
         }
 
 
@@ -1209,10 +1309,10 @@
 
             /* Progress bar */
             .progress-bar-container {
-                width: 100%;
+                width: 100% !important;
+                /* Force full width */
                 height: 22px;
                 margin-bottom: 15px;
-                /* More space */
             }
 
             .timer-text {
@@ -1393,11 +1493,11 @@
             --streak-10: #ff3300;
             /* rojo fuerte */
 
-            /* Racha 11-20: rojo cada vez más oscuro/intenso */
+            /* Racha 11-20: rojo cada vez mÃ¡s oscuro/intenso */
             --streak-15: #cc0000;
             --streak-20: #990000;
 
-            /* Racha 21-25: violeta suave → violeta medio */
+            /* Racha 21-25: violeta suave Ã¢â â violeta medio */
             --streak-21: #b14aed;
             --streak-25: #9c3be0;
 
@@ -1415,7 +1515,7 @@
             color: var(--streak-1);
             /* color por defecto */
             transition: color 0.5s ease;
-            /* animación suave al cambiar racha */
+            /* animaciÃÂ³n suave al cambiar racha */
         }
 
         /* Estilo para etiqueta de creador */
@@ -1429,19 +1529,32 @@
 
         /* Estilo para streak-saver-ui */
         #streak-saver-ui {
+            position: relative;
+            /* No fixed */
+            margin-top: 5px;
+            /* Space from search input */
+            margin-bottom: 0px;
+            /* Reduced space to avoid scroll */
+
             font-size: 1.0em;
             color: var(--white);
             text-align: center;
-            margin-top: 10px;
-            padding: 5px;
+            padding: 8px 15px;
             background-color: var(--panel);
-            border-radius: 4px;
-            width: auto;
-            max-width: 600px;
+            border-radius: 8px;
+            /* Nice rounded corners again */
+            box-shadow: none;
+            /* Sin sombra */
+
+            width: fit-content;
+            margin-left: auto;
+            margin-right: auto;
+
             display: flex;
             align-items: center;
             justify-content: center;
             gap: 5px;
+            z-index: 10;
         }
 
         #streak-saver-ui img {
@@ -1452,6 +1565,19 @@
             margin-left: 0;
             /* Quitar margen extra si usamos gap */
             vertical-align: middle;
+        }
+
+        .mode-artist-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            background: transparent;
+            padding: 0;
+            margin-top: 15px;
+            gap: 0;
+            width: fit-content;
+            position: relative;
+            /* Context needed for absolute positioning if we wanted, but we use fixed for art */
         }
 
         /* === CONTENEDOR UNIFICADO MODO + ARTISTA === */
@@ -1512,11 +1638,11 @@
 
 
 
-        /* === ESTILOS PARA LA SECCIÓN DE ARTISTA === */
+        /* === ESTILOS PARA LA SECCIÃâN DE ARTISTA === */
         #artist-section {
             width: 100%;
             max-width: 300px;
-            /* REDUCIDO: más angosto */
+            /* REDUCIDO: mÃ¡s angosto */
             margin-bottom: 20px;
             display: none;
             /* Oculto por defecto */
@@ -1555,7 +1681,235 @@
             display: block;
         }
 
-        /* TIPOGRAFÍA POPPINS PARA ELEMENTOS ESPECÍFICOS */
+        /* === ESTILOS PARA LA SECCIÃâN DE ÃÂLBUM === */
+        #album-section {
+            width: 100%;
+            max-width: 300px;
+            margin-bottom: 20px;
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+        }
+
+        #album-section.show {
+            display: flex;
+        }
+
+        #album-list {
+            position: absolute;
+            background-color: var(--panel);
+            border-radius: 4px;
+            box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.3);
+            width: 100%;
+            top: 100%;
+            z-index: 1000;
+            max-height: 200px;
+            overflow-y: auto;
+            display: none;
+        }
+
+        /* Ensure main is relative so absolute children anchor to it */
+        main {
+            position: relative !important;
+        }
+
+        #album-list.show {
+            display: block;
+        }
+
+        /* Wrapper to strictly contain the game board width */
+        /* Wrapper to strictly contain the game board width */
+        .game-board-wrapper {
+            width: 100%;
+            max-width: 1050px;
+            margin: 0 auto;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        /* ALBUM ART DISPLAY CONTAINER 
+           Positioned ABSOLUTE relative to the .game-board-wrapper
+        */
+        #album-art-container {
+            position: absolute;
+            /* Anchored to the right edge of the 1050px wrapper */
+            right: -120px;
+            /* Moved right as requested (was -40px) */
+            /* User confirmed horizontal is good */
+            top: 0px;
+            /* Aligned with top of wrapper (guess boxes) */
+
+            display: none !important;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-start;
+            gap: 5px;
+
+            z-index: 100;
+            background-color: var(--panel);
+            padding: 15px;
+            border-radius: 12px;
+            width: 170px;
+            height: auto;
+            box-shadow: none;
+            /* Removed shadow */
+            border: 1px solid #444;
+        }
+
+        #album-art-display {
+            box-shadow: none !important;
+            border-radius: 4px;
+            /* Optional: keep it nice */
+        }
+
+        /* WARNING NOTIFICATION (Duplicate Song) */
+        #streak-warning {
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            /* User requested "un poquitito mas a la izquierda" */
+            transform: translateX(-48%);
+
+            background-color: #2a2a2a;
+            /* standard dark gray */
+            color: white;
+            border: 2px solid #ff9100;
+            /* Orange stroke */
+
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-family: 'PoppinsFont', sans-serif;
+            font-weight: bold;
+            z-index: 3000;
+            opacity: 0;
+            visibility: hidden;
+            /* Added visibility delay to allow opacity fade out */
+            transition: opacity 0.5s ease, transform 0.5s ease, visibility 0s 0.5s;
+            pointer-events: none;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
+        }
+
+        #streak-warning.show {
+            opacity: 1;
+            visibility: visible;
+            transform: translateX(-48%) translateY(10px);
+            /* Reset visibility delay when showing so it appears instantly */
+            transition: opacity 0.5s ease, transform 0.5s ease, visibility 0s 0s;
+        }
+
+        #album-art-container.show {
+            display: flex !important;
+            animation: popIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        /* Hide on mobile/tablets (<1100px) */
+        @media (max-width: 1100px) {
+
+            #album-art-container,
+            #album-art-container.show {
+                display: none !important;
+            }
+        }
+
+        #album-label {
+            color: #bbb;
+            font-size: 10px;
+            font-weight: bold;
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+            text-align: center;
+            width: 100%;
+            margin-bottom: 2px;
+            /* Force static positioning to prevent drift */
+            position: static !important;
+            transform: none !important;
+        }
+
+        #album-art-display {
+            width: 150px;
+            height: 150px;
+            border-radius: 8px;
+            border: 2px solid #444;
+            object-fit: cover;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.6);
+            flex-shrink: 0;
+            /* Force static positioning to prevent drift */
+            position: static !important;
+            transform: none !important;
+            margin: 0 !important;
+            /* Let flex gap handle spacing */
+        }
+
+        #album-name-display {
+            color: white;
+            font-size: 13px;
+            font-weight: 600;
+            text-align: center;
+            max-width: 160px;
+            word-wrap: break-word;
+            line-height: 1.3;
+            /* Force static positioning to prevent drift */
+            position: static !important;
+            transform: none !important;
+        }
+
+        /* End of Album Art styles */
+        /* ALBUM LIST ITEM WITH IMAGE */
+        .album-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 10px;
+            cursor: pointer;
+            transition: background-color 0.2s ease;
+        }
+
+        .album-item:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+
+        .album-item-text {
+            flex: 1;
+            padding-right: 10px;
+        }
+
+        .album-item-image {
+            width: 30px;
+            height: 30px;
+            border-radius: 4px;
+            object-fit: cover;
+            flex-shrink: 0;
+        }
+
+        /* Make parent relative so absolute positioning works relative to the main container logic? 
+           Actually, putting it inside .mode-artist-container might be too small context.
+           Let's put it in main or header? 
+           Better: Fix it to the screen if there is space, or put it in flow on mobile.
+        */
+
+        @media (min-width: 1400px) {
+            #album-art-display {
+                right: calc(50% - 700px);
+                /* Align with the new wider container edge? No */
+                /* Let's try fixed positioning relative to the centered column */
+                position: fixed;
+                right: 50px;
+                top: 150px;
+            }
+        }
+
+        /* On smaller screens, maybe hide it or show it smaller? */
+        @media (max-width: 1100px) {
+            #album-art-display {
+                display: none !important;
+                /* Hide on small screens for now to avoid overlap */
+            }
+        }
+
+        /* TIPOGRAFÃÂA POPPINS PARA ELEMENTOS ESPECÃÂFICOS */
         .play-again-button,
         #skip-button-standalone,
         #search-input,
@@ -1746,7 +2100,7 @@
             color: var(--white);
         }
 
-        /* === VOLUMEN Y MENÚ MÓVIL === */
+        /* === VOLUMEN Y MENÃÅ¡ MÃâVIL === */
         .volume-container-desktop {
             position: fixed;
             top: 20px;
@@ -1927,7 +2281,7 @@
             border-radius: 4px;
             display: block;
             width: 200px;
-            /* Tamaño preview */
+            /* TamaÃÂ±o preview */
             height: auto;
         }
 
@@ -2035,6 +2389,7 @@
         <div class="mode-selector">
             <button id="mode-normal" class="mode-button active" onclick="switchMode('normal')">Normal</button>
             <button id="mode-artist" class="mode-button" onclick="switchMode('artist')">Artista</button>
+            <button id="mode-album" class="mode-button" onclick="switchMode('album')">Album</button>
         </div>
     </div>
 </header>
@@ -2067,8 +2422,8 @@
 <!-- RECOMMEND MODAL -->
 <div id="recommend-modal">
     <div class="modal-box">
-        <button class="close-x" onclick="closeRecommendModal()">×</button>
-        <h3>recomendar artistas/canciones</h3>
+        <button class="close-x" onclick="closeRecommendModal()">x</button>
+        <h3>recomendar artistas/temas/albumes</h3>
         <p>¿tenés artistas o canciones para agregar al juego?</p>
         <p>comentalas en este tweet:</p>
         <a href="https://x.com/Invalame/status/1997739527235047739" target="_blank" class="twitter-link">abrir tweet</a>
@@ -2078,7 +2433,7 @@
 <!-- BUGS MODAL -->
 <div id="bugs-modal">
     <div class="modal-box">
-        <button class="close-x" onclick="closeBugsModal()">×</button>
+        <button class="close-x" onclick="closeBugsModal()">x</button>
         <h3>arreglar bugs</h3>
         <p>apretá <kbd>Ctrl</kbd> + <kbd>Shift</kbd> + <kbd>R</kbd> para borrar el caché y recargar.</p>
         <p>otros bugs? comentalos en este tweet:</p>
@@ -2139,12 +2494,27 @@
         position: absolute;
         top: 100%;
         right: 0;
+
         margin-top: 5px;
         opacity: 0;
         transition: opacity 0.3s;
         font-size: 0.8em;
         pointer-events: none;
         white-space: nowrap;
+    }
+
+    /* Adjust body min-height to avoid scroll on exact fit */
+    body {
+        min-height: 100vh;
+        /* Ensure no scrollbar appears if content fits */
+        height: 100%;
+        overflow-y: auto;
+        /* Allow scroll if needed */
+    }
+
+    .search-controls-container {
+        margin-bottom: 0 !important;
+        padding-bottom: 0 !important;
     }
 
     .youtube-container:hover .tooltip {
@@ -2185,11 +2555,42 @@
         100% {
             transform: rotate(360deg);
         }
+
+    }
+
+    /* FINAL OVERRIDES to ensure User Preferences */
+    .search-input {
+        font-family: 'PoppinsFont', sans-serif !important;
+        /* Force correct font */
+    }
+
+    .progress-wrapper,
+    .progress-bar-container {
+        width: 100% !important;
+        max-width: none !important;
+        min-width: 100% !important;
+        box-sizing: border-box !important;
+    }
+
+    /* REVERT: Constrain guess boxes and search controls back to original compact size */
+    .guess-boxes {
+        max-width: 700px !important;
+        /* Widened to 700px as requested */
+        /* Restore original narrow look */
+        margin-left: auto !important;
+        margin-right: auto !important;
+    }
+
+    .search-controls-container {
+        max-width: 800px !important;
+        /* Wider than guess boxes (600px) */
+        margin-left: auto !important;
+        margin-right: auto !important;
     }
 </style>
 
 <main>
-    <!-- SECCIÓN DE ARTISTA -->
+    <!-- SECCIÃâN DE ARTISTA -->
     <div id="artist-section">
         <div id="current-artist-display">Selecciona un artista</div>
         <div class="artist-search-container">
@@ -2205,51 +2606,83 @@
         </div>
     </div>
 
-    <div class="guess-boxes" id="guess-boxes">
-        <div class="guess-box"></div>
-        <div class="guess-box"></div>
-        <div class="guess-box"></div>
-        <div class="guess-box"></div>
-        <div class="guess-box"></div>
-        <div class="guess-box"></div>
-    </div>
-
-
-    <div class="progress-wrapper">
-        <div class="progress-bar-container" id="progress-bar">
-            <div class="segments-overlay" id="segments-overlay"></div>
-            <div class="progress-bar-fill" id="progress-bar-fill"></div>
-        </div>
-        <span class="timer-text" id="current-timer-text" style="left:0%">0.1s</span>
-    </div>
-    <button class="play-button" id="play-button" onclick="playSnippet()" disabled aria-label="escuchar fragmento">
-        <svg viewBox="0 0 24 24" aria-hidden="true">
-            <path d="M8 5v14l11-7z" />
-        </svg>
-    </button>
-    <div id="streak">Racha: 0</div>
-
-    <div class="search-controls-container">
-        <div class="controls-row">
-            <div class="search-container" id="search-container">
+    <!-- SECCIÃâN DE ÃÂLBUM -->
+    <div id="album-section">
+        <div class="artist-search-container"> <!-- Reutilizamos estilos containers -->
+            <div class="search-container">
                 <svg viewBox="0 0 24 24" aria-hidden="true">
                     <path
-                        d="M15.5 14h-.79l-.28-.27A6.471 6.471 0 0 0 16 9.5 6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79L20.29 21l.71-.71L15.5 14zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z" />
+                        d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 14.5c-2.49 0-4.5-2.01-4.5-4.5S9.51 7.5 12 7.5s4.5 2.01 4.5 4.5-2.01 4.5-4.5 4.5zm0-5.5c-.55 0-1 .45-1 1s.45 1 1 1 1-.45 1-1-.45-1-1-1z" />
                 </svg>
-                <input type="text" class="search-input" id="search-input" placeholder="Busca un banger..."
+                <input type="text" class="search-input" id="album-search-input" placeholder="Buscar álbum..."
                     autocomplete="off">
-                <div id="songs-list" class="songs-list" aria-hidden="true"></div>
             </div>
-            <button id="skip-button-standalone" onclick="handleSkip()">Skip</button>
+            <div id="album-list" class="songs-list"></div>
         </div>
     </div>
-    <div id="streak-saver-ui" onclick="openLifeModal()" style="cursor: pointer;" title="Ver info de vidas">salvadores de
-        racha: 3</div>
+
+
+
+    <!-- GAME BOARD WRAPPER: Provides stable anchor context -->
+    <div class="game-board-wrapper">
+
+        <div class="guess-boxes" id="guess-boxes">
+            <div class="guess-box"></div>
+            <div class="guess-box"></div>
+            <div class="guess-box"></div>
+            <div class="guess-box"></div>
+            <div class="guess-box"></div>
+            <div class="guess-box"></div>
+        </div>
+
+
+        <div class="progress-wrapper">
+            <div class="progress-bar-container" id="progress-bar">
+                <div class="segments-overlay" id="segments-overlay"></div>
+                <div class="progress-bar-fill" id="progress-bar-fill"></div>
+            </div>
+            <span class="timer-text" id="current-timer-text" style="left:0%">0.1s</span>
+        </div>
+
+        <!-- ALBUM ART DISPLAY CONTAINER - Anchored to .game-board-wrapper -->
+        <div id="album-art-container">
+            <div id="album-label">ALBUM ELEGIDO</div>
+            <img id="album-art-display" src="" alt="Album Art">
+            <div id="album-name-display"></div>
+        </div>
+
+        <button class="play-button" id="play-button" onclick="playSnippet()" disabled aria-label="escuchar fragmento">
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M8 5v14l11-7z" fill="white" stroke="white" stroke-width="2" stroke-linejoin="round" />
+            </svg>
+        </button>
+        <div id="streak">Racha: 0</div>
+
+        <div class="search-controls-container">
+            <div class="controls-row">
+                <div class="search-container" id="search-container">
+                    <svg viewBox="0 0 24 24" aria-hidden="true">
+                        <path
+                            d="M15.5 14h-.79l-.28-.27A6.471 6.471 0 0 0 16 9.5 6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79L20.29 21l.71-.71L15.5 14zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z" />
+                    </svg>
+                    <input type="text" class="search-input" id="search-input" placeholder="Busca un banger..."
+                        autocomplete="off">
+                    <div id="songs-list" class="songs-list" aria-hidden="true"></div>
+                </div>
+                <button id="skip-button-standalone" onclick="handleSkip()">Skip</button>
+            </div>
+            <!-- STREAK SAVERS MOVED HERE -->
+            <div id="streak-saver-ui" onclick="openLifeModal()" style="cursor: pointer;" title="Ver info de vidas">
+                salvadores de racha: 3
+            </div>
+        </div>
+
+    </div> <!-- End game-board-wrapper -->
 </main>
 
 <!-- POPUP RECLAMAR RACHA -->
 <div id="streak-claim-popup" class="streak-popup" style="display: none;">
-    <button class="close-popup" onclick="closeClaimPopup()">×</button>
+    <button class="close-popup" onclick="closeClaimPopup()">x</button>
     <div class="popup-title">Reclamar 25 de racha</div>
     <div class="popup-text">Por la cantidad de bugs te regalamos esto</div>
     <button class="claim-button" onclick="claimStreak()">Reclamar</button>
@@ -2258,7 +2691,7 @@
 <!-- MODAL INFO VIDAS -->
 <div id="life-info-modal" class="modal-overlay" style="display: none;">
     <div class="modal-content">
-        <button class="close-modal" onclick="closeLifeModal()">×</button>
+        <button class="close-modal" onclick="closeLifeModal()">x</button>
         <h2>Sistema de Vidas</h2>
         <p>Consigue vidas extra al alcanzar estas rachas:</p>
         <ul class="life-milestones">
@@ -2335,8 +2768,8 @@
 </div>
 <!-- SHARE CONTAINER (DESKTOP) -->
 <div id="share-container">
-    <button class="close-popup" onclick="closeShareContainer()">×</button>
-    <h2>¡Compartí tu racha!</h2>
+    <button class="close-popup" onclick="closeShareContainer()">X</button>
+    <h2>Compartí tu racha!</h2>
     <div id="canvas-preview-wrapper">
         <img id="share-preview" alt="Resultado">
     </div>
@@ -2344,712 +2777,22 @@
         <button id="btn-download-img" class="share-btn">Descargar</button>
     </div>
 </div>
-<!-- CANVAS OCULTO PARA GENERACIÓN -->
+<!-- CANVAS OCULTO PARA GENERACIÃâN -->
 <canvas id="share-canvas" width="600" height="750" style="display: none;"></canvas>
 
 <!-- Removed audio tag from DOM -->
 <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
 
+<!-- STREAK WARNING NOTIFICATION -->
+<div id="streak-warning">Ya adivinaste esta canción. No suma racha.</div>
+
+<!-- DATA - Must load before main script -->
+<script src="data.js"></script>
+
 <script>
+
     // -----------------------------------------------------
-
-    const biblioteca = [
-
-        { nombre: "CHOOSEY - ADOPTA POSES", archivo: "music/CHOOSEY - ADOPTA POSES.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "CHOOSEY - SI NO ME CONOCES", archivo: "music/CHOOSEY - SI NO ME CONOCES.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "LOLO , CHOOSEY - QUE PUEDE PASAR", archivo: "music/LOLO , CHOOSEY - QUE PUEDE PASAR.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "CHOOSEY - 2 SAMPLEOS", archivo: "music/CHOOSEY - 2 SAMPLEOS.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "CHOOSEY , Stiffy - BeastieBoyZZZ", archivo: "music/CHOOSEY , Stiffy - BeastieBoyZZZ.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "CHOOSEY - ROMPEDISKOTECA", archivo: "music/CHOOSEY - ROMPEDISKOTECA.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "Hepa - Cuando estas high", archivo: "music/Hepa - Cuando estas high.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "Hepa - Sintonizame", archivo: "music/Hepa - Sintonizame.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "Hepa - Varios Puntos", archivo: "music/Hepa - Varios Puntos.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "Hepa - Lovestar", archivo: "music/Hepa - Lovestar.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "Hepa - Batman", archivo: "music/Hepa - Batman.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "Shako , Jugo! - Medio Tana", archivo: "music/Shako , Jugo! - Medio Tana.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "Jugo! , enzocerobulto - Musicalmente", archivo: "music/Jugo! , enzocerobulto - Musicalmente.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "Jugo! , YSY A - Todo el dia en el trap", archivo: "music/Jugo! , YSY A - Todo el dia en el trap.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "Jugo! , Cluster - Nos retiene el estado", archivo: "music/Jugo! , Cluster - Nos retiene el estado.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "Shako - Amigdalas", archivo: "music/Shako - Amigdalas.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "Shako, Bhavi, Seven Kayne - K.O", archivo: "music/Shako, Bhavi, Seven Kayne - K.O.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "Shako - RACKLESS", archivo: "music/Shako - RACKLESS.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "Shako - Hotel", archivo: "music/Shako - Hotel.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "Shako - 4eva", archivo: "music/Shako - 4eva.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "LOLO - FERNET HIELO", archivo: "music/LOLO - FERNET HIELO.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "LOLO - YO RAPERO ELLA DELANTERA", archivo: "music/LOLO - YO RAPERO ELLA DELANTERA.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "LOLO - A TU MODO", archivo: "music/LOLO - A TU MODO.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "LOLO - MINI LOLO", archivo: "music/LOLO - MINI LOLO.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "LOLO - HATER", archivo: "music/LOLO - HATER.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "LOLO - OSCUROoOo", archivo: "music/LOLO - OSCUROoOo.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "LOLO - QUIEN FUE", archivo: "music/LOLO - QUIEN FUE.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "LOLO , BANATROLL - HAZ MAS DINERO", archivo: "music/LOLO , BANATROLL - HAZ MAS DINERO.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "LOLO , BANATROLL - TOY GANADO", archivo: "music/LOLO , BANATROLL - TOY GANADO.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "Frozouda , cero , Cluster - plinko", archivo: "music/Frozouda , Cero , Cluster - plinko.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "Frozouda - tatiana !", archivo: "music/Frozouda - tatiana !.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "Frozouda - fumamos una ZAZA", archivo: "music/Frozouda - fumamos una ZAZA.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "Frozouda - quitate las BAPE", archivo: "music/Frozouda - quitate las BAPE.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "Frozouda - quitate los Jeans", archivo: "music/Frozouda - quitate los Jeans.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "Frozouda - mi RACE", archivo: "music/Frozouda - mi RACE.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "Frozouda - hot money", archivo: "music/Frozouda - hot money.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "Frozouda - TOP !", archivo: "music/Frozouda - TOP !.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "Frozouda - nicki nicole", archivo: "music/Frozouda - nicki nicole.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "Frozouda - doble F con visa", archivo: "music/Frozouda - doble F con visa.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "Frozouda - GAS O PORRO", archivo: "music/Frozouda - GAS O PORRO.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "PANKKY - FREEHOMMIES", archivo: "music/PANKKY - FREEHOMMIES.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "PANKKY - TELL ME", archivo: "music/PANKKY - TELL ME.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "PANKKY - GLOPETA", archivo: "music/PANKKY - GLOPETA.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "enzocerobulto - Ocupado en mi droga", archivo: "music/enzocerobulto - Ocupado en mi droga.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "enzocerobulto, 2UU! - Tanta plata", archivo: "music/enzocerobulto, 2UU! - Tanta plata.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "enzocerobulto - Hasta que termine el dia", archivo: "music/enzocerobulto - Hasta que termine el dia.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "enzocerobulto - una tira", archivo: "music/enzocerobulto - una tira.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "enzocerobulto, panchitolefleur - Por un cuarto", archivo: "music/enzocerobulto, panchitolefleur - Por un cuarto.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "enzocerobulto - Un banger tras otro", archivo: "music/enzocerobulto - Un banger tras otro.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "enzocerobulto - Falsa tu cara de Cristo", archivo: "music/enzocerobulto - Falsa tu cara de Cristo.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "KERCHAK, enzocerobulto - Chamuyo Habilidoso", archivo: "music/KERCHAK, enzocerobulto - Chamuyo Habilidoso.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "KERCHAK, TURROBABY, Cluster, Tuw4 - Un picadito", archivo: "music/KERCHAK, TURROBABY, Cluster, Tuw4 - Un picadito.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "KERCHAK - No Me Pienso Demorar", archivo: "music/KERCHAK - No Me Pienso Demorar.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "KERCHAK - Viviendo Al Corte", archivo: "music/KERCHAK - Viviendo Al Corte.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "KERCHAK, Cluster - Una Noche Con Los Tios 2", archivo: "music/KERCHAK, Cluster - Una Noche Con Los Tios 2.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "pabloxo - no son dos f son clones", archivo: "music/pabloxo - no son dos f son clones.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "pabloxo - dosydos", archivo: "music/pabloxo - dosydos.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "pabloxo - lo hago x mi", archivo: "music/pabloxo - lo hago x mi.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "Cluster, Frozouda - TOP 1 CHARTS", archivo: "music/Cluster, Frozouda - TOP 1 CHARTS.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "Cluster, Doly Flackko - OREO", archivo: "music/Cluster, Doly Flackko - OREO.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "Cluster - Muy imbecil", archivo: "music/Cluster - Muy imbecil.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "Cluster, Pabloxo - OTRA SEDA", archivo: "music/Cluster, Pabloxo - OTRA SEDA.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "salas flaco - TAN MALA", archivo: "music/salas flaco - TAN MALA.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "salas flaco - PANICO ESCENICO", archivo: "music/salas flaco - PANICO ESCENICO.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "salas flaco, Bhavi, Asan - EL DINERO DE INTERNET", archivo: "music/salas flaco, Bhavi, Asan - EL DINERO DE INTERNET.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "salas flaco - Por Argentina", archivo: "music/salas flaco - Por Argentina.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "Zell - webcam", archivo: "music/Zell - webcam.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "Zell - vamonos", archivo: "music/Zell - vamonos.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "Zell, KNAK - ZiploK", archivo: "music/Zell, KNAK - ZiploK.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "Zell, Tiago PZK - xq te enamoraste", archivo: "music/Zell, Tiago PZK - xq te enamoraste.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "Zell - calvin klein", archivo: "music/Zell - calvin klein.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "Zell - Starboy", archivo: "music/Zell - Starboy.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "PILF - HIT", archivo: "music/PILF - HIT.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "PILF - TANTA GIRA", archivo: "music/PILF - TANTA GIRA.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "PILF - FUMO UNO FUMO DOS", archivo: "music/PILF - FUMO UNO FUMO DOS.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "PILF - ENTRO A LA CANCHA", archivo: "music/PILF - ENTRO A LA CANCHA.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "TURROBABY, Lolo OG - Lovebombing", archivo: "music/TURROBABY, Lolo OG - Lovebombing.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "TURROBABY, ZELL, Stiffy - Cara De Boludo", archivo: "music/TURROBABY, ZELL, Stiffy - Cara De Boludo.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "TURROBABY - Sergio Massa", archivo: "music/TURROBABY - Sergio Massa.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "TURROBABY - Wacha Flequilluda", archivo: "music/TURROBABY - Wacha Flequilluda.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "TURROBABY, ZELL - Inter De Miami", archivo: "music/TURROBABY, ZELL - Inter De Miami.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "TURROBABY, enzocerobulto - Las Seis", archivo: "music/TURROBABY, enzocerobulto - Las Seis.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "AGUSFORTNITE2008 - PASO", archivo: "music/AGUSFORTNITE2008 - PASO.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "AGUSFORTNITE2008, Stiffy - GOFUE", archivo: "music/AGUSFORTNITE2008, Stiffy - GOFUE.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "AGUSFORTNITE2008 - FLEKO", archivo: "music/AGUSFORTNITE2008 - FLEKO.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "AGUSFORTNITE2008, Stiffy - DISTINTO", archivo: "music/AGUSFORTNITE2008, Stiffy - DISTINTO.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "AGUSFORTNITE2008, Stiffy - CUANDO QUIERO", archivo: "music/AGUSFORTNITE2008, Stiffy - CUANDO QUIERO.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "Stiffy, AGUSFORTNITE2008 - QUIERE PENE", archivo: "music/Stiffy, AGUSFORTNITE2008 - QUIERE PENE.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "Stiffy - NO LA CUELGO", archivo: "music/Stiffy - NO LA CUELGO.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "Stiffy, TURROBABY, ZELL, AGUSFORTNITE2008 - BABASONICO", archivo: "music/Stiffy, TURROBABY, ZELL, AGUSFORTNITE2008 - BABASONICO.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "Stiffy - MECHINSTRONGAS", archivo: "music/Stiffy - MECHINSTRONGAS.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "Stiffy - NO ES LO QUE PENSAS", archivo: "music/Stiffy - NO ES LO QUE PENSAS.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "ISMA - Antes del Amanecer", archivo: "music/ISMA - Antes del Amanecer.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "ISMA - 2037", archivo: "music/ISMA - 2037.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "ISMA - Cuanto va a pasar", archivo: "music/ISMA - Cuanto va a pasar.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "Doly Flackko - LEGENDARIO", archivo: "music/Doly Flackko - LEGENDARIO.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "Doly Flackko - PIOLA VAGO", archivo: "music/Doly Flackko - PIOLA VAGO.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "Doly Flackko - Uber", archivo: "music/Doly Flackko - Uber.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "Doly Flackko - TRES TRISTES TIGUERES", archivo: "music/Doly Flackko - TRES TRISTES TIGUERES.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "Blagh, Agush  - TIBURON", archivo: "music/Blagh, Agush  - TIBURON.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "Blagh  - GET IT UP", archivo: "music/Blagh  - GET IT UP.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "Blagh  - High", archivo: "music/Blagh  - High.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "Blagh - Toxico", archivo: "music/Blagh - Toxico.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "Blagh - 2013", archivo: "music/Blagh - 2013.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "MAGNESIO - WING WANG WOW", archivo: "music/MAGNESIO - WING WANG WOW.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "AFKgoat- DEFRENTEMAL", archivo: "music/AFKgoat- DEFRENTEMAL.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "AFKgoat - OSLAVA", archivo: "music/AFKgoat - OSLAVA.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "vahel - .", archivo: "music/vahel - ..mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "vahel - tunel", archivo: "music/vahel - tunel.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "vahel, pachudani - loquita", archivo: "music/vahel, pachudani - loquita.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "vahel - PLAN B", archivo: "music/vahel - PLAN B.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "pa2k, enzocerobulto - BOYFRIEND", archivo: "music/pa2k, enzocerobulto - BOYFRIEND.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "pa2k, cero - Rn", archivo: "music/pa2k, cero - Rn.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "pa2k, enzocerobulto - RIGHT NOW", archivo: "music/pa2k, enzocerobulto - RIGHT NOW.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "papirola - sos mi papirola", archivo: "music/papirola - sos mi papirola.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "cero, TURROBABY - Slat", archivo: "music/cero, TURROBABY - Slat.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "Zell - Joven Ballin", archivo: "music/Zell - Joven Ballin.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "Zell - diva", archivo: "music/Zell - diva.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "Zell - ballin de verdad", archivo: "music/Zell - ballin de verdad.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "Zell - piso 3", archivo: "music/Zell - piso 3.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "Zell - iceberg", archivo: "music/Zell - iceberg.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "Zell - Whats Up", archivo: "music/Zell - Whats Up.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "Zell - Uber", archivo: "music/Zell - Uber.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "Zell - iPhone", archivo: "music/Zell - iPhone.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "Zell - Ritual", archivo: "music/Zell - Ritual.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "Zell - Ballin", archivo: "music/Zell - Ballin.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "TURROBABY, Bhavi - Parabrisas", archivo: "music/TURROBABY, Bhavi - Parabrisas.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "TURROBABY - Filmemos Una Peli", archivo: "music/TURROBABY - Filmemos Una Peli.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "TURROBABY - SIMO VIANI", archivo: "music/TURROBABY - SIMO VIANI.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "TURROBABY - YPF", archivo: "music/TURROBABY - YPF.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "TURROBABY, Stiffy - PENDEJO ATREVIDO", archivo: "music/TURROBABY, Stiffy - PENDEJO ATREVIDO.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "AGUSFORTNITE2008 - SWAGGEANDO EN EL BANDO", archivo: "music/AGUSFORTNITE2008 - SWAGGEANDO EN EL BANDO.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "Chiki Wanted - que es el under", archivo: "music/Chiki Wanted - que es el under.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "Matias Fisher - Muerte en Halloween", archivo: "music/Matias Fisher - Muerte en Halloween.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "LITTLE BOOGIE, EL DOCTOR - BILLIE JEAN", archivo: "music/LITTLE BOOGIE, EL DOCTOR - BILLIE JEAN.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "LITTLE BOOGIE, DOLY FLACKKO - EL MUNDO ES MIO", archivo: "music/LITTLE BOOGIE, DOLY FLACKKO - EL MUNDO ES MIO.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "LITTLE BOOGIE - CLICK CLACK", archivo: "music/LITTLE BOOGIE - CLICK CLACK.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "LITTLE BOOGIE - DANDO CLASE", archivo: "music/LITTLE BOOGIE - DANDO CLASE.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "Frozouda, Cluster - hot box", archivo: "music/Frozouda, Cluster - hot box.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "Frozouda - un goat siempre esta busy", archivo: "music/Frozouda - un goat siempre esta busy.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "Frozouda, Jugo!, KNAK - chirlito", archivo: "music/Frozouda, Jugo!, KNAK - chirlito.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "cero - Sonajero", archivo: "music/cero - Sonajero.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "cero - Con frio y calor", archivo: "music/cero - Con frio y calor.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "cero - Mr wow", archivo: "music/cero - Mr wow.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "cero, enzocerobulto - De concierto en concierto", archivo: "music/cero, enzocerobulto - De concierto en concierto.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "Stiffy - GUASO BALLS Z", archivo: "music/Stiffy - GUASO BALLS Z.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "Stiffy - FARANDULERO", archivo: "music/Stiffy - FARANDULERO.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "Stiffy - SANDRO", archivo: "music/Stiffy - SANDRO.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "LOLO - EMILIA MERNES", archivo: "music/LOLO - EMILIA MERNES.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "LOLO - GASTEMOS MAS", archivo: "music/LOLO - GASTEMOS MAS.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "LOLO - HOY SI QUEMO", archivo: "music/LOLO - HOY SI QUEMO.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "LOLO, 143LETI - LUNES A VIERNES", archivo: "music/LOLO, 143LETI - LUNES A VIERNES.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "SixUp - DobleVaso", archivo: "music/SixUp - DobleVaso.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "SixUp - TripleVaso", archivo: "music/SixUp - TripleVaso.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "SixUp - TikiTime", archivo: "music/SixUp - TikiTime.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "SixUp - Anti", archivo: "music/SixUp - Anti.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "huntr - baby boo", archivo: "music/huntr - baby boo.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "huntr - esta va porque te quiero", archivo: "music/huntr - esta va porque te quiero.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "huntr - partydanc3", archivo: "music/huntr - partydanc3.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "elchombapolo - Estoy En Tu Cesped", archivo: "music/elchombapolo - Estoy En Tu Cesped.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "elchombapolo - CHIQUI TAPIA", archivo: "music/elchombapolo - CHIQUI TAPIA.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "elchombapolo - el under me chupa la pija", archivo: "music/elchombapolo - el under me chupa la pija.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "elchombapolo - UN OSO WACHO", archivo: "music/elchombapolo - UN OSO WACHO.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "jovenalien - tengo hambre", archivo: "music/jovenalien - tengo hambre.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "jovenalien - ME PASO LA SEMANA", archivo: "music/jovenalien - ME PASO LA SEMANA.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "jovenalien - No vale la pena enojarse", archivo: "music/jovenalien - No vale la pena enojarse.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "KERCHAK, PANCHITOLEFLEUR - ANOTHER NIGHT WITH THE UNCLE", archivo: "music/KERCHAK, PANCHITOLEFLEUR - ANOTHER NIGHT WITH THE UNCLE.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "KERCHAK, PANCHITOLEFLEUR - Tamo a Full", archivo: "music/KERCHAK, PANCHITOLEFLEUR - Tamo a Full.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "AFKgoat - ASI NO", archivo: "music/AFKgoat - ASI NO.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "Stiffy, Jon Z - COMO ANTES", archivo: "music/Stiffy, Jon Z - COMO ANTES.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "Francis Jeremy, Banatroll - Skibidi Toilet", archivo: "music/Francis Jeremy, Banatroll - Skibidi Toilet.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "bic - mis maneras", archivo: "music/bic - mis maneras.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "bic - phone off", archivo: "music/bic - phone off.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "bic - letal", archivo: "music/bic - letal.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "Shako - vas a ver el alma mula", archivo: "music/Shako - vas a ver el alma mula.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "Blagh  - No Loyalty", archivo: "music/Blagh  - No Loyalty.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "Nykoo0 - Anorexico", archivo: "music/Nykoo0 - Anorexico.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "Nykoo0 - Que sabes de amor", archivo: "music/Nykoo0 - Que sabes de amor.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "Jugo!, salasflaco - Desfile", archivo: "music/Jugo!, salasflaco - Desfile.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "pa2k, cero - yEye", archivo: "music/pa2k, cero - yEye.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "Stiffy - GUAP", archivo: "music/Stiffy - GUAP.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "Stiffy, Rojuu - AMNESIA", archivo: "music/Stiffy, Rojuu - AMNESIA.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "143LETI - En mis sueños soy tu novia", archivo: "music/143LETI - En mis sueños soy tu novia.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "143LETI - EU TE AMO", archivo: "music/143LETI - EU TE AMO.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "143LETI, VALUTO  - COSAS QUE ESTAN MAL", archivo: "music/143LETI, VALUTO  - COSAS QUE ESTAN MAL.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "2UU!, Asan - CELOSA", archivo: "music/2UU!, Asan - CELOSA.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "2UU!, enzocerobulto, Jugo!, Soowney - ESO QUERE TULI", archivo: "music/2UU!, enzocerobulto, Jugo!, Soowney - ESO QUERE TULI.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "2UU!, TURROBABY - LA GATA GOZA", archivo: "music/2UU!, TURROBABY - LA GATA GOZA.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "AFKgoat - 1VUELTAINTERMINABLE", archivo: "music/AFKgoat - 1VUELTAINTERMINABLE.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "AFKgoat - Te caigo mas tarde", archivo: "music/AFKgoat - Te caigo mas tarde.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "AFKgoat, cero  - ME QUEMAN LOS DEDOS", archivo: "music/AFKgoat, cero  - ME QUEMAN LOS DEDOS.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "cero - 1234", archivo: "music/cero - 1234.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "cero - como roe", archivo: "music/cero - como roe.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "cero - De moda", archivo: "music/cero - De moda.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "cero - t2o", archivo: "music/cero - t2o.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "cero - xq soy el villano", archivo: "music/cero - xq soy el villano.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "cero, knak - TOA", archivo: "music/cero, knak - TOA.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "CHOOSEY - 1-2 groupie", archivo: "music/CHOOSEY - 1-2 groupie.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "CHOOSEY - 100% LUCHA", archivo: "music/CHOOSEY - 100 LUCHA.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "ISMA, LOLO  - CUAL ES TU PLAN", archivo: "music/ISMA, LOLO  - CUAL ES TU PLAN.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "LITTLE BOOGIE - COMPA LO HICIMOS", archivo: "music/LITTLE BOOGIE - COMPA LO HICIMOS.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "LITTLE BOOGIE - DEJA DE SUFRIR", archivo: "music/LITTLE BOOGIE - DEJA DE SUFRIR.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "LITTLE BOOGIE - LOS DEL BOHIO", archivo: "music/LITTLE BOOGIE - LOS DEL BOHIO.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "LITTLE BOOGIE - OKUPAS", archivo: "music/LITTLE BOOGIE - OKUPAS.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "LITTLE BOOGIE - TODO BIEN TODO CHETO", archivo: "music/LITTLE BOOGIE - TODO BIEN TODO CHETO.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "LITTLE BOOGIE, EL DOCTOR, RUSHERKING - SOY FAMOSO Y TENGO PLATA", archivo: "music/LITTLE BOOGIE, EL DOCTOR, RUSHERKING - SOY FAMOSO Y TENGO PLATA.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "MAGNESIO - MAS LENTO", archivo: "music/MAGNESIO - MAS LENTO.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "MAGNESIO - OLLA POPULAR", archivo: "music/MAGNESIO - OLLA POPULAR.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "MAGNESIO - ZLATAN", archivo: "music/MAGNESIO - ZLATAN.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "MAGNESIO, White! - GOKU", archivo: "music/MAGNESIO, White! - GOKU.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "Stiffy, Agusfortnite2008 - AFIP", archivo: "music/Stiffy, Agusfortnite2008 - AFIP.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "White! - FR", archivo: "music/White! - FR.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "White! - No lo intentes en tu home", archivo: "music/White! - No lo intentes en tu home.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "White! - X - RAY", archivo: "music/White! - X - RAY.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "White!, magnesio - Shen Long", archivo: "music/White!, magnesio - Shen Long.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "Zell - stripper", archivo: "music/Zell - stripper.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "Stiffy - SWAG DE SOSA", archivo: "music/Stiffy - SWAG DE SOSA.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "Blagh, Agush - sex", archivo: "music/Blagh, Agush - sex.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "TURROBABY - Aca y Alla y En Todos Lados", archivo: "music/TURROBABY - Aca y Alla y En Todos Lados.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "TURROBABY - 2017", archivo: "music/TURROBABY - 2017.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "TURROBABY, Doble P - ANTO ROCUZZO", archivo: "music/TURROBABY, Doble P - ANTO ROCUZZO.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "TURROBABY - Cornudo Consciente", archivo: "music/TURROBABY - Cornudo Consciente.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "TURROBABY - Bajo El Sol", archivo: "music/TURROBABY - Bajo El Sol.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "TURROBABY - COLOMBIANA HOODTRAP", archivo: "music/TURROBABY - COLOMBIANA HOODTRAP.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "EL DOCTOR - STARBOY", archivo: "music/EL DOCTOR - STARBOY.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "AGUSFORTNITE2008, Stiffy - GUISO", archivo: "music/AGUSFORTNITE2008, Stiffy - GUISO.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "AGUSFORTNITE2008, Stiffy, NEO PISTEA - MEJORALITO", archivo: "music/AGUSFORTNITE2008, Stiffy, NEO PISTEA - MEJORALITO.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "Cluster, Duki - aGaRRo La PLaTa", archivo: "music/Cluster, Duki - aGaRRo La PLaTa.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "laura sad - chupavrga", archivo: "music/laura sad - chupavrga.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "laura sad, LOLO - Joseador Boy", archivo: "music/laura sad, LOLO - Joseador Boy.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "laura sad - i Laurie", archivo: "music/laura sad - i Laurie.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "laura sad, MAGNESIO - Perdon Mama", archivo: "music/laura sad, MAGNESIO - Perdon Mama.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "LITTLE BOOGIE - LITTLE BOOGIE VS EL GOBIERNO", archivo: "music/LITTLE BOOGIE - LITTLE BOOGIE VS EL GOBIERNO.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "AGUSFORTNITE2008, Stiffy - 24 7", archivo: "music/AGUSFORTNITE2008, Stiffy - 24 7.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "AGUSFORTNITE2008, Stiffy - PIE EN LA PISTA", archivo: "music/AGUSFORTNITE2008, Stiffy - PIE EN LA PISTA.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "AGUSFORTNITE2008, Stiffy - MUSICA DE ASCENSOR", archivo: "music/AGUSFORTNITE2008, Stiffy - MUSICA DE ASCENSOR.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "cybernene, TURROBABY - LEANCOLN REMIX", archivo: "music/cybernene, TURROBABY - LEANCOLN REMIX.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        // { nombre: "", archivo: "music/.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        // { nombre: "", archivo: "music/.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-    ];
-
-    // NUEVO: Biblioteca para Modo Artista (se llenará manualmente)
-    const bibliotecaArtist = [
-
-        { nombre: "CHOOSEY - ADOPTA POSES", archivo: "musicartist/CHOOSEY - ADOPTA POSES.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "CHOOSEY - SI NO ME CONOCES", archivo: "musicartist/CHOOSEY - SI NO ME CONOCES.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "LOLO , CHOOSEY - QUE PUEDE PASAR", archivo: "musicartist/LOLO , CHOOSEY - QUE PUEDE PASAR.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "CHOOSEY - 2 SAMPLEOS", archivo: "musicartist/CHOOSEY - 2 SAMPLEOS.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "CHOOSEY , Stiffy - BeastieBoyZZZ", archivo: "musicartist/CHOOSEY , Stiffy - BeastieBoyZZZ.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "CHOOSEY - ROMPEDISKOTECA", archivo: "musicartist/CHOOSEY - ROMPEDISKOTECA.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "Hepa - Cuando estas high", archivo: "musicartist/Hepa - Cuando estas high.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "Hepa - Sintonizame", archivo: "musicartist/Hepa - Sintonizame.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "Hepa - Varios Puntos", archivo: "musicartist/Hepa - Varios Puntos.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "Hepa - Lovestar", archivo: "musicartist/Hepa - Lovestar.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "Hepa - Batman", archivo: "musicartist/Hepa - Batman.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "Shako , Jugo! - Medio Tana", archivo: "musicartist/Shako , Jugo! - Medio Tana.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "Jugo! , enzocerobulto - Musicalmente", archivo: "musicartist/Jugo! , enzocerobulto - Musicalmente.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "Jugo! , YSY A - Todo el dia en el trap", archivo: "musicartist/Jugo! , YSY A - Todo el dia en el trap.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "Jugo! , Cluster - Nos retiene el estado", archivo: "musicartist/Jugo! , Cluster - Nos retiene el estado.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "Shako - Amigdalas", archivo: "musicartist/Shako - Amigdalas.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "Shako, Bhavi, Seven Kayne - K.O", archivo: "musicartist/Shako, Bhavi, Seven Kayne - K.O.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "Shako - RACKLESS", archivo: "musicartist/Shako - RACKLESS.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "Shako - Hotel", archivo: "musicartist/Shako - Hotel.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "Shako - 4eva", archivo: "musicartist/Shako - 4eva.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "LOLO - FERNET HIELO", archivo: "musicartist/LOLO - FERNET HIELO.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "LOLO - YO RAPERO ELLA DELANTERA", archivo: "musicartist/LOLO - YO RAPERO ELLA DELANTERA.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "LOLO - A TU MODO", archivo: "musicartist/LOLO - A TU MODO.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "LOLO - MINI LOLO", archivo: "musicartist/LOLO - MINI LOLO.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "LOLO - HATER", archivo: "musicartist/LOLO - HATER.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "LOLO - OSCUROoOo", archivo: "musicartist/LOLO - OSCUROoOo.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "LOLO - QUIEN FUE", archivo: "musicartist/LOLO - QUIEN FUE.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "LOLO , BANATROLL - HAZ MAS DINERO", archivo: "musicartist/LOLO , BANATROLL - HAZ MAS DINERO.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "LOLO , BANATROLL - TOY GANADO", archivo: "musicartist/LOLO , BANATROLL - TOY GANADO.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "Frozouda , cero , Cluster - plinko", archivo: "musicartist/Frozouda , Cero , Cluster - plinko.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "Frozouda - tatiana !", archivo: "musicartist/Frozouda - tatiana !.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "Frozouda - fumamos una ZAZA", archivo: "musicartist/Frozouda - fumamos una ZAZA.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "Frozouda - quitate las BAPE", archivo: "musicartist/Frozouda - quitate las BAPE.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "Frozouda - quitate los Jeans", archivo: "musicartist/Frozouda - quitate los Jeans.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "Frozouda - mi RACE", archivo: "musicartist/Frozouda - mi RACE.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "Frozouda - hot money", archivo: "musicartist/Frozouda - hot money.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "Frozouda - TOP !", archivo: "musicartist/Frozouda - TOP !.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "Frozouda - nicki nicole", archivo: "musicartist/Frozouda - nicki nicole.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "Frozouda - doble F con visa", archivo: "musicartist/Frozouda - doble F con visa.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "Frozouda - GAS O PORRO", archivo: "musicartist/Frozouda - GAS O PORRO.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "PANKKY - FREEHOMMIES", archivo: "musicartist/PANKKY - FREEHOMMIES.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "PANKKY - TELL ME", archivo: "musicartist/PANKKY - TELL ME.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "PANKKY - GLOPETA", archivo: "musicartist/PANKKY - GLOPETA.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "enzocerobulto - Ocupado en mi droga", archivo: "musicartist/enzocerobulto - Ocupado en mi droga.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "enzocerobulto, 2UU! - Tanta plata", archivo: "musicartist/enzocerobulto, 2UU! - Tanta plata.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "enzocerobulto - Hasta que termine el dia", archivo: "musicartist/enzocerobulto - Hasta que termine el dia.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "enzocerobulto - una tira", archivo: "musicartist/enzocerobulto - una tira.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "enzocerobulto, panchitolefleur - Por un cuarto", archivo: "musicartist/enzocerobulto, panchitolefleur - Por un cuarto.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "enzocerobulto - Un banger tras otro", archivo: "musicartist/enzocerobulto - Un banger tras otro.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "enzocerobulto - Falsa tu cara de Cristo", archivo: "musicartist/enzocerobulto - Falsa tu cara de Cristo.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "KERCHAK, enzocerobulto - Chamuyo Habilidoso", archivo: "musicartist/KERCHAK, enzocerobulto - Chamuyo Habilidoso.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "KERCHAK, TURROBABY, Cluster, Tuw4 - Un picadito", archivo: "musicartist/KERCHAK, TURROBABY, Cluster, Tuw4 - Un picadito.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "KERCHAK - No Me Pienso Demorar", archivo: "musicartist/KERCHAK - No Me Pienso Demorar.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "KERCHAK - Viviendo Al Corte", archivo: "musicartist/KERCHAK - Viviendo Al Corte.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "KERCHAK, Cluster - Una Noche Con Los Tios 2", archivo: "musicartist/KERCHAK, Cluster - Una Noche Con Los Tios 2.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "pabloxo - no son dos f son clones", archivo: "musicartist/pabloxo - no son dos f son clones.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "pabloxo - dosydos", archivo: "musicartist/pabloxo - dosydos.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "pabloxo - lo hago x mi", archivo: "musicartist/pabloxo - lo hago x mi.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "Cluster, Frozouda - TOP 1 CHARTS", archivo: "musicartist/Cluster, Frozouda - TOP 1 CHARTS.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "Cluster, Doly Flackko - OREO", archivo: "musicartist/Cluster, Doly Flackko - OREO.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "Cluster - Muy imbecil", archivo: "musicartist/Cluster - Muy imbecil.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "Cluster, Pabloxo - OTRA SEDA", archivo: "musicartist/Cluster, Pabloxo - OTRA SEDA.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "salas flaco - TAN MALA", archivo: "musicartist/salas flaco - TAN MALA.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "salas flaco - PANICO ESCENICO", archivo: "musicartist/salas flaco - PANICO ESCENICO.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "salas flaco, Bhavi, Asan - EL DINERO DE INTERNET", archivo: "musicartist/salas flaco, Bhavi, Asan - EL DINERO DE INTERNET.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "salas flaco - Por Argentina", archivo: "musicartist/salas flaco - Por Argentina.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "Zell - webcam", archivo: "musicartist/Zell - webcam.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "Zell - vamonos", archivo: "musicartist/Zell - vamonos.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "Zell, KNAK - ZiploK", archivo: "musicartist/Zell, KNAK - ZiploK.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "Zell, Tiago PZK - xq te enamoraste", archivo: "musicartist/Zell, Tiago PZK - xq te enamoraste.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "Zell - calvin klein", archivo: "musicartist/Zell - calvin klein.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "Zell - Starboy", archivo: "musicartist/Zell - Starboy.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "PILF - HIT", archivo: "musicartist/PILF - HIT.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "PILF - TANTA GIRA", archivo: "musicartist/PILF - TANTA GIRA.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "PILF - FUMO UNO FUMO DOS", archivo: "musicartist/PILF - FUMO UNO FUMO DOS.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "PILF - ENTRO A LA CANCHA", archivo: "musicartist/PILF - ENTRO A LA CANCHA.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "TURROBABY, Lolo OG - Lovebombing", archivo: "musicartist/TURROBABY, Lolo OG - Lovebombing.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "TURROBABY, ZELL, Stiffy - Cara De Boludo", archivo: "musicartist/TURROBABY, ZELL, Stiffy - Cara De Boludo.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "TURROBABY - Sergio Massa", archivo: "musicartist/TURROBABY - Sergio Massa.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "TURROBABY - Wacha Flequilluda", archivo: "musicartist/TURROBABY - Wacha Flequilluda.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "TURROBABY, ZELL - Inter De Miami", archivo: "musicartist/TURROBABY, ZELL - Inter De Miami.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "TURROBABY, enzocerobulto - Las Seis", archivo: "musicartist/TURROBABY, enzocerobulto - Las Seis.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "AGUSFORTNITE2008 - PASO", archivo: "musicartist/AGUSFORTNITE2008 - PASO.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "AGUSFORTNITE2008, Stiffy - GOFUE", archivo: "musicartist/AGUSFORTNITE2008, Stiffy - GOFUE.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "AGUSFORTNITE2008 - FLEKO", archivo: "musicartist/AGUSFORTNITE2008 - FLEKO.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "AGUSFORTNITE2008, Stiffy - DISTINTO", archivo: "musicartist/AGUSFORTNITE2008, Stiffy - DISTINTO.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "AGUSFORTNITE2008, Stiffy - CUANDO QUIERO", archivo: "musicartist/AGUSFORTNITE2008, Stiffy - CUANDO QUIERO.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "Stiffy, AGUSFORTNITE2008 - QUIERE PENE", archivo: "musicartist/Stiffy, AGUSFORTNITE2008 - QUIERE PENE.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "Stiffy - NO LA CUELGO", archivo: "musicartist/Stiffy - NO LA CUELGO.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "Stiffy, TURROBABY, ZELL, AGUSFORTNITE2008 - BABASONICO", archivo: "musicartist/Stiffy, TURROBABY, ZELL, AGUSFORTNITE2008 - BABASONICO.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "Stiffy - MECHINSTRONGAS", archivo: "musicartist/Stiffy - MECHINSTRONGAS.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "Stiffy - NO ES LO QUE PENSAS", archivo: "musicartist/Stiffy - NO ES LO QUE PENSAS.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "ISMA - Antes del Amanecer", archivo: "musicartist/ISMA - Antes del Amanecer.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "ISMA - 2037", archivo: "musicartist/ISMA - 2037.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "ISMA - Cuanto va a pasar", archivo: "musicartist/ISMA - Cuanto va a pasar.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "Doly Flackko - LEGENDARIO", archivo: "musicartist/Doly Flackko - LEGENDARIO.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "Doly Flackko - PIOLA VAGO", archivo: "musicartist/Doly Flackko - PIOLA VAGO.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "Doly Flackko - Uber", archivo: "musicartist/Doly Flackko - Uber.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "Doly Flackko - TRES TRISTES TIGUERES", archivo: "musicartist/Doly Flackko - TRES TRISTES TIGUERES.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "Blagh, Agush  - TIBURON", archivo: "musicartist/Blagh, Agush  - TIBURON.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "Blagh  - GET IT UP", archivo: "musicartist/Blagh  - GET IT UP.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "Blagh  - High", archivo: "musicartist/Blagh  - High.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "Blagh - Toxico", archivo: "musicartist/Blagh - Toxico.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "Blagh - 2013", archivo: "musicartist/Blagh - 2013.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "MAGNESIO - WING WANG WOW", archivo: "musicartist/MAGNESIO - WING WANG WOW.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "AFKgoat- DEFRENTEMAL", archivo: "musicartist/AFKgoat- DEFRENTEMAL.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "AFKgoat - OSLAVA", archivo: "musicartist/AFKgoat - OSLAVA.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "vahel - .", archivo: "musicartist/vahel - ..mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "vahel - tunel", archivo: "musicartist/vahel - tunel.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "vahel, pachudani - loquita", archivo: "musicartist/vahel, pachudani - loquita.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "vahel - PLAN B", archivo: "musicartist/vahel - PLAN B.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "pa2k, enzocerobulto - BOYFRIEND", archivo: "musicartist/pa2k, enzocerobulto - BOYFRIEND.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "pa2k, cero - Rn", archivo: "musicartist/pa2k, cero - Rn.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "pa2k, enzocerobulto - RIGHT NOW", archivo: "musicartist/pa2k, enzocerobulto - RIGHT NOW.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "papirola - sos mi papirola", archivo: "musicartist/papirola - sos mi papirola.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "cero, TURROBABY - Slat", archivo: "musicartist/cero, TURROBABY - Slat.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "Zell - Joven Ballin", archivo: "musicartist/Zell - Joven Ballin.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "Zell - diva", archivo: "musicartist/Zell - diva.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "Zell - ballin de verdad", archivo: "musicartist/Zell - ballin de verdad.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "Zell - piso 3", archivo: "musicartist/Zell - piso 3.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "Zell - iceberg", archivo: "musicartist/Zell - iceberg.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "Zell - Whats Up", archivo: "musicartist/Zell - Whats Up.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "Zell - Uber", archivo: "musicartist/Zell - Uber.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "Zell - iPhone", archivo: "musicartist/Zell - iPhone.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "Zell - Ritual", archivo: "musicartist/Zell - Ritual.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "Zell - Ballin", archivo: "musicartist/Zell - Ballin.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "TURROBABY, Bhavi - Parabrisas", archivo: "musicartist/TURROBABY, Bhavi - Parabrisas.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "TURROBABY - Filmemos Una Peli", archivo: "musicartist/TURROBABY - Filmemos Una Peli.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "TURROBABY - SIMO VIANI", archivo: "musicartist/TURROBABY - SIMO VIANI.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "TURROBABY - YPF", archivo: "musicartist/TURROBABY - YPF.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "TURROBABY, Stiffy - PENDEJO ATREVIDO", archivo: "musicartist/TURROBABY, Stiffy - PENDEJO ATREVIDO.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "AGUSFORTNITE2008 - SWAGGEANDO EN EL BANDO", archivo: "musicartist/AGUSFORTNITE2008 - SWAGGEANDO EN EL BANDO.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "Chiki Wanted - que es el under", archivo: "musicartist/Chiki Wanted - que es el under.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "Matias Fisher - Muerte en Halloween", archivo: "musicartist/Matias Fisher - Muerte en Halloween.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "LITTLE BOOGIE, EL DOCTOR - BILLIE JEAN", archivo: "musicartist/LITTLE BOOGIE, EL DOCTOR - BILLIE JEAN.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "LITTLE BOOGIE, DOLY FLACKKO - EL MUNDO ES MIO", archivo: "musicartist/LITTLE BOOGIE, DOLY FLACKKO - EL MUNDO ES MIO.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "LITTLE BOOGIE - CLICK CLACK", archivo: "musicartist/LITTLE BOOGIE - CLICK CLACK.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "LITTLE BOOGIE - DANDO CLASE", archivo: "musicartist/LITTLE BOOGIE - DANDO CLASE.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "Frozouda, Cluster - hot box", archivo: "musicartist/Frozouda, Cluster - hot box.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "Frozouda - un goat siempre esta busy", archivo: "musicartist/Frozouda - un goat siempre esta busy.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "Frozouda, Jugo!, KNAK - chirlito", archivo: "musicartist/Frozouda, Jugo!, KNAK - chirlito.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "cero - Sonajero", archivo: "musicartist/cero - Sonajero.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "cero - Con frio y calor", archivo: "musicartist/cero - Con frio y calor.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "cero - Mr wow", archivo: "musicartist/cero - Mr wow.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "cero, enzocerobulto - De concierto en concierto", archivo: "musicartist/cero, enzocerobulto - De concierto en concierto.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "Stiffy - GUASO BALLS Z", archivo: "musicartist/Stiffy - GUASO BALLS Z.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "Stiffy - FARANDULERO", archivo: "musicartist/Stiffy - FARANDULERO.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "Stiffy - SANDRO", archivo: "musicartist/Stiffy - SANDRO.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "LOLO - EMILIA MERNES", archivo: "musicartist/LOLO - EMILIA MERNES.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "LOLO - GASTEMOS MAS", archivo: "musicartist/LOLO - GASTEMOS MAS.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "LOLO - HOY SI QUEMO", archivo: "musicartist/LOLO - HOY SI QUEMO.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "LOLO, 143LETI - LUNES A VIERNES", archivo: "musicartist/LOLO, 143LETI - LUNES A VIERNES.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "SixUp - DobleVaso", archivo: "musicartist/SixUp - DobleVaso.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "SixUp - TripleVaso", archivo: "musicartist/SixUp - TripleVaso.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "SixUp - TikiTime", archivo: "musicartist/SixUp - TikiTime.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "SixUp - Anti", archivo: "musicartist/SixUp - Anti.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "huntr - baby boo", archivo: "musicartist/huntr - baby boo.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "huntr - esta va porque te quiero", archivo: "musicartist/huntr - esta va porque te quiero.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "huntr - partydanc3", archivo: "musicartist/huntr - partydanc3.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "elchombapolo - Estoy En Tu Cesped", archivo: "musicartist/elchombapolo - Estoy En Tu Cesped.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "elchombapolo - CHIQUI TAPIA", archivo: "musicartist/elchombapolo - CHIQUI TAPIA.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "elchombapolo - el under me chupa la pija", archivo: "musicartist/elchombapolo - el under me chupa la pija.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "elchombapolo - UN OSO WACHO", archivo: "musicartist/elchombapolo - UN OSO WACHO.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "jovenalien - tengo hambre", archivo: "musicartist/jovenalien - tengo hambre.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "jovenalien - ME PASO LA SEMANA", archivo: "musicartist/jovenalien - ME PASO LA SEMANA.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "jovenalien - No vale la pena enojarse", archivo: "musicartist/jovenalien - No vale la pena enojarse.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "KERCHAK, PANCHITOLEFLEUR - ANOTHER NIGHT WITH THE UNCLE", archivo: "musicartist/KERCHAK, PANCHITOLEFLEUR - ANOTHER NIGHT WITH THE UNCLE.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "KERCHAK, PANCHITOLEFLEUR - Tamo a Full", archivo: "musicartist/KERCHAK, PANCHITOLEFLEUR - Tamo a Full.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "AFKgoat - ASI NO", archivo: "musicartist/AFKgoat - ASI NO.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "Stiffy, Jon Z - COMO ANTES", archivo: "musicartist/Stiffy, Jon Z - COMO ANTES.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "Francis Jeremy, Banatroll - Skibidi Toilet", archivo: "musicartist/Francis Jeremy, Banatroll - Skibidi Toilet.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "bic - mis maneras", archivo: "musicartist/bic - mis maneras.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "bic - phone off", archivo: "musicartist/bic - phone off.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "bic - letal", archivo: "musicartist/bic - letal.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "Shako - vas a ver el alma mula", archivo: "musicartist/Shako - vas a ver el alma mula.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "Blagh  - No Loyalty", archivo: "musicartist/Blagh  - No Loyalty.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "Nykoo0 - Anorexico", archivo: "musicartist/Nykoo0 - Anorexico.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "Nykoo0 - Que sabes de amor", archivo: "musicartist/Nykoo0 - Que sabes de amor.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "Jugo!, salasflaco - Desfile", archivo: "musicartist/Jugo!, salasflaco - Desfile.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "pa2k, cero - yEye", archivo: "musicartist/pa2k, cero - yEye.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "Stiffy - GUAP", archivo: "musicartist/Stiffy - GUAP.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "Stiffy, Rojuu - AMNESIA", archivo: "musicartist/Stiffy, Rojuu - AMNESIA.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "143LETI - En mis sueños soy tu novia", archivo: "musicartist/143LETI - En mis sueños soy tu novia.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "143LETI - EU TE AMO", archivo: "musicartist/143LETI - EU TE AMO.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "143LETI, VALUTO  - COSAS QUE ESTAN MAL", archivo: "musicartist/143LETI, VALUTO  - COSAS QUE ESTAN MAL.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "2UU!, Asan - CELOSA", archivo: "musicartist/2UU!, Asan - CELOSA.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "2UU!, enzocerobulto, Jugo!, Soowney - ESO QUERE TULI", archivo: "musicartist/2UU!, enzocerobulto, Jugo!, Soowney - ESO QUERE TULI.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "2UU!, TURROBABY - LA GATA GOZA", archivo: "musicartist/2UU!, TURROBABY - LA GATA GOZA.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "AFKgoat - 1VUELTAINTERMINABLE", archivo: "musicartist/AFKgoat - 1VUELTAINTERMINABLE.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "AFKgoat - Te caigo mas tarde", archivo: "musicartist/AFKgoat - Te caigo mas tarde.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "AFKgoat, cero  - ME QUEMAN LOS DEDOS", archivo: "musicartist/AFKgoat, cero  - ME QUEMAN LOS DEDOS.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "cero - 1234", archivo: "musicartist/cero - 1234.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "cero - como roe", archivo: "musicartist/cero - como roe.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "cero - De moda", archivo: "musicartist/cero - De moda.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "cero - t2o", archivo: "musicartist/cero - t2o.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "cero - xq soy el villano", archivo: "musicartist/cero - xq soy el villano.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "cero, knak - TOA", archivo: "musicartist/cero, knak - TOA.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "CHOOSEY - 1-2 groupie", archivo: "musicartist/CHOOSEY - 1-2 groupie.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "CHOOSEY - 100% LUCHA", archivo: "musicartist/CHOOSEY - 100 LUCHA.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "ISMA, LOLO  - CUAL ES TU PLAN", archivo: "musicartist/ISMA, LOLO  - CUAL ES TU PLAN.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "LITTLE BOOGIE - COMPA LO HICIMOS", archivo: "musicartist/LITTLE BOOGIE - COMPA LO HICIMOS.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "LITTLE BOOGIE - DEJA DE SUFRIR", archivo: "musicartist/LITTLE BOOGIE - DEJA DE SUFRIR.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "LITTLE BOOGIE - LOS DEL BOHIO", archivo: "musicartist/LITTLE BOOGIE - LOS DEL BOHIO.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "LITTLE BOOGIE - OKUPAS", archivo: "musicartist/LITTLE BOOGIE - OKUPAS.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "LITTLE BOOGIE - TODO BIEN TODO CHETO", archivo: "musicartist/LITTLE BOOGIE - TODO BIEN TODO CHETO.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "LITTLE BOOGIE, EL DOCTOR, RUSHERKING - SOY FAMOSO Y TENGO PLATA", archivo: "musicartist/LITTLE BOOGIE, EL DOCTOR, RUSHERKING - SOY FAMOSO Y TENGO PLATA.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "MAGNESIO - MAS LENTO", archivo: "musicartist/MAGNESIO - MAS LENTO.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "MAGNESIO - OLLA POPULAR", archivo: "musicartist/MAGNESIO - OLLA POPULAR.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "MAGNESIO - WING WANG WOW", archivo: "musicartist/MAGNESIO - WING WANG WOW.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "MAGNESIO - ZLATAN", archivo: "musicartist/MAGNESIO - ZLATAN.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "MAGNESIO, White! - GOKU", archivo: "musicartist/MAGNESIO, White! - GOKU.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "Stiffy, Agusfortnite2008 - AFIP", archivo: "musicartist/Stiffy, Agusfortnite2008 - AFIP.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "White! - FR", archivo: "musicartist/White! - FR.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "White! - No lo intentes en tu home", archivo: "musicartist/White! - No lo intentes en tu home.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "White! - X - RAY", archivo: "musicartist/White! - X - RAY.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "White!, magnesio - Shen Long", archivo: "musicartist/White!, magnesio - Shen Long.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "AFKgoat - BANCAR EL PARCHE", archivo: "musicartist/AFKgoat - BANCAR EL PARCHE.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "AFKgoat - PERNOCTANDO EN EL BALCON", archivo: "musicartist/AFKgoat - PERNOCTANDO EN EL BALCON.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "AFKgoat - HACERME TRAICIONAR", archivo: "musicartist/AFKgoat - HACERME TRAICIONAR.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "AFKgoat - ASI DE DESCONFIADO", archivo: "musicartist/AFKgoat - ASI DE DESCONFIADO.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "Zell - Rainbow", archivo: "musicartist/Zell - Rainbow.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "Zell - humo", archivo: "musicartist/Zell - humo.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "Zell, Bhavi - nanana", archivo: "musicartist/Zell, Bhavi - nanana.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "Zell - on my mind", archivo: "musicartist/Zell - on my mind.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "Zell, Rojuu - Bye Bye", archivo: "musicartist/Zell, Rojuu - Bye Bye.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "Zell - diamante", archivo: "musicartist/Zell - diamante.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "Zell, Polima Westcoast - g wagon", archivo: "musicartist/Zell, Polima Westcoast - g wagon.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "Zell - Kendall", archivo: "musicartist/Zell - Kendall.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "Zell - Keep It Quiet", archivo: "musicartist/Zell - Keep It Quiet.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "Zell - Cero Cero", archivo: "musicartist/Zell - Cero Cero.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "Zell - stripper", archivo: "musicartist/Zell - stripper.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "Zell - Aura", archivo: "musicartist/Zell - Aura.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "LITTLE BOOGIE, KID$$UP - HATERS", archivo: "musicartist/LITTLE BOOGIE, KID$$UP - HATERS.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "LITTLE BOOGIE, EL DOCTOR - MARTES 13", archivo: "musicartist/LITTLE BOOGIE, EL DOCTOR - MARTES 13.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "LITTLE BOOGIE - SUAVE CRIMINAL", archivo: "musicartist/LITTLE BOOGIE - SUAVE CRIMINAL.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "LITTLE BOOGIE, MC CACO - SE TE QUEDO EL VENTO", archivo: "musicartist/LITTLE BOOGIE, MC CACO - SE TE QUEDO EL VENTO.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "LITTLE BOOGIE - CREPUSCULO", archivo: "musicartist/LITTLE BOOGIE - CREPUSCULO.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "LOLO - APHEX TWIN", archivo: "musicartist/LOLO - APHEX TWIN.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "LOLO - SYDNEY", archivo: "musicartist/LOLO - SYDNEY.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "LOLO - ALEJO ISAKK", archivo: "musicartist/LOLO - ALEJO ISAKK.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "LOLO - INIMU", archivo: "musicartist/LOLO - INIMU.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "Stiffy - SWAG DE SOSA", archivo: "musicartist/Stiffy - SWAG DE SOSA.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "Stiffy - SECONDLIFE", archivo: "musicartist/Stiffy - SECONDLIFE.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "Stiffy - WACHA LOCA", archivo: "musicartist/Stiffy - WACHA LOCA.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "Stiffy, AGUSFORTNITE2008 - CON PEDRO Y CON LA DROGA", archivo: "musicartist/Stiffy, AGUSFORTNITE2008 - CON PEDRO Y CON LA DROGA.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "Stiffy - PEGO FLORES", archivo: "musicartist/Stiffy - PEGO FLORES.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "LOLO - PROBEMOS CON IR A GIRAR", archivo: "musicartist/LOLO - PROBEMOS CON IR A GIRAR.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "LOLO - adicto al vodka", archivo: "musicartist/LOLO - adicto al vodka.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "Stiffy - escudo y espada", archivo: "musicartist/Stiffy - escudo y espada.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "MAGNESIO - COKER", archivo: "musicartist/MAGNESIO - COKER.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "cero - Vicky", archivo: "musicartist/cero - Vicky.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "Blagh, Agush - sex", archivo: "musicartist/Blagh, Agush - sex.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "PILF - PILF", archivo: "musicartist/PILF - PILF.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "PILF - MALVIAJAR", archivo: "musicartist/PILF - MALVIAJAR.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "PILF - YO SOY ASI", archivo: "musicartist/PILF - YO SOY ASI.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "PILF - ROMANCE TE PUEDO DAR", archivo: "musicartist/PILF - ROMANCE TE PUEDO DAR.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "PILF - NABO", archivo: "musicartist/PILF - NABO.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "PILF - NI ME ACUERDO", archivo: "musicartist/PILF - NI ME ACUERDO.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "TURROBABY - Mañana Me Voy De Gira", archivo: "musicartist/TURROBABY - Mañana Me Voy De Gira.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "TURROBABY - Yo Te Amo Toda", archivo: "musicartist/TURROBABY - Yo Te Amo Toda.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "TURROBABY - Bici Itau", archivo: "musicartist/TURROBABY - Bici Itau.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "TURROBABY - Aca y Alla y En Todos Lados", archivo: "musicartist/TURROBABY - Aca y Alla y En Todos Lados.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "TURROBABY - 2017", archivo: "musicartist/TURROBABY - 2017.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "TURROBABY - De Cote", archivo: "musicartist/TURROBABY - De Cote.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "TURROBABY, Doble P - ANTO ROCUZZO", archivo: "musicartist/TURROBABY, Doble P - ANTO ROCUZZO.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "TURROBABY, tussiwarriors, Ze Pequeña - Natalia Oreiro", archivo: "musicartist/TURROBABY, tussiwarriors, Ze Pequeña - Natalia Oreiro.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "TURROBABY - Cornudo Consciente", archivo: "musicartist/TURROBABY - Cornudo Consciente.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "TURROBABY - Bajo El Sol", archivo: "musicartist/TURROBABY - Bajo El Sol.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "TURROBABY, baby cashy - Colorada", archivo: "musicartist/TURROBABY, baby cashy - Colorada.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "TURROBABY - Lgante Y Wanda Nara", archivo: "musicartist/TURROBABY - Lgante Y Wanda Nara.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "TURROBABY - Franco Colapinto", archivo: "musicartist/TURROBABY - Franco Colapinto.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "TURROBABY - COJER WACHAS", archivo: "musicartist/TURROBABY - COJER WACHAS.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "TURROBABY - COLOMBIANA HOODTRAP", archivo: "musicartist/TURROBABY - COLOMBIANA HOODTRAP.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "cero - DEAM", archivo: "musicartist/cero - DEAM.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "Cluster- EL COLO", archivo: "musicartist/Cluster- EL COLO.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "Cluster - Gucci Mane en la traphouse", archivo: "musicartist/Cluster - Gucci Mane en la traphouse.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "Cluster - Levanto el tubo", archivo: "musicartist/Cluster - Levanto el tubo.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "Cluster, Aleezok - CARGO", archivo: "musicartist/Cluster, Aleezok - CARGO.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "Cluster, Francis Jeremy - MUY IMBECIL", archivo: "musicartist/Cluster, Francis Jeremy - MUY IMBECIL.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "LOLO - hoy es mi dia", archivo: "musicartist/LOLO - hoy es mi dia.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "LOLO - JESSE PINKMAN", archivo: "musicartist/LOLO - JESSE PINKMAN.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "CHOOSEY - Prod Pimpinela", archivo: "musicartist/CHOOSEY - Prod Pimpinela.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "underaiki - fuli", archivo: "musicartist/underaiki - fuli.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "underaiki, Suei - Marceline", archivo: "musicartist/underaiki, Suei - Marceline.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "underaiki - No Es Personal", archivo: "musicartist/underaiki - No Es Personal.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "underaiki - borsi", archivo: "musicartist/underaiki - borsi.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "underaiki - Too Late", archivo: "musicartist/underaiki - Too Late.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "underaiki - sushi", archivo: "musicartist/underaiki - sushi.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "underaiki - mugi", archivo: "musicartist/underaiki - mugi.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "KERCHAK - WIDE OPEN", archivo: "musicartist/KERCHAK - WIDE OPEN.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "KERCHAK - BACK", archivo: "musicartist/KERCHAK - BACK.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "KERCHAK - MI BRO SE MAMO", archivo: "musicartist/KERCHAK - MI BRO SE MAMO.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "KERCHAK - Fajos en el Camperon", archivo: "musicartist/KERCHAK - Fajos en el Camperon.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "KERCHAK, DAGGER - BOOFER", archivo: "musicartist/KERCHAK, DAGGER - BOOFER.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "KERCHAK - CHILL AF", archivo: "musicartist/KERCHAK - CHILL AF.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "elchombapolo - SIX SEVEN", archivo: "musicartist/elchombapolo - SIX SEVEN.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "elchombapolo - TE LA RIFASTE FERNANDO", archivo: "musicartist/elchombapolo - TE LA RIFASTE FERNANDO.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "elchombapolo - ESTA PERRA ESTA LOCA", archivo: "musicartist/elchombapolo - ESTA PERRA ESTA LOCA.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "elchombapolo - EL PISO ES LABURO", archivo: "musicartist/elchombapolo - EL PISO ES LABURO.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "elchombapolo - SAL AFUERA Y JOSEA", archivo: "musicartist/elchombapolo - SAL AFUERA Y JOSEA.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "Banatroll, LOLO - KULEANDO NARKOS", archivo: "musicartist/Banatroll, LOLO - KULEANDO NARKOS.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "Banatroll, LOLO- soy un virgen", archivo: "musicartist/Banatroll, LOLO- soy un virgen.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "Banatroll - OUTLAST RAP", archivo: "musicartist/Banatroll - OUTLAST RAP.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "Banatroll - RAP DE PEDIR LOS PUNTOS", archivo: "musicartist/Banatroll - RAP DE PEDIR LOS PUNTOS.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "Banatroll - RIP RESIDENTE", archivo: "musicartist/Banatroll - RIP RESIDENTE.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "elchombapolo - LA PREGUNTA", archivo: "musicartist/elchombapolo - LA PREGUNTA.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "Banatroll - MONTAGEM DUBAI (Slowed)", archivo: "musicartist/Banatroll - MONTAGEM DUBAI (Slowed).mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "Banatroll, zEkO - GUERRA FUNK (Slowed)", archivo: "musicartist/Banatroll, zEkO - GUERRA FUNK (Slowed).mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "Banatroll - SUBWAY", archivo: "musicartist/Banatroll - SUBWAY.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "Banatroll - Rap del Hornet", archivo: "musicartist/Banatroll - Rap del Hornet.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "Banatroll - GTA 6 RAP", archivo: "musicartist/Banatroll - GTA 6 RAP.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "pa2k - Fumando Afuera", archivo: "musicartist/pa2k - Fumando Afuera.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "pa2k - DEMOLIENDO HOTELES", archivo: "musicartist/pa2k - DEMOLIENDO HOTELES.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "pa2k - TODA", archivo: "musicartist/pa2k - TODA.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "EL DOCTOR - STARBOY", archivo: "musicartist/EL DOCTOR - STARBOY.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "huntr - pain", archivo: "musicartist/huntr - pain.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "vahel, fukinmari - UuuUUuuu", archivo: "musicartist/vahel, fukinmari - UuuUUuuu.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "enzocerobulto, eluney - ying yang", archivo: "musicartist/enzocerobulto, eluney - ying yang.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "Hepa, Cluster - Dolor de muela", archivo: "musicartist/Hepa, Cluster - Dolor de muela.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "Hepa - Pepe Argento", archivo: "musicartist/Hepa - Pepe Argento.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "Hepa, nykoo0 - MI HERMANO SE LAS MANDA", archivo: "musicartist/Hepa, nykoo0 - MI HERMANO SE LAS MANDA.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "Hepa - Con mi cousin", archivo: "musicartist/Hepa - Con mi cousin.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "Hepa - Carlos Padilla", archivo: "musicartist/Hepa - Carlos Padilla.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "AGUSFORTNITE2008, Stiffy, Joshu Joshu - Jesus Escucha Plug", archivo: "musicartist/AGUSFORTNITE2008, Stiffy, Joshu Joshu - Jesus Escucha Plug.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "AGUSFORTNITE2008, Stiffy - GUISO", archivo: "musicartist/AGUSFORTNITE2008, Stiffy - GUISO.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "AGUSFORTNITE2008, Stiffy - MEJORES HOES", archivo: "musicartist/AGUSFORTNITE2008, Stiffy - MEJORES HOES.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "AGUSFORTNITE2008 - HOTEL EN HOTEL", archivo: "musicartist/AGUSFORTNITE2008 - HOTEL EN HOTEL.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "AGUSFORTNITE2008, Stiffy, DILLOM - EL MOROCHO EL RUBIO Y EL COLO", archivo: "musicartist/AGUSFORTNITE2008, Stiffy, DILLOM - EL MOROCHO EL RUBIO Y EL COLO.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "AGUSFORTNITE2008, Stiffy, NEO PISTEA - MEJORALITO", archivo: "musicartist/AGUSFORTNITE2008, Stiffy, NEO PISTEA - MEJORALITO.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "AGUSFORTNITE2008 - LOS HAGO CONCHA", archivo: "musicartist/AGUSFORTNITE2008 - LOS HAGO CONCHA.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "AGUSFORTNITE2008 - ELLA ME LLAMA", archivo: "musicartist/AGUSFORTNITE2008 - ELLA ME LLAMA.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "AGUSFORTNITE2008 - VUELVO A FUMAR", archivo: "musicartist/AGUSFORTNITE2008 - VUELVO A FUMAR.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "Cluster, Duki - aGaRRo La PLaTa", archivo: "musicartist/Cluster, Duki - aGaRRo La PLaTa.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "Jugo! - La chupa la fame", archivo: "musicartist/Jugo! - La chupa la fame.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "Jugo! - Quiere algo de mi", archivo: "musicartist/Jugo! - Quiere algo de mi.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "Jugo! - Nadie se salva", archivo: "musicartist/Jugo! - Nadie se salva.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "Jugo!, enzocerobulto - Hacela facil", archivo: "musicartist/Jugo!, enzocerobulto - Hacela facil.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "Shako - es la vencida", archivo: "musicartist/Shako - es la vencida.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "Shako, SixUp - Daily", archivo: "musicartist/Shako, SixUp - Daily.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "laura sad - chupavrga", archivo: "musicartist/laura sad - chupavrga.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "laura sad, LOLO - Joseador Boy", archivo: "musicartist/laura sad, LOLO - Joseador Boy.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "laura sad - todos pvtos", archivo: "musicartist/laura sad - todos pvtos.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "laura sad - i Laurie", archivo: "musicartist/laura sad - i Laurie.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "laura sad - capitulo perdido", archivo: "musicartist/laura sad - capitulo perdido.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "laura sad - PUCCA", archivo: "musicartist/laura sad - PUCCA.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "laura sad - mochila", archivo: "musicartist/laura sad - mochila.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "laura sad, MAGNESIO - Perdon Mama", archivo: "musicartist/laura sad, MAGNESIO - Perdon Mama.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "SixUp - Mortedor", archivo: "musicartist/SixUp - Mortedor.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "SixUp - 10 tucas", archivo: "musicartist/SixUp - 10 tucas.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "SixUp - Falso", archivo: "musicartist/SixUp - Falso.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "CHOOSEY, DLANG - DE MAS DE MI", archivo: "musicartist/CHOOSEY, DLANG - DE MAS DE MI.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "CHOOSEY - MI NUMERO TELEFONICO", archivo: "musicartist/CHOOSEY - MI NUMERO TELEFONICO.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "CHOOSEY - mi AUTOMOVIL", archivo: "musicartist/CHOOSEY - mi AUTOMOVIL.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "CHOOSEY - CARS BEAT", archivo: "musicartist/CHOOSEY - CARS BEAT.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "CHOOSEY - pero CHATGPT", archivo: "musicartist/CHOOSEY - pero CHATGPT.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "CHOOSEY - NDQV", archivo: "musicartist/CHOOSEY - NDQV.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "Blagh, KKAFU - TE ROBO", archivo: "musicartist/Blagh, KKAFU - TE ROBO.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "Blagh  - Purple", archivo: "musicartist/Blagh  - Purple.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "Blagh, ISMA - Particular", archivo: "musicartist/Blagh, ISMA - Particular.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "Blagh - Safe Room", archivo: "musicartist/Blagh - Safe Room.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "Blagh - Leave Me Alone", archivo: "musicartist/Blagh - Leave Me Alone.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "Blagh - Priceless", archivo: "musicartist/Blagh - Priceless.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "2UU! - vuelve a mi", archivo: "musicartist/2UU! - vuelve a mi.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "2UU!, LTHELIZARD - FERRAGAMO", archivo: "musicartist/2UU!, LTHELIZARD - FERRAGAMO.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "2UU! - PEPSI", archivo: "musicartist/2UU! - PEPSI.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "2UU!, ELUNEYBENEDETTI - TARADA", archivo: "musicartist/2UU!, ELUNEYBENEDETTI - TARADA.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "2UU! - WORLDWIDE", archivo: "musicartist/2UU! - WORLDWIDE.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "2UU!, enzocerobulto, SKIIDY, TULO13 - Promesas sobre el bidet", archivo: "musicartist/2UU!, enzocerobulto, SKIIDY, TULO13 - Promesas sobre el bidet.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "2UU!, TULO13 - GREENDAY", archivo: "musicartist/2UU!, TULO13 - GREENDAY.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "2UU!, enzocerobulto - PALMERA", archivo: "musicartist/2UU!, enzocerobulto - PALMERA.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "enzocerobulto - Esta nota", archivo: "musicartist/enzocerobulto - Esta nota.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "enzocerobulto - De capital al Sifon", archivo: "musicartist/enzocerobulto - De capital al Sifon.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "enzocerobulto - perdiendo", archivo: "musicartist/enzocerobulto - perdiendo.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "LITTLE BOOGIE - LITTLE BOOGIE VS EL GOBIERNO", archivo: "musicartist/LITTLE BOOGIE - LITTLE BOOGIE VS EL GOBIERNO.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "enzocerobulto - Mitad", archivo: "musicartist/enzocerobulto - Mitad.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "enzocerobulto - Ahora y mas tarde", archivo: "musicartist/enzocerobulto - Ahora y mas tarde.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "enzocerobulto - Vos y yo!", archivo: "musicartist/enzocerobulto - Vos y yo!.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "enzocerobulto - Cada vez mas", archivo: "musicartist/enzocerobulto - Cada vez mas.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "enzocerobulto - Es humo no es vapor", archivo: "musicartist/enzocerobulto - Es humo no es vapor.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "enzocerobulto - Por las nubes", archivo: "musicartist/enzocerobulto - Por las nubes.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "AGUSFORTNITE2008, Stiffy - 24 7", archivo: "musicartist/AGUSFORTNITE2008, Stiffy - 24 7.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "AGUSFORTNITE2008, Stiffy - PIE EN LA PISTA", archivo: "musicartist/AGUSFORTNITE2008, Stiffy - PIE EN LA PISTA.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "AGUSFORTNITE2008, Stiffy - TRES PATITOS", archivo: "musicartist/AGUSFORTNITE2008, Stiffy - TRES PATITOS.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "AGUSFORTNITE2008, Stiffy - 8 JEANS", archivo: "musicartist/AGUSFORTNITE2008, Stiffy - 8 JEANS.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "AGUSFORTNITE2008, Stiffy - MUSICA DE ASCENSOR", archivo: "musicartist/AGUSFORTNITE2008, Stiffy - MUSICA DE ASCENSOR.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "Banatroll - TOY DE PARTY", archivo: "musicartist/Banatroll - TOY DE PARTY.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "Banatroll, Francis Jeremy - SKIBIDI TOILET REMIX", archivo: "musicartist/Banatroll, Francis Jeremy - SKIBIDI TOILET REMIX.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "Banatroll, LOLO - CALIFORNIA", archivo: "musicartist/Banatroll, LOLO - CALIFORNIA.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "AGUSFORTNITE2008, Stiffy - PETER GRIFFIN", archivo: "musicartist/AGUSFORTNITE2008, Stiffy - PETER GRIFFIN.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "AGUSFORTNITE2008, Stiffy - DESDE LOS 14", archivo: "musicartist/AGUSFORTNITE2008, Stiffy - DESDE LOS 14.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "EL DOCTOR, FALA FABIO - BARCELONA 90", archivo: "musicartist/EL DOCTOR, FALA FABIO - BARCELONA 90.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "cybernene, roomtrash6 - MEJOR NO", archivo: "musicartist/cybernene, roomtrash6 - MEJOR NO.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "cybernene - MTGA", archivo: "musicartist/cybernene - MTGA.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "cybernene - PRIMERA DAMA (CYBERSEXO)", archivo: "musicartist/cybernene - PRIMERA DAMA (CYBERSEXO).mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "cybernene, roomtrash6 - KENNEDY", archivo: "musicartist/cybernene, roomtrash6 - KENNEDY.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "cybernene - DIAMANTES", archivo: "musicartist/cybernene - DIAMANTES.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "cybernene, 8belial - LOUD BONUS TRACK", archivo: "musicartist/cybernene, 8belial - LOUD BONUS TRACK.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "cybernene, roomtrash6, yyy891, 8belial - ENVIDIA", archivo: "musicartist/cybernene, roomtrash6, yyy891, 8belial - ENVIDIA.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "cybernene, TURROBABY - LEANCOLN REMIX", archivo: "musicartist/cybernene, TURROBABY - LEANCOLN REMIX.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "cybernene - WHITE WIDOW HOUSE", archivo: "musicartist/cybernene - WHITE WIDOW HOUSE.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "EL DOCTOR - LA SEPARACION", archivo: "musicartist/EL DOCTOR - LA SEPARACION.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "EL DOCTOR - LOS QUE SON MAS ATREVIDOS", archivo: "musicartist/EL DOCTOR - LOS QUE SON MAS ATREVIDOS.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "EL DOCTOR, CHILI PARKER - VELORIO", archivo: "musicartist/EL DOCTOR, CHILI PARKER - VELORIO.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "EL DOCTOR - RESCATE UNA METRA", archivo: "musicartist/EL DOCTOR - RESCATE UNA METRA.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "EL DOCTOR - DIDDY", archivo: "musicartist/EL DOCTOR - DIDDY.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "EL DOCTOR, TURROBABY - LA TIENE", archivo: "musicartist/EL DOCTOR, TURROBABY - LA TIENE.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "EL DOCTOR, Homer El Mero Mero - Adelantado", archivo: "musicartist/EL DOCTOR, Homer El Mero Mero - Adelantado.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "LITTLE BOOGIE, EL DOCTOR - LOS MAS ODIADOS", archivo: "musicartist/LITTLE BOOGIE, EL DOCTOR - LOS MAS ODIADOS.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "EL DOCTOR, FOYONE - PA QUE NO PASES HAMBRE", archivo: "musicartist/EL DOCTOR, FOYONE - PA QUE NO PASES HAMBRE.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "pabloxo, Cluster - Fuego en el microfono", archivo: "musicartist/pabloxo, Cluster - Fuego en el microfono.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "pabloxo - Doble F", archivo: "musicartist/pabloxo - Doble F.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "kino frizza - LA SAVEIRO LA SAVEIRO", archivo: "musicartist/kino frizza - LA SAVEIRO LA SAVEIRO.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "kino frizza - AYER ME COMI UNAS REX", archivo: "musicartist/kino frizza - AYER ME COMI UNAS REX.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "kino frizza - MAMICHULA", archivo: "musicartist/kino frizza - MAMICHULA.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "kino frizza - SI ME TOMO UNA CERVEZA", archivo: "musicartist/kino frizza - SI ME TOMO UNA CERVEZA.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "kino frizza - ADEMAS DE MI REMIX", archivo: "musicartist/kino frizza - ADEMAS DE MI REMIX.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "kino frizza, Nico Melo -  L-GANTE  BZRP 162", archivo: "musicartist/kino frizza, Nico Melo -  L-GANTE  BZRP 162.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "kino frizza, pijarrap - Malbec", archivo: "musicartist/kino frizza, pijarrap - Malbec.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "kino frizza - Cancion para cuando te quedas sin internet", archivo: "musicartist/kino frizza - Cancion para cuando te quedas sin internet.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "kino frizza - QUEVEDO  BZRP", archivo: "musicartist/kino frizza - QUEVEDO  BZRP.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "kino frizza - GIVENCHY PARODIA", archivo: "musicartist/kino frizza - GIVENCHY PARODIA.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "kino frizza - SHAKIRA  BZRP", archivo: "musicartist/kino frizza - SHAKIRA  BZRP.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "kino frizza - LUCK RA  BZRP", archivo: "musicartist/kino frizza - LUCK RA  BZRP.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "kino frizza, Nico Melo - ENTRE NOSOTROS", archivo: "musicartist/kino frizza, Nico Melo - ENTRE NOSOTROS.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "bic, Jugo! - paintball", archivo: "musicartist/bic, Jugo! - paintball.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "pabloxo - Una mas por mis amigos", archivo: "musicartist/pabloxo - Una mas por mis amigos.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "pabloxo - dB", archivo: "musicartist/pabloxo - dB.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "pabloxo - Astigmatismo", archivo: "musicartist/pabloxo - Astigmatismo.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "pabloxo - Plata con lo que me gusta", archivo: "musicartist/pabloxo - Plata con lo que me gusta.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "pabloxo - COMIDA POR PESO", archivo: "musicartist/pabloxo - COMIDA POR PESO.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "Francis Jeremy, enzocerobulto - DEUCOTOS", archivo: "musicartist/Francis Jeremy, enzocerobulto - DEUCOTOS.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "Francsi Jeremy, Komp - MILAGROSA X SAYAGO", archivo: "musicartist/Francsi Jeremy, Komp - MILAGROSA X SAYAGO.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "Francis Jeremy - SAYAGLO", archivo: "musicartist/Francis Jeremy - SAYAGLO.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "Francis Jeremy, Doly Flackko  - SAYAGO Y RIO GALLEGOS", archivo: "musicartist/Francis Jeremy, Doly Flackko  - SAYAGO Y RIO GALLEGOS.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "Francis Jeremy - RIP SURF Y RIP SURFISTAS", archivo: "musicartist/Francis Jeremy - RIP SURF Y RIP SURFISTAS.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "Francis Jeremy - BIGGEST PLAYERS", archivo: "musicartist/Francis Jeremy - BIGGEST PLAYERS.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "Francis Jeremy - NEGRA DE MIERDA", archivo: "musicartist/Francis Jeremy - NEGRA DE MIERDA.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "Francis Jeremy - CUMPLEAÑOS DEL MEJOR RAPERO EN URUGUAY", archivo: "musicartist/Francis Jeremy - CUMPLEAÑOS DEL MEJOR RAPERO EN URUGUAY.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "Francis Jeremy, underaiki - BLUE DREAM", archivo: "musicartist/Francis Jeremy, underaiki - BLUE DREAM.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "Francis Jeremy - YO LE DIJE WEPA UEPA!", archivo: "musicartist/Francis Jeremy - YO LE DIJE WEPA UEPA!.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "underaiki - Majora", archivo: "musicartist/underaiki - Majora.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "Zell - ᐸ3", archivo: "musicartist/Zell - ᐸ3.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "MAGNESIO, jovenalien - ROBANDO EN EL CARRE", archivo: "musicartist/MAGNESIO, jovenalien - ROBANDO EN EL CARRE.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "", archivo: "musicartist/.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "", archivo: "musicartist/.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "", archivo: "musicartist/.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-        { nombre: "", archivo: "musicartist/.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] },
-
-        // Ejemplo: { nombre: "Artista - Cancion", archivo: "musicartist/Artista - Cancion.mp3", inicios: [0, 0.5, 1, 1.5, 2, 2.5] }
-    ];
-
+    // Variables
 
     // -----------------------------------------------------
     // Variables
@@ -3060,9 +2803,9 @@
     // VARIABLE GLOBAL PARA EL COMANDO SECRETO
     window.kinoUnlocked = false;
 
-    // Duraciones de intentos (DINÁMICO)
+    // Duraciones de intentos (DINÃÂMICO)
     function getDurations() {
-        if (currentMode === 'artist') {
+        if (currentMode === 'artist' || currentMode === 'album') {
             return [0.1, 2, 4, 8];
         }
         return [0.1, 0.5, 2, 4, 8, 15];
@@ -3099,8 +2842,8 @@
         }
     });
 
-    // nuevo: historial para evitar repetición entre juegos.
-    let lastTwoIndices = [-1, -1]; // almacena los índices de las dos últimas canciones jugadas de 'biblioteca'
+    // nuevo: historial para evitar repeticiÃÂ³n entre juegos.
+    let lastTwoIndices = [-1, -1]; // almacena los ÃÂ­ndices de las dos ÃÂºltimas canciones jugadas de 'biblioteca'
     let currentBlobUrl = null; // Para ocultar la URL del archivo
 
     // HISTORIAL PERSISTENTE DE CANCIONES JUGADAS
@@ -3121,7 +2864,12 @@
     let currentMode = 'normal'; // 'normal' | 'artist'
     let selectedArtist = null;
     let artists = new Set();
-    let artistList = []; // Array ordenado de artistas para búsqueda
+    let artistList = []; // Array ordenado de artistas para bÃÂºsqueda
+
+    // NUEVO: Variables para Modo ÃÂlbum
+    let selectedAlbum = null;
+    let albumList = []; // Array de nombres de Ã¡lbumes
+    let currentAlbumSongs = []; // Canciones del Ã¡lbum seleccionado
 
     // dom
     const playButton = document.getElementById('play-button');
@@ -3152,6 +2900,14 @@
     const currentArtistDisplayHeader = document.getElementById('current-artist-display-header');
     const modeNormalBtn = document.getElementById('mode-normal');
     const modeArtistBtn = document.getElementById('mode-artist');
+    const modeAlbumBtn = document.getElementById('mode-album');
+
+    // elementos modo album
+    const albumSection = document.getElementById('album-section');
+    const albumSearchInput = document.getElementById('album-search-input');
+    const albumListEl = document.getElementById('album-list');
+    const currentAlbumDisplay = document.getElementById('current-album-display');
+    const albumArtDisplay = document.getElementById('album-art-display');
 
     // iconos svg para el boton (con bordes redondeados sutiles)
     const iconPlay = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5v14l11-7z" stroke="white" stroke-width="2" stroke-linejoin="round" /></svg>';
@@ -3179,7 +2935,7 @@
         return Number.isInteger(value) ? `${value}s` : `${value.toFixed(1)}s`;
     }
 
-    // nueva función: formatear tiempo a mm:ss
+    // nueva funciÃÂ³n: formatear tiempo a mm:ss
     function formatTime(seconds) {
         if (isNaN(seconds) || seconds < 0) return "0:00";
         const minutes = Math.floor(seconds / 60);
@@ -3240,7 +2996,7 @@
         });
     }
 
-    // NUEVO: Renderizar cajas de intentos dinámicamente
+    // NUEVO: Renderizar cajas de intentos dinÃ¡micamente
     function renderGuessBoxes() {
         const container = document.getElementById('guess-boxes');
         if (!container) return;
@@ -3256,7 +3012,7 @@
         }
     }
 
-    // FUNCIÓN MEJORADA PARA RACHA CON DEGRADADO PROGRESIVO SUAVE
+    // FUNCIÃâN MEJORADA PARA RACHA CON DEGRADADO PROGRESIVO SUAVE
     function updateStreakDisplay() {
         const currentStreak = currentMode === 'normal' ? winStreak : artistStreak;
         streakEl.textContent = `Racha: ${currentStreak}`;
@@ -3307,7 +3063,7 @@
             streakEl.style.textShadow = '0 0 12px rgba(138, 43, 226, 0.7)';
         }
         else {
-            // 100 o más: celeste piola con glow más intenso
+            // 100 o mÃ¡s: celeste piola con glow mÃ¡s intenso
             color = 'var(--streak-cyan)';
             streakEl.style.textShadow = '0 0 15px rgba(0, 212, 255, 0.8)';
         }
@@ -3320,7 +3076,7 @@
         }
     }
 
-    // Función auxiliar para interpolar colores (degradado suave)
+    // FunciÃÂ³n auxiliar para interpolar colores (degradado suave)
     function lerpColor(color1, color2, factor) {
         const hex = (c) => {
             const hex = c.replace('#', '');
@@ -3337,7 +3093,7 @@
         if (!streakSaverEl) return;
 
         // En modo artista no usamos salva rachas
-        if (currentMode === 'artist') {
+        if (currentMode === 'artist' || currentMode === 'album') {
             streakSaverEl.style.display = 'none';
             return;
         }
@@ -3349,7 +3105,7 @@
             return;
         }
 
-        streakSaverEl.style.display = 'block';
+        streakSaverEl.style.display = 'flex';
         let html = 'Vidas: ';
         const maxSavers = 3;
         for (let i = 0; i < maxSavers; i++) {
@@ -3360,7 +3116,7 @@
     }
 
     // -----------------------------------------------------
-    // LÓGICA MODO ARTISTA
+    // LÃâGICA MODO ARTISTA
 
     function extractArtist(songName) {
         // El artista son las palabras que esten antes de una "," o un "-"
@@ -3376,7 +3132,7 @@
         return ""; // Fallback o si no tiene separador (raro en este formato)
     }
 
-    // NUEVO: Helper específico para la lógica de "guess box amarilla"
+    // NUEVO: Helper especÃÂ­fico para la lÃÂ³gica de "guess box amarilla"
     // Solo considera el guion como separador, ignorando comas.
     function extractArtistForGuess(songName) {
         let separatorIndex = songName.indexOf('-');
@@ -3392,8 +3148,12 @@
         bibliotecaArtist.forEach(song => {
             // EXCLUDE TROLL SONGS
             if (song.nombre === "Matias Fisher - Muerte en Halloween" ||
-                song.nombre === "Francis Jeremy, Banatroll - Skibidi Toilet" ||
                 song.nombre === "Chiki Wanted - que es el under" ||
+                song.nombre === "PILF - ENTRO A LA CANCHA" ||
+                song.nombre === "PILF - FUMO UNO FUMO DOS" ||
+                song.nombre === "PILF - HIT" ||
+                song.nombre === "PILF - TANTA GIRA" ||
+                song.nombre === "Red Shine, MAGNESIO - ELDEN RING" ||
                 song.nombre === "papirola - sos mi papirola") {
                 return;
             }
@@ -3415,10 +3175,10 @@
                 // Intentar actualizar la UI (si existe el selector)
                 // Como no tengo el ID exacto del selector, asumimos que al cambiar de modo se refresca
                 // o llamamos a init/render si fuera accesible.
-                // Pero populateArtists actualiza la lista global 'artistList', así que cualquier
-                // renderizado subsecuente lo tomará.
+                // Pero populateArtists actualiza la lista global 'artistList', asÃÂ­ que cualquier
+                // renderizado subsecuente lo tomarÃ¡.
 
-                // Forzar actualización si estamos en modo artista
+                // Forzar actualizaciÃÂ³n si estamos en modo artista
                 if (typeof renderModeSelector === 'function') {
                     renderModeSelector();
                 } else {
@@ -3430,12 +3190,131 @@
                 return "juga con las parodias de la cabra";
             };
         });
-        artistList = Array.from(artists).sort();
+        artistList = Array.from(artists).sort((a, b) => a.localeCompare(b));
     }
+
+    // -----------------------------------------------------
+    // LÃâGICA MODO ÃÂLBUM
+
+    function populateAlbums() {
+        albumList = albumsData.map(a => a.name).sort((a, b) => a.localeCompare(b));
+    }
+
+    function filterAlbums(query) {
+        if (!query) return albumList;
+        const lowerQuery = query.toLowerCase();
+        return albumList.filter(name => name.toLowerCase().includes(lowerQuery));
+    }
+
+    function renderAlbumSuggestions(list) {
+        albumListEl.innerHTML = "";
+        if (list && list.length > 0) {
+            list.forEach(albumName => {
+                const albumInfo = albumsData.find(a => a.name === albumName);
+                const div = document.createElement('div');
+                div.className = 'album-item';
+
+                const textSpan = document.createElement('span');
+                textSpan.className = 'album-item-text';
+                textSpan.textContent = albumName;
+
+                const img = document.createElement('img');
+                img.className = 'album-item-image';
+                if (albumInfo && albumInfo.cover) {
+                    img.src = albumInfo.cover;
+                    img.alt = albumName;
+                } else {
+                    img.style.display = 'none';
+                }
+
+                div.appendChild(textSpan);
+                div.appendChild(img);
+                div.onclick = () => selectAlbum(albumName);
+                albumListEl.appendChild(div);
+            });
+            albumListEl.classList.add('show');
+        } else {
+            albumListEl.classList.remove('show');
+        }
+    }
+
+    async function selectAlbum(albumName) {
+        if (selectedAlbum === albumName) {
+            albumListEl.classList.remove('show');
+            return;
+        }
+
+        selectedAlbum = albumName;
+        albumSearchInput.value = albumName;
+        albumSearchInput.classList.add('centered-text');
+        albumListEl.classList.remove('show');
+
+        const albumInfo = albumsData.find(a => a.name === albumName);
+        if (albumInfo) {
+            availableSongs = [...albumInfo.songs];
+
+            // Update album art container
+            const container = document.getElementById('album-art-container');
+            const albumNameDisplay = document.getElementById('album-name-display');
+            const albumArtDisplay = document.getElementById('album-art-display');
+
+            if (albumInfo.cover && container && albumArtDisplay && albumNameDisplay) {
+                albumArtDisplay.src = albumInfo.cover;
+                albumNameDisplay.textContent = albumName;
+                container.classList.add('show');
+            } else if (container) {
+                container.classList.remove('show');
+            }
+        } else {
+            availableSongs = [];
+            const container = document.getElementById('album-art-container');
+            if (container) container.classList.remove('show');
+        }
+
+        saveModeState('album');
+        resetGame(true);
+    }
+
+    // Event Listeners para bÃÂºsqueda de Ã¡lbum
+    if (albumSearchInput) {
+        albumSearchInput.addEventListener('input', (e) => {
+            const query = e.target.value;
+            const matches = query ? filterAlbums(query) : albumList;
+            renderAlbumSuggestions(matches);
+        });
+
+        albumSearchInput.addEventListener('click', () => {
+            if (albumList.length === 0) populateAlbums();
+            albumSearchInput.classList.remove('centered-text');
+            const query = albumSearchInput.value;
+            const matches = query ? filterAlbums(query) : albumList;
+            renderAlbumSuggestions(matches);
+        });
+
+        albumSearchInput.addEventListener('focus', () => {
+            albumSearchInput.classList.remove('centered-text');
+        });
+
+        albumSearchInput.addEventListener('blur', () => {
+            if (selectedAlbum && albumSearchInput.value === selectedAlbum) {
+                albumSearchInput.classList.add('centered-text');
+            }
+        });
+    }
+
+    // Close dropdown on outside click
+    document.addEventListener('click', (e) => {
+        if (albumSearchInput && albumListEl) {
+            if (!albumSearchInput.contains(e.target) && !albumListEl.contains(e.target)) {
+                albumListEl.classList.remove('show');
+            }
+        }
+    });
 
     // PERSISTENCIA DE ESTADO
     let normalModeState = null;
     let artistModeState = null;
+    let albumModeState = null;
 
     function saveModeState(mode) {
         const state = {
@@ -3450,6 +3329,9 @@
         if (mode === 'artist') {
             state.selectedArtist = selectedArtist;
             artistModeState = state;
+        } else if (mode === 'album') {
+            state.selectedAlbum = selectedAlbum;
+            albumModeState = state;
         } else {
             normalModeState = state;
         }
@@ -3458,9 +3340,24 @@
         const fullState = {
             normal: normalModeState,
             artist: artistModeState,
-            currentMode: currentMode
+            album: albumModeState,
+            currentMode: currentMode,
+            wonSongsInStreak: Array.from(wonSongsInStreak) // Convert Set to Array
         };
         localStorage.setItem('underless_save_v1', JSON.stringify(fullState));
+    }
+
+    // --- UNIQUE STREAK LOGIC ---
+    let wonSongsInStreak = new Set(); // Stores song names already won in current streak
+
+    function showStreakWarning() {
+        const warning = document.getElementById('streak-warning');
+        if (warning) {
+            warning.classList.add('show');
+            setTimeout(() => {
+                warning.classList.remove('show');
+            }, 2200); // reduced from 3.5s
+        }
     }
 
     function loadFromLocalStorage() {
@@ -3470,9 +3367,18 @@
                 const parsed = JSON.parse(saved);
                 normalModeState = parsed.normal;
                 artistModeState = parsed.artist;
+                albumModeState = parsed.album;
                 if (parsed.currentMode) {
                     currentMode = parsed.currentMode;
                 }
+
+                // Load won songs set
+                if (parsed.wonSongsInStreak) {
+                    wonSongsInStreak = new Set(parsed.wonSongsInStreak);
+                } else {
+                    wonSongsInStreak = new Set();
+                }
+
             } catch (e) {
                 console.error("Error loading game state:", e);
                 localStorage.removeItem('underless_save_v1');
@@ -3481,7 +3387,10 @@
     }
 
     async function restoreModeState(mode) {
-        const state = mode === 'artist' ? artistModeState : normalModeState;
+        let state;
+        if (mode === 'artist') state = artistModeState;
+        else if (mode === 'album') state = albumModeState;
+        else state = normalModeState;
 
         renderGuessBoxes();
         renderProgressSegments();
@@ -3490,6 +3399,7 @@
             // Si no hay estado guardado, resetear de cero
             availableSongs = [];
             if (mode === 'artist') selectedArtist = null;
+            if (mode === 'album') selectedAlbum = null;
             resetGame(true);
             return;
         }
@@ -3523,6 +3433,32 @@
                 if (artistSearchInput) artistSearchInput.value = "";
                 availableSongs = [];
             }
+        } else if (mode === 'album') {
+            // Modo álbum
+            selectedAlbum = state.selectedAlbum || null;
+            if (selectedAlbum) {
+                if (albumSearchInput) {
+                    albumSearchInput.value = selectedAlbum;
+                    albumSearchInput.classList.add('centered-text');
+                }
+
+                // Update Album Art Container with labels
+                const albumInfo = albumsData.find(a => a.name === selectedAlbum);
+                const container = document.getElementById('album-art-container');
+                const albumNameDisplay = document.getElementById('album-name-display');
+                const albumArtDisplay = document.getElementById('album-art-display');
+
+                if (albumInfo && albumInfo.cover && container && albumArtDisplay && albumNameDisplay) {
+                    albumArtDisplay.src = albumInfo.cover;
+                    albumNameDisplay.textContent = selectedAlbum;
+                    container.classList.add('show');
+                }
+            } else {
+                if (albumSearchInput) albumSearchInput.value = "";
+                availableSongs = [];
+                const container = document.getElementById('album-art-container');
+                if (container) container.classList.remove('show');
+            }
         } else {
             // Modo normal
             // updateArtistHeaderDisplay(null);
@@ -3541,7 +3477,7 @@
             restoreGuessStates(state.guessBoxStates);
         }
 
-        // Restaurar audio con blob para mantener ofuscación
+        // Restaurar audio con blob para mantener ofuscaciÃÂ³n
         if (currentSong.archivo) {
             // Restaurar el tiempo de inicio aleatorio guardado, o usar 0 por defecto
             gameStartTime = state.gameStartTime !== undefined ? state.gameStartTime : 0;
@@ -3556,7 +3492,7 @@
                 audioPlayer.onloadedmetadata = null;
             };
 
-            // Cargar canción con blob (ofuscación)
+            // Cargar canciÃÂ³n con blob (ofuscaciÃÂ³n)
             if (currentBlobUrl) {
                 URL.revokeObjectURL(currentBlobUrl);
                 currentBlobUrl = null;
@@ -3587,10 +3523,18 @@
                 playButton.removeAttribute('disabled');
                 audioPlayer.oncanplaythrough = null;
             };
-            // No reproducimos automáticamente, el usuario debe dar play
+            // No reproducimos automÃ¡ticamente, el usuario debe dar play
         } else {
-            // Si no había canción (ej. artista no seleccionado), resetear UI
+            // Si no habÃÂ­a canciÃÂ³n (ej. artista no seleccionado), resetear UI
+            audioPlayer.src = "";
+            playButton.setAttribute('disabled', '');
+            skipButton.disabled = true;
+            if (fullSongTime) fullSongTime.textContent = '0:00 / 0:00';
+
             if (mode === 'artist' && !selectedArtist) {
+                document.getElementById('search-container').classList.add('disabled');
+            }
+            if (mode === 'album' && !selectedAlbum) {
                 document.getElementById('search-container').classList.add('disabled');
             }
         }
@@ -3614,7 +3558,7 @@
         updateStreakDisplay();
         updateStreakSaverUI();
 
-        // Si el juego terminó, mostrar el modal de nuevo
+        // Si el juego terminÃÂ³, mostrar el modal de nuevo
         if (hasGuessedCorrectly) {
             showGameOver(true);
         } else if (guessCount >= getDurations().length) {
@@ -3629,6 +3573,13 @@
 
         pauseAudioInternal();
 
+        // CRITICAL FIX: Stop everything and CLEAR SOURCE immediately to prevent ghost audio
+        audioPlayer.src = "";
+        if (currentBlobUrl) {
+            URL.revokeObjectURL(currentBlobUrl);
+            currentBlobUrl = null;
+        }
+
         // FIX: Reset progress bar visually when switching modes
         if (progressBarFill) progressBarFill.style.width = '0%';
 
@@ -3636,17 +3587,31 @@
 
         currentMode = mode;
 
-        // Actualizar botones
-        if (mode === 'normal') {
-            modeNormalBtn.classList.add('active');
-            modeArtistBtn.classList.remove('active');
-            artistSection.classList.remove('show');
-            // updateArtistHeaderDisplay(null);
-        } else {
-            modeNormalBtn.classList.remove('active');
-            modeArtistBtn.classList.add('active');
-            artistSection.classList.add('show');
-            populateArtists();
+        // Actualizar botones y secciones
+        modeNormalBtn.classList.toggle('active', mode === 'normal');
+        modeArtistBtn.classList.toggle('active', mode === 'artist');
+        modeAlbumBtn.classList.toggle('active', mode === 'album');
+
+        artistSection.classList.toggle('show', mode === 'artist');
+        if (mode === 'artist') populateArtists();
+
+        albumSection.classList.toggle('show', mode === 'album');
+        if (mode === 'album') populateAlbums();
+
+        // Hide album art container if not in album mode
+        const albumArtContainer = document.getElementById('album-art-container');
+        if (mode !== 'album' && albumArtContainer) {
+            albumArtContainer.classList.remove('show');
+        }
+
+        // Hide/show lives UI based on mode (no lives in album mode)
+        const streakSaverUI = document.getElementById('streak-saver-ui');
+        if (streakSaverUI) {
+            if (mode === 'album') {
+                streakSaverUI.style.display = 'none';
+            } else {
+                streakSaverUI.style.display = 'block';
+            }
         }
 
         await restoreModeState(mode);
@@ -3677,10 +3642,10 @@
         // Resetear juego para empezar con el artista seleccionado
         availableSongs = []; // Limpiar pool para obligar a recargar con el nuevo artista
         resetGame(true);
-        saveModeState('artist'); // Guardar selección de artista
+        saveModeState('artist'); // Guardar selecciÃÂ³n de artista
     }
 
-    // Event Listeners para búsqueda de artista
+    // Event Listeners para bÃÂºsqueda de artista
     // Helper para renderizar la lista de artistas
     function renderArtistSuggestions(list) {
         artistListEl.innerHTML = '';
@@ -3698,10 +3663,10 @@
         }
     }
 
-    // Event Listeners para búsqueda de artista
+    // Event Listeners para bÃÂºsqueda de artista
     artistSearchInput.addEventListener('input', (e) => {
         const query = e.target.value;
-        // Si hay texto, filtra. Si está vacío, muestra todos.
+        // Si hay texto, filtra. Si estÃ¡ vacÃÂ­o, muestra todos.
         const matches = query ? filterArtists(query) : artistList;
         renderArtistSuggestions(matches);
     });
@@ -3739,6 +3704,9 @@
 
         // CRITICAL: Reset game over and full song playback state
         audioPlayer.pause();
+        // Force clear immediately to prevent old song from playing during async fetch
+        audioPlayer.src = "";
+
         isGameOver = false;
         isFullSongPlaying = false;
         snippetState = 'idle';
@@ -3758,13 +3726,13 @@
         snippetRemainingMs = 0;
         snippetDurationMs = 0;
 
-        // Si se fuerza un juego nuevo (botón reset/play again), borramos la canción guardada
+        // Si se fuerza un juego nuevo (botÃÂ³n reset/play again), borramos la canciÃÂ³n guardada
         if (forceNew) {
             playSound('click');
             localStorage.removeItem('savedSong');
         }
 
-        // availableSongs se rellena dentro de selectRandomSong si está vacío
+        // availableSongs se rellena dentro de selectRandomSong si estÃ¡ vacÃÂ­o
         selectRandomSong();
 
         guessCount = 0;
@@ -3785,7 +3753,7 @@
             gameOverContent.classList.remove('win', 'lose');
         }, 300);
 
-        // Si no hay canción seleccionada (modo artista sin artista), deshabilitar búsqueda
+        // Si no hay canciÃÂ³n seleccionada (modo artista sin artista), deshabilitar bÃÂºsqueda
         if (!currentSong.archivo) {
             document.getElementById('search-container').classList.add('disabled');
         } else {
@@ -3837,7 +3805,7 @@
 
         audioPlayer.currentTime = gameStartTime;
 
-        // Configurar listener para calcular inicio aleatorio cuando tengamos la duración
+        // Configurar listener para calcular inicio aleatorio cuando tengamos la duraciÃÂ³n
         audioPlayer.onloadedmetadata = () => {
             const duration = audioPlayer.duration;
             if (isFinite(duration) && duration > 15) {
@@ -3852,13 +3820,13 @@
 
             saveModeState(currentMode);
 
-            // Limpiar listener para evitar ejecuciones múltiples
+            // Limpiar listener para evitar ejecuciones mÃÂºltiples
             audioPlayer.onloadedmetadata = null;
         };
 
         audioPlayer.load(); // forzar la carga de la nueva fuente
 
-        // corrección: usar oncanplaythrough para activar el botón solo cuando el audio está listo
+        // correcciÃÂ³n: usar oncanplaythrough para activar el botÃÂ³n solo cuando el audio estÃ¡ listo
         audioPlayer.oncanplaythrough = () => {
             // re-establecer currentTime con el valor aleatorio calculado
             audioPlayer.currentTime = gameStartTime;
@@ -3879,7 +3847,7 @@
         saveModeState(currentMode);
     }
 
-    // Nueva función para reseteo completo (botón REINICIAR)
+    // Nueva funciÃÂ³n para reseteo completo (botÃÂ³n REINICIAR)
     function fullReset() {
         if (currentMode === 'normal') {
             winStreak = 0;
@@ -3895,6 +3863,7 @@
         localStorage.removeItem('underless_save_v1');
         normalModeState = null;
         artistModeState = null;
+        albumModeState = null;
 
         // Llamar al reset normal del juego
         resetGame(true);
@@ -3918,16 +3887,28 @@
             if (currentMode === 'artist') {
                 if (selectedArtist) {
                     // MODO ARTISTA: Comportamiento de "Lista/Playlist" -> Cargar TODAS las canciones
-                    // No filtramos por historial aquí para permitir que las canciones vuelvan a sonar en la siguiente vuelta
+                    // No filtramos por historial aquÃÂ­ para permitir que las canciones vuelvan a sonar en la siguiente vuelta
                     fullPool = bibliotecaArtist.filter(song => extractArtist(song.nombre) === selectedArtist);
                     availableSongs = [...fullPool];
+                } else {
+                    availableSongs = [];
+                }
+            } else if (currentMode === 'album') {
+                if (selectedAlbum) {
+                    // MODO ÃÂLBUM: Comportamiento de "Lista/Playlist" -> Cargar TODAS las canciones del Ã¡lbum
+                    const albumInfo = albumsData.find(a => a.name === selectedAlbum);
+                    if (albumInfo && albumInfo.songs) {
+                        availableSongs = [...albumInfo.songs];
+                    } else {
+                        availableSongs = [];
+                    }
                 } else {
                     availableSongs = [];
                 }
             } else {
                 // MODO NORMAL: Comportamiento original
                 fullPool = [...biblioteca];
-                // Filtrar las que ya están en el historial para dar variedad
+                // Filtrar las que ya estÃ¡n en el historial para dar variedad
                 availableSongs = fullPool.filter(song => !persistentHistory.includes(song.nombre));
 
                 // Si se agotan (ya se jugaron todas las posibles menos las del historial), reiniciamos
@@ -3948,14 +3929,14 @@
             return;
         }
 
-        // 3. Elegir canción aleatoria
+        // 3. Elegir canciÃÂ³n aleatoria
         let randomIndexInAvailable = Math.floor(Math.random() * availableSongs.length);
         let selectedSongCandidate = availableSongs[randomIndexInAvailable];
 
-        // 4. MODO ARTISTA: Evitar repetición en lapso corto (Constraint check)
+        // 4. MODO ARTISTA/ÃÂLBUM: Evitar repetición en lapso corto (Constraint check)
         // Aunque availableSongs garantiza no repetición DENTRO de la ronda, 
         // al resetear la lista (nueva ronda) podría tocar una que recién sonó.
-        if (currentMode === 'artist') {
+        if (currentMode === 'artist' || currentMode === 'album') {
             const SHORT_LAPSE = 12; // Cantidad de canciones recientes a evitar
             const recentSongs = persistentHistory.slice(-SHORT_LAPSE);
 
@@ -3971,16 +3952,16 @@
             }
         }
 
-        // 5. Asignar canción final
+        // 5. Asignar canciÃÂ³n final
         currentSong = selectedSongCandidate;
 
-        // 6. Sacarla de availableSongs (para esta sesión/ronda)
+        // 6. Sacarla de availableSongs (para esta sesiÃÂ³n/ronda)
         availableSongs.splice(randomIndexInAvailable, 1);
 
         // 7. Actualizar historial persistente
         persistentHistory.push(currentSong.nombre);
 
-        // Limitar historial (mantener solo las últimas 20 para referencia)
+        // Limitar historial (mantener solo las ÃÂºltimas 20 para referencia)
         if (persistentHistory.length > 20) {
             persistentHistory.shift();
         }
@@ -4083,7 +4064,7 @@
         }, 500); // actualizar dos veces por segundo
     }
 
-    // listener para el slider de búsqueda (seeker)
+    // listener para el slider de bÃÂºsqueda (seeker)
     function setupFullSongSeeker() {
         if (!fullSongSeeker || fullSongSeeker.dataset.listenerSet) return;
 
@@ -4094,7 +4075,7 @@
             fullSongTime.textContent = `${formatTime(seekTo)} / ${formatTime(duration)}`;
         });
 
-        // al soltar el slider (change), busca la posición y reproduce si estaba pausado
+        // al soltar el slider (change), busca la posiciÃÂ³n y reproduce si estaba pausado
         fullSongSeeker.addEventListener('change', function () {
             const duration = audioPlayer.duration || 0;
             const seekTo = duration * (this.value / 100);
@@ -4114,7 +4095,7 @@
         fullSongSeeker.dataset.listenerSet = true;
     }
 
-    // inicialización del reproductor completo cuando el modal se abre
+    // inicializaciÃÂ³n del reproductor completo cuando el modal se abre
     function initializeFullPlayer() {
         // CONTINUOUS PLAYBACK: If game over, don't stop audio, just sync UI
         if (isGameOver) {
@@ -4141,7 +4122,7 @@
             return;
         }
 
-        // detener reproductor de snippet si aún estaba activo
+        // detener reproductor de snippet si aÃÂºn estaba activo
         pauseAudioInternal();
 
         // resetear el estado del reproductor completo
@@ -4161,20 +4142,20 @@
             }
         }
         audioPlayer.currentTime = 0;
-        audioPlayer.load(); // forzar la carga de metadatos (duración)
+        audioPlayer.load(); // forzar la carga de metadatos (duraciÃÂ³n)
 
         // configurar el seeker
         setupFullSongSeeker();
         if (fullSongSeeker) fullSongSeeker.value = 0;
 
-        // esperar a que se carguen los metadatos para obtener la duración
+        // esperar a que se carguen los metadatos para obtener la duraciÃÂ³n
         audioPlayer.onloadedmetadata = () => {
             const duration = audioPlayer.duration;
             if (fullSongTime) fullSongTime.textContent = `0:00 / ${formatTime(duration)}`;
-            audioPlayer.onloadedmetadata = null; // limpiar para evitar múltiples llamadas
+            audioPlayer.onloadedmetadata = null; // limpiar para evitar mÃÂºltiples llamadas
         };
 
-        // configurar el evento de finalización
+        // configurar el evento de finalizaciÃÂ³n
         audioPlayer.onended = () => {
             isFullSongPlaying = false;
             updateFullPlayerIcon(false);
@@ -4198,11 +4179,11 @@
         } else {
             pauseAudioInternal(); // detener el snippet si estaba sonando
 
-            // si está pausada y no en el inicio, reanudar
+            // si estÃ¡ pausada y no en el inicio, reanudar
             if (audioPlayer.paused && audioPlayer.currentTime > 0) {
                 audioPlayer.play().catch(e => console.warn('fallo al reanudar canción completa:', e));
             } else {
-                // si está en el inicio (0:00) o terminó, empezar desde el principio (ya cargado por initializeFullPlayer)
+                // si estÃ¡ en el inicio (0:00) o terminÃÂ³, empezar desde el principio (ya cargado por initializeFullPlayer)
                 audioPlayer.currentTime = 0;
                 audioPlayer.play().catch(e => console.warn('fallo al reproducir canción completa:', e));
             }
@@ -4246,7 +4227,8 @@
         }
 
         // Check if we've reached or passed the target time
-        if (currentTime >= snippetTargetTime) {
+        // FIX: If user guessed correctly, DON'T stop playback. Let it play through the cooldown.
+        if (currentTime >= snippetTargetTime && !hasGuessedCorrectly) {
             // Use VISUAL duration (0.1s) not actual playback duration (0.2s) for progress bar
             const durations = getDurations();
             const visualDuration = durations[guessCount] || getTotalGameDuration();
@@ -4305,6 +4287,9 @@
      * Uses audio events instead of timers for reliable mobile playback
      */
     function playSnippet() {
+        // Prevent playing if in album mode without album selection
+        if (currentMode === 'album' && !selectedAlbum) return;
+
         if (hasGuessedCorrectly || playButton.hasAttribute('disabled')) return;
 
         const durations = getDurations();
@@ -4355,14 +4340,44 @@
 
 
     // función de game over modificada
-    function showGameOver(won) {
+
+    // SMART RANDOM LOGIC
+    const messageHistory = { win: [], lose: [] };
+
+    function getNonRepeatingMessage(messages, type) {
+        const history = messageHistory[type];
+        // Filter out messages currently in history (last 3 shown)
+        let available = messages.filter(msg => !history.includes(msg));
+
+        // Fallback: If all messages are in history (shouldn't happen with large pools, but for safety)
+        // or if available is too small, just pick from full pool avoiding the VERY last one if possible.
+        if (available.length === 0) {
+            const lastOne = history[history.length - 1];
+            available = messages.filter(msg => msg !== lastOne);
+        }
+
+        // Final fallback if still empty (e.g. pool size 1)
+        if (available.length === 0) available = messages;
+
+        const randomMsg = available[Math.floor(Math.random() * available.length)];
+
+        // Update history
+        history.push(randomMsg);
+        if (history.length > 3) history.shift(); // Keep last 3
+
+        return randomMsg;
+    }
+    function showGameOver(won, isDuplicate = false) {
         isGameOver = true;
 
         // inicializar el reproductor completo antes de mostrar el modal
         initializeFullPlayer();
 
         if (won) {
-            gameResult.textContent = "ganaste gg"; // TEXTO SOLICITADO
+            const winMessages = ["GANASTE GG", "SOS BUENO", "CHAD HUMANO", "QUE PIBE TAN UNDER", "AURA INFINITA", "ZARPADO EN CHETO", "boeee...", "estoy orgulloso hijo", "CLAP CLAP", "ESTE SI QUE SABE", "watejel"];
+            // const randomMsg = winMessages[Math.floor(Math.random() * winMessages.length)];
+            const randomMsg = getNonRepeatingMessage(winMessages, 'win');
+            gameResult.textContent = randomMsg;
             gameOverContent.classList.remove('win', 'lose'); // limpia ambas
             gameOverContent.classList.add('win');
             answerLabel.textContent = "la cancion era"; // etiqueta simple
@@ -4376,8 +4391,11 @@
                     localStorage.setItem('streaksavers', streaksavers);
                 }
             } else {
-                artistStreak++;
-                localStorage.setItem('artistStreak', artistStreak);
+                // ARTIST / ALBUM MODE
+                if (!isDuplicate) {
+                    artistStreak++;
+                    localStorage.setItem('artistStreak', artistStreak);
+                }
             }
 
             updateStreakDisplay();
@@ -4388,7 +4406,7 @@
                 particleCount: 70,
                 spread: 70,
                 origin: { y: 0.6 },
-                ticks: 200, // Duración breve
+                ticks: 200, // DuraciÃÂ³n breve
                 gravity: 1.2,
                 scalar: 0.9
             });
@@ -4397,15 +4415,16 @@
             playSound('gameover');
 
             // Mensajes aleatorios de derrota
-            const loseMessages = ["PERDISTE", "MAL AHI", "NECESITÁS MEJORAR", "DEDICATE AL PADEL", "NAAH :(", "SAJ", "FAKE FAN"];
-            const randomMsg = loseMessages[Math.floor(Math.random() * loseMessages.length)];
+            const loseMessages = ["PERDISTE", "MAL AHI", "NECESITÁS MEJORAR", "DEDICATE AL PADEL", "NAAH :(", "SAJ", "FAKE FAN", "PETÓN HISTORICO", "PERO WILLYGARFIO", "TE TENIA FE", "mal aji broder", "-10000 aura", "eeee?", "xdd"];
+            // const randomMsg = loseMessages[Math.floor(Math.random() * loseMessages.length)];
+            const randomMsg = getNonRepeatingMessage(loseMessages, 'lose');
             gameResult.textContent = randomMsg;
 
-            gameOverContent.classList.remove('win', 'lose'); // ¡limpia ambas!
+            gameOverContent.classList.remove('win', 'lose'); // Ã¡limpia ambas!
             gameOverContent.classList.add('lose');
             answerLabel.textContent = "la cancion era"; // etiqueta simple
 
-            // Lógica de salva rachas al perder
+            // LÃÂ³gica de salva rachas al perder
             if (currentMode === 'normal') {
                 // Ocultar UI de share por defecto al perder (se muestra solo si es fatal)
                 const shareCont = document.getElementById('share-container');
@@ -4425,7 +4444,7 @@
                     if (winStreak > 15) {
                         try {
                             generateShareCard(currentSong.nombre, winStreak);
-                            // Mostrar UI según dispositivo
+                            // Mostrar UI segÃÂºn dispositivo
                             if (window.innerWidth > 768) {
                                 if (shareCont) shareCont.style.display = 'flex';
                             } else {
@@ -4440,8 +4459,13 @@
                     localStorage.setItem('winStreak', winStreak);
                 }
             } else {
+                // Artist o Album mode: reset artistStreak
                 artistStreak = 0;
                 localStorage.setItem('artistStreak', artistStreak);
+
+                // RESET UNIQUE SONGS TRACKING
+                wonSongsInStreak.clear();
+                saveModeState(currentMode); // Save cleared state
             }
 
             updateStreakDisplay();
@@ -4451,7 +4475,7 @@
         correctAnswerEl.textContent = (currentSong.nombre || "");
         gameOverMessage.classList.add('show');
 
-        // Randomizar texto del botón "una ma"
+        // Randomizar texto del botÃÂ³n "una ma"
         const playAgainBtn = document.querySelector('.play-again-button');
         if (playAgainBtn) {
             const btnMessages = ["una ma", "otra?", "la seguimos?", "siguiente", "continuar"];
@@ -4481,20 +4505,35 @@
             guessBox.classList.add('correct');
             hasGuessedCorrectly = true;
 
-            // CAMBIO: Deshabilitar inmediatamente y añadir el retraso de 1.5s
+            // CHECK DUPLICATE WIN (Artist/Album Modes)
+            const songName = currentSong.nombre;
+            let isDuplicate = false;
+
+            if (currentMode === 'artist' || currentMode === 'album') {
+                if (wonSongsInStreak.has(songName)) {
+                    isDuplicate = true;
+                    showStreakWarning();
+                    // NO STREAK INCREMENT
+                } else {
+                    wonSongsInStreak.add(songName);
+                }
+                saveModeState(currentMode); // Persist updated set
+            }
+
+            // CAMBIO: Deshabilitar inmediatamente y aÃÂ±adir el retraso de 1.5s
             document.getElementById('search-container').classList.add('disabled');
             playButton.setAttribute('disabled', '');
             skipButton.disabled = true;
 
             setTimeout(() => {
-                showGameOver(true);
+                showGameOver(true, isDuplicate); // Pass isDuplicate flag
             }, 1500); // Retraso de 1.5 segundos
 
         } else {
             // si falla, se pone el nombre seleccionado en la casilla
             guessBox.textContent = selectedSongName || "intento fallido";
 
-            // Lógica de coincidencia parcial (solo modo normal)
+            // LÃÂ³gica de coincidencia parcial (solo modo normal)
             let isPartial = false;
             if (currentMode === 'normal') {
                 // Obtener string completo de artistas (antes del guion)
@@ -4507,7 +4546,7 @@
                     const correctArtists = correctArtistStr.split(',').map(a => a.trim().toLowerCase());
 
                     // Verificar si hay ALGUNA coincidencia
-                    // Si algún artista de la canción adivinada está en la lista de artistas de la correcta
+                    // Si algÃÂºn artista de la canciÃÂ³n adivinada estÃ¡ en la lista de artistas de la correcta
                     const match = guessedArtists.some(g => correctArtists.includes(g));
                     if (match) {
                         isPartial = true;
@@ -4538,36 +4577,36 @@
         const durations = getDurations();
         if (hasGuessedCorrectly || guessCount >= durations.length) return;
 
-        // Si está en modo Mandale, enviar intento
+        // Si estÃ¡ en modo Mandale, enviar intento
         if (isSubmitMode) {
-            // No reproducir sonido aquí, ya lo hace handleGuessFromSelection
+            // No reproducir sonido aquÃÂ­, ya lo hace handleGuessFromSelection
             const val = searchInput.value.trim();
             if (val) {
                 handleGuessFromSelection(val);
-                disableSubmitMode(); // Resetear botón tras intento
+                disableSubmitMode(); // Resetear botÃÂ³n tras intento
             }
             return;
         }
 
-        // SONIDO: Solo reproducir click si NO es el último skip (para que no se solape con game over)
+        // SONIDO: Solo reproducir click si NO es el ÃÂºltimo skip (para que no se solape con game over)
         if (guessCount < durations.length - 1) {
             playSound('click');
         }
 
         const guessBox = document.querySelectorAll('.guess-box')[guessCount];
 
-        // >>> INICIO MODIFICACIÓN JS PARA SKIP <<<
+        // >>> INICIO MODIFICACIÃâN JS PARA SKIP <<<
         guessBox.textContent = "Skipped";
         guessBox.classList.remove('incorrect', 'correct'); // asegurar que no tiene rojo ni verde
         guessBox.classList.add('skipped'); // nuevo: usa el gris oscuro
-        // >>> FIN MODIFICACIÓN JS PARA SKIP <<<
+        // >>> FIN MODIFICACIÃâN JS PARA SKIP <<<
 
         guessCount++;
         if (guessCount < durations.length) {
             updateTimeMarker(guessCount);
 
-            // FIX: Actualizar snippetTargetTime al nuevo límite del segmento desbloqueado
-            // para que el audio no se pause al llegar al límite del segmento anterior
+            // FIX: Actualizar snippetTargetTime al nuevo lÃÂ­mite del segmento desbloqueado
+            // para que el audio no se pause al llegar al lÃÂ­mite del segmento anterior
             let newTargetDuration = durations[guessCount];
             // "Mentira" del 0.2s: visual shows 0.1s but plays 0.2s
             if (guessCount === 0 && newTargetDuration === 0.1) {
@@ -4587,8 +4626,9 @@
         // CORREGIDO: parseFloat
         audioPlayer.volume = parseFloat(volumeSlider.value);
         volumeSlider.addEventListener("input", e => {
-            // CORREGIDO: parseFloat
-            audioPlayer.volume = parseFloat(e.target.value);
+            const vol = parseFloat(e.target.value);
+            audioPlayer.volume = vol;
+            localStorage.setItem('volume', vol);
         });
     }
 
@@ -4601,7 +4641,7 @@
         const percentage = getPercentage(targetTime);
 
         // Ajuste visual para que la flecha no parezca adelantada en 0.1s
-        // Si es el primer segmento (0.1s), le restamos un pelín
+        // Si es el primer segmento (0.1s), le restamos un pelÃÂ­n
         let visualPercentage = percentage;
         if (safeIndex === 0) visualPercentage -= 0.5; // Ajuste fino
 
@@ -4621,7 +4661,7 @@
 
     // -----------------------------------------------------
     // buscador y eventos
-    // NUEVO: Variable para controlar el modo del botón Skip
+    // NUEVO: Variable para controlar el modo del botÃÂ³n Skip
     let isSubmitMode = false;
 
     function enableSubmitMode() {
@@ -4649,13 +4689,19 @@
 
         if (currentMode === 'artist' && selectedArtist) {
             pool = pool.filter(s => extractArtist(s.nombre) === selectedArtist);
+        } else if (currentMode === 'album' && selectedAlbum) {
+            // FILTER BY ALBUM
+            const albumData = albumsData.find(a => a.name === selectedAlbum);
+            if (albumData) {
+                pool = albumData.songs;
+            }
         }
 
-        // MEJORADO: Búsqueda por palabras clave independientes (fuzzy-like)
+        // MEJORADO: BÃÂºsqueda por palabras clave independientes (fuzzy-like)
         const queryTerms = query.split(/\s+/); // Separar por espacios
         const filtered = pool.filter(s => {
             const songName = s.nombre.toLowerCase();
-            // Verificar si TODAS las palabras de la búsqueda están en el nombre
+            // Verificar si TODAS las palabras de la bÃÂºsqueda estÃ¡n en el nombre
             return queryTerms.every(term => songName.includes(term));
         });
         if (filtered.length > 0) {
@@ -4665,7 +4711,7 @@
                 div.classList.add('suggestion-item');
                 div.textContent = song.nombre;
 
-                // EVENTO IMPORTANTE: AHORA LLAMA A LA NUEVA FUNCIÓN DE ADIVINANZA
+                // EVENTO IMPORTANTE: AHORA LLAMA A LA NUEVA FUNCIÃâN DE ADIVINANZA
                 div.addEventListener('click', () => {
                     // primero se rellena el input con el valor seleccionado
                     searchInput.value = song.nombre;
@@ -4690,7 +4736,7 @@
     searchInput.addEventListener('keypress', function (event) {
         if (event.key === 'Enter') {
             event.preventDefault();
-            // no hace nada, bloquea el enter para forzar la selección de la lista
+            // no hace nada, bloquea el enter para forzar la selecciÃÂ³n de la lista
         }
     });
 
@@ -4700,32 +4746,53 @@
         renderGuessBoxes(); // Inicializar cajas
         renderProgressSegments();
         updateTimeMarker(0);
-        if (volumeSlider) audioPlayer.volume = parseFloat(volumeSlider.value);
+
+        // Restore volume
+        const savedVol = localStorage.getItem('volume');
+        if (savedVol !== null && volumeSlider) {
+            volumeSlider.value = savedVol;
+            audioPlayer.volume = parseFloat(savedVol);
+        } else if (volumeSlider) {
+            audioPlayer.volume = parseFloat(volumeSlider.value);
+        }
 
         // PERSISTENCIA: Cargar estado guardado
         loadFromLocalStorage();
+        currentMode = 'normal'; // FORCE NORMAL MODE ON LOAD (User Request)
 
-        // Restaurar UI según el modo cargado
+        // Restaurar UI segÃÂºn el modo cargado
         if (currentMode === 'artist') {
             modeNormalBtn.classList.remove('active');
             modeArtistBtn.classList.add('active');
             artistSection.classList.add('show');
             populateArtists();
             restoreModeState('artist');
+        } else if (currentMode === 'album') {
+            modeNormalBtn.classList.remove('active');
+            modeAlbumBtn.classList.add('active');
+            albumSection.classList.add('show');
+            populateAlbums();
+            restoreModeState('album');
         } else {
             restoreModeState('normal');
         }
 
-        // Cargar racha inicial (si no se cargó ya en restoreModeState -> resetGame)
+        // Cargar racha inicial (si no se cargÃÂ³ ya en restoreModeState -> resetGame)
         winStreak = parseInt(localStorage.getItem('winStreak')) || 0;
         updateStreakDisplay();
         updateStreakSaverUI();
 
         // Chequear popup de racha
         checkClaimPopup();
+
+        // Hide lives UI if in album mode
+        const streakSaverUI = document.getElementById('streak-saver-ui');
+        if (currentMode === 'album' && streakSaverUI) {
+            streakSaverUI.style.display = 'none';
+        }
     });
 
-    // LÓGICA POPUP RACHA
+    // LÃâGICA POPUP RACHA
     function checkClaimPopup() {
         if (!localStorage.getItem('streakClaimed_v1')) {
             const popup = document.getElementById('streak-claim-popup');
@@ -4757,12 +4824,12 @@
         if (popup) popup.style.display = 'none';
     }
 
-    // LÓGICA MODAL BUGS
+    // LÃâGICA MODAL BUGS
     function openBugsModal() {
         const modal = document.getElementById('bugs-modal');
         if (modal) {
-            // Asegurar display flex antes de la animación (aunque ya debería estar por CSS)
-            // pero para esta implementación basada en CSS opacity, flex está siempre.
+            // Asegurar display flex antes de la animaciÃÂ³n (aunque ya deberÃÂ­a estar por CSS)
+            // pero para esta implementaciÃÂ³n basada en CSS opacity, flex estÃ¡ siempre.
             // Solo necesitamos togglear la clase.
             modal.classList.add('show');
         }
@@ -4779,7 +4846,7 @@
         if (e.target === modal) closeBugsModal();
     });
 
-    // LÓGICA MODAL RECOMENDAR
+    // LÃâGICA MODAL RECOMENDAR
     function openRecommendModal() {
         playSound('click');
         const modal = document.getElementById('recommend-modal');
@@ -4798,7 +4865,7 @@
         if (e.target === modal) closeRecommendModal();
     });
 
-    // LÓGICA MODAL INFO VIDAS
+    // LÃâGICA MODAL INFO VIDAS
     function openLifeModal() {
         playSound('click');
         const modal = document.getElementById('life-info-modal');
@@ -5054,8 +5121,83 @@
         }
     }
 
+    // Custom Smooth Slow Scroll Implementation
+    function applySlowScroll(element) {
+        if (!element) return;
+
+        let targetScroll = 0;
+        let isAnimating = false;
+        let animationFrame;
+
+        element.addEventListener('wheel', (e) => {
+            e.preventDefault();
+
+            // If not animating, sync target with current position to avoid jumps
+            if (!isAnimating) {
+                targetScroll = element.scrollTop;
+            }
+
+            // Factor 0.4: Slower than default (approx 40% speed)
+            const scrollSpeed = 0.4;
+            targetScroll += e.deltaY * scrollSpeed;
+
+            // Clamp target
+            const maxScroll = element.scrollHeight - element.clientHeight;
+            targetScroll = Math.max(0, Math.min(targetScroll, maxScroll));
+
+            if (!isAnimating) {
+                isAnimating = true;
+                animateScroll();
+            }
+        }, { passive: false });
+
+        function animateScroll() {
+            // Lerp factor 0.08: Very smooth/soft (lower is smoother)
+            const smoothFactor = 0.08;
+
+            const currentScroll = element.scrollTop;
+            const diff = targetScroll - currentScroll;
+
+            if (Math.abs(diff) < 0.5) {
+                element.scrollTop = targetScroll;
+                isAnimating = false;
+                return;
+            }
+
+            // Interpolate
+            element.scrollTop = currentScroll + (diff * smoothFactor);
+            animationFrame = requestAnimationFrame(animateScroll);
+        }
+    }
+
+    window.addEventListener('load', () => {
+        applySlowScroll(document.getElementById('songs-list'));
+        applySlowScroll(document.getElementById('artist-list'));
+        applySlowScroll(document.getElementById('album-list'));
+    });
+
     window.addEventListener("resize", ajustarEscala);
     window.addEventListener("load", ajustarEscala);
+
+    // FIX: Force loader on Play Button when switching modes without selection
+    // This ensures visual feedback (spinner) persists until the user picks a song
+    ['mode-artist', 'mode-album', 'mode-normal'].forEach(modeId => {
+        const btn = document.getElementById(modeId);
+        if (btn) {
+            btn.addEventListener('click', () => {
+                setTimeout(() => {
+                    const playBtn = document.getElementById('play-button');
+                    // Check conditions to force loader
+                    const needsLoader = (currentMode === 'artist' && !selectedArtist) ||
+                        (currentMode === 'album' && !selectedAlbum);
+
+                    if (needsLoader && playBtn) {
+                        playBtn.innerHTML = '<div class="loader"></div>';
+                    }
+                }, 50); // Small delay to run after main switch logic
+            });
+        }
+    });
 </script>
 </body>
 
