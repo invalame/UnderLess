@@ -432,8 +432,8 @@
         "archivo": "music/Jugo! , YSY A - Todo el dia en el trap.mp3"
     },
     {
-        "nombre": "Jugo!, salasflaco - Desfile",
-        "archivo": "music/Jugo!, salasflaco - Desfile.mp3"
+        "nombre": "Jugo!, salas flaco - Desfile",
+        "archivo": "music/Jugo!, salas flaco - Desfile.mp3"
     },
     {
         "nombre": "KERCHAK, Cluster - No Me Pienso Demorar",
@@ -832,8 +832,8 @@
         "archivo": "music/TURROBABY, ZELL - Inter De Miami.mp3"
     },
     {
-        "nombre": "TURROBABY, ZELL, STIFFY - Cara De Boludo",
-        "archivo": "music/TURROBABY, ZELL, STIFFY - Cara De Boludo.mp3"
+        "nombre": "TURROBABY, ZELL, Stiffy - Cara De Boludo",
+        "archivo": "music/TURROBABY, ZELL, Stiffy - Cara De Boludo.mp3"
     },
     {
         "nombre": "vahel - .",
@@ -970,8 +970,11 @@
     {
         "nombre": "Red Shine, MAGNESIO - ELDEN RING",
         "archivo": "music/Red Shine, MAGNESIO - ELDEN RING.mp3"
-    }
-
+    },
+    {
+        "nombre": "TURROBABY, LITTLE BOOGIE - Emotes",
+        "archivo": "music/TURROBABY, LITTLE BOOGIE - Emotes.mp3"
+    },
     /*
     {
         "nombre": "",
@@ -1871,8 +1874,8 @@ const bibliotecaArtist = [
         "archivo": "musicartist/Jugo!, enzocerobulto - Hacela facil.mp3"
     },
     {
-        "nombre": "Jugo!, salasflaco - Desfile",
-        "archivo": "musicartist/Jugo!, salasflaco - Desfile.mp3"
+        "nombre": "Jugo!, salas flaco - Desfile",
+        "archivo": "musicartist/Jugo!, salas flaco - Desfile.mp3"
     },
     {
         "nombre": "KERCHAK - BACK",
@@ -3429,8 +3432,8 @@ const bibliotecaArtist = [
         "archivo": "musicartist/CHOOSEY - ORISHINAL.mp3"
     },
     {
-        "nombre": "",
-        "archivo": "musicartist/"
+        "nombre": "TURROBABY, LITTLE BOOGIE - Emotes",
+        "archivo": "musicartist/TURROBABY, LITTLE BOOGIE - Emotes.mp3"
     },
     {
         "nombre": "",

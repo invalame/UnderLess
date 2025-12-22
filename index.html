@@ -13,9 +13,25 @@
     <title>UnderLess</title>
     <meta name="description" content="en UnderLess tenés que adivinar artistas y canciones del under argentino.">
     <meta property="og:title" content="UnderLess">
+    <meta property="og:description" content="en UnderLess tenés que adivinar artistas y canciones del under argentino.">
+    <meta property="og:type" content="website">
+    <meta property="og:image" content="https://invalame.github.io/UnderLess/img/home_underless.png">
     <meta name="application-name" content="UnderLess">
-    <link rel="icon" href="underless.ico">
-    <link rel="icon" href="favicon.ico" type="image/x-icon">
+    <meta name="google-site-verification" content="wJNtyF9L8PONkSvZSHAbqFFadmZrDmITZJYvXF0eivQ">
+    <!-- Favicon - single declaration with correct format -->
+    <link rel="icon" type="image/x-icon" href="favicon.ico">
+    <link rel="shortcut icon" type="image/x-icon" href="favicon.ico">
+    <!-- Structured Data for Google - Site Name -->
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "WebSite",
+        "name": "UnderLess",
+        "url": "https://invalame.github.io/UnderLess/"
+    }
+    </script>
+    <!-- UnderLess Sidebar Styles (scoped) -->
+    <link rel="stylesheet" href="underless-sidebar.css">
     <style>
         @font-face {
             font-family: 'UnderLessFont';
@@ -937,7 +953,7 @@
             /* Flex siempre para centrar, controlamos visibilidad */
             justify-content: center;
             align-items: center;
-            z-index: 3000;
+            z-index: 7000;
             opacity: 0;
             visibility: hidden;
             pointer-events: none;
@@ -1033,7 +1049,7 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            z-index: 3000;
+            z-index: 7000;
             opacity: 0;
             visibility: hidden;
             pointer-events: none;
@@ -2397,10 +2413,7 @@
 <div id="ui-root">
 </div>
 
-<!-- VOLUME SLIDER (DESKTOP) -->
-<div class="volume-container-desktop">
-    <input type="range" id="volume-slider" min="0" max="1" step="0.05" value="1" title="Volumen">
-</div>
+
 
 <!-- MOBILE MENU (PHONE) -->
 <div class="mobile-menu-container" id="mobile-menu-container">
@@ -2806,7 +2819,7 @@
     // Duraciones de intentos (DINÃÂMICO)
     function getDurations() {
         if (currentMode === 'artist' || currentMode === 'album') {
-            return [0.1, 2, 4, 8];
+            return [0.1, 0.5, 2, 6];
         }
         return [0.1, 0.5, 2, 4, 8, 15];
     }
@@ -4374,7 +4387,7 @@
         initializeFullPlayer();
 
         if (won) {
-            const winMessages = ["GANASTE GG", "SOS BUENO", "CHAD HUMANO", "QUE PIBE TAN UNDER", "AURA INFINITA", "ZARPADO EN CHETO", "boeee...", "estoy orgulloso hijo", "CLAP CLAP", "ESTE SI QUE SABE", "watejel"];
+            const winMessages = ["GANASTE GG", "SOS BUENO", "CHAD HUMANO", "QUE PIBE TAN UNDER", "ZARPADO EN CHETO", "boeee...", "estoy orgulloso hijo", "CLAP CLAP", "ESTE SI QUE SABE", "watejel"];
             // const randomMsg = winMessages[Math.floor(Math.random() * winMessages.length)];
             const randomMsg = getNonRepeatingMessage(winMessages, 'win');
             gameResult.textContent = randomMsg;
@@ -4415,7 +4428,7 @@
             playSound('gameover');
 
             // Mensajes aleatorios de derrota
-            const loseMessages = ["PERDISTE", "MAL AHI", "NECESITÁS MEJORAR", "DEDICATE AL PADEL", "NAAH :(", "SAJ", "FAKE FAN", "PETÓN HISTORICO", "PERO WILLYGARFIO", "TE TENIA FE", "mal aji broder", "-10000 aura", "eeee?", "xdd"];
+            const loseMessages = ["PERDISTE", "MAL AHI", "NECESITÁS MEJORAR", "DEDICATE AL PADEL", "NAAH :(", "SAJ", "FAKE FAN", "PETÓN HISTORICO", "TE TENIA FE", "mal aji broder", "eeee?", "xdd"];
             // const randomMsg = loseMessages[Math.floor(Math.random() * loseMessages.length)];
             const randomMsg = getNonRepeatingMessage(loseMessages, 'lose');
             gameResult.textContent = randomMsg;
@@ -4724,6 +4737,44 @@
             });
             songsList.classList.add('show');
         } else songsList.classList.remove('show');
+    });
+
+    // NEW: Re-show suggestions when clicking/focusing on search input with existing text
+    searchInput.addEventListener('focus', function () {
+        const query = (this.value || '').toLowerCase();
+        if (query.length >= 2) {
+            // Trigger the same logic as input event
+            let pool = currentMode === 'artist' ? bibliotecaArtist : biblioteca;
+
+            if (currentMode === 'artist' && selectedArtist) {
+                pool = pool.filter(s => extractArtist(s.nombre) === selectedArtist);
+            } else if (currentMode === 'album' && selectedAlbum) {
+                const albumData = albumsData.find(a => a.name === selectedAlbum);
+                if (albumData) pool = albumData.songs;
+            }
+
+            const queryTerms = query.split(/\s+/);
+            const filtered = pool.filter(s => {
+                const songName = s.nombre.toLowerCase();
+                return queryTerms.every(term => songName.includes(term));
+            });
+
+            songsList.innerHTML = '';
+            if (filtered.length > 0) {
+                filtered.forEach(song => {
+                    const div = document.createElement('div');
+                    div.classList.add('suggestion-item');
+                    div.textContent = song.nombre;
+                    div.addEventListener('click', () => {
+                        searchInput.value = song.nombre;
+                        songsList.classList.remove('show');
+                        enableSubmitMode();
+                    });
+                    songsList.appendChild(div);
+                });
+                songsList.classList.add('show');
+            }
+        }
     });
 
     document.addEventListener('click', (event) => {
@@ -5174,6 +5225,7 @@
         applySlowScroll(document.getElementById('songs-list'));
         applySlowScroll(document.getElementById('artist-list'));
         applySlowScroll(document.getElementById('album-list'));
+        applySlowScroll(document.getElementById('uoh-artist-list'));
     });
 
     window.addEventListener("resize", ajustarEscala);
@@ -5199,6 +5251,237 @@
         }
     });
 </script>
+
+<!-- ========================================
+     UNDERLESS SIDEBAR ROOT
+     All sidebar elements scoped under this container
+     ======================================== -->
+<div id="underless-sidebar-root">
+    <!-- Menu Buttons (Hamburger + Settings) -->
+    <div class="underless-menu-buttons">
+        <button class="underless-hamburger" aria-label="Abrir menu de modos" title="Menu">
+            <span></span>
+            <span></span>
+            <span></span>
+        </button>
+        <button class="underless-settings-btn" aria-label="Configuracion" title="Configuracion">
+            <img src="img/img_effects.png" alt="settings">
+        </button>
+    </div>
+
+    <!-- Overlay (darkens background when sidebar open) -->
+    <div class="underless-overlay" aria-hidden="true"></div>
+
+    <!-- Sidebar Panel - Mode selection with icons -->
+    <nav class="underless-sidebar" aria-label="Menu de modos de juego">
+        <p class="underless-sidebar-label">MODOS DE JUEGO</p>
+
+        <div class="underless-mode-option underless-mode-normal active" aria-label="Modo UnderLess Normal">
+            <img src="img/home_underless.png" alt="" class="mode-icon">
+            <span>UNDERLESS</span>
+        </div>
+        <div class="underless-mode-option underless-mode-underorhigher" aria-label="Modo Under or Higher">
+            <img src="img/home_underhigher.png" alt="" class="mode-icon">
+            <span>UNDER/HIGHER</span>
+        </div>
+
+        <!-- Social Buttons -->
+        <div class="underless-social-buttons">
+            <p class="underless-sidebar-label">REDES</p>
+            <a href="https://x.com/Invalame" target="_blank" class="underless-social-btn underless-twitter-btn">
+                <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor">
+                    <path
+                        d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" />
+                </svg>
+                Twitter
+            </a>
+            <a href="https://youtube.com/@UnderLesss" target="_blank"
+                class="underless-social-btn underless-youtube-btn">
+                <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor">
+                    <path
+                        d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z" />
+                </svg>
+                YouTube
+            </a>
+        </div>
+    </nav>
+
+    <!-- Under or Higher Game -->
+    <div class="underless-uoh-game">
+        <!-- Left side: hamburger button + search button -->
+        <div class="uoh-top-left">
+            <button class="uoh-back-btn" id="uoh-back-btn" aria-label="Menu" onclick="toggleSidebar()">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+            <!-- Search button (PC only) -->
+            <button class="uoh-search-btn" id="uoh-search-btn" aria-label="Buscar artistas"
+                onclick="toggleArtistSearch()">
+                <svg viewBox="0 0 24 24" fill="white" width="20" height="20">
+                    <path
+                        d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z" />
+                </svg>
+            </button>
+        </div>
+
+        <!-- Artist Search Overlay (darkens background) -->
+        <div class="uoh-artist-search-overlay" id="uoh-artist-search-overlay" onclick="toggleArtistSearch()"></div>
+
+        <!-- Artist Search Panel (PC only) -->
+        <div class="uoh-artist-search-panel" id="uoh-artist-search-panel">
+            <div class="uoh-artist-search-header">
+                <div>
+                    <h3>Buscador de artistas</h3>
+                    <p class="uoh-artist-search-subtitle">Esta seccion es para que corrobores si está (o no) un artista
+                        en el Under/Higher</p>
+                </div>
+                <button class="uoh-artist-search-close" onclick="toggleArtistSearch()">×</button>
+            </div>
+            <div class="uoh-artist-search-input-wrapper">
+                <input type="text" id="uoh-artist-search-input" placeholder="Buscar artista..." autocomplete="off">
+            </div>
+            <div class="uoh-artist-list" id="uoh-artist-list">
+                <!-- Artists will be populated by JS -->
+            </div>
+        </div>
+
+        <!-- Right side: same buttons as normal mode -->
+        <div class="uoh-top-right">
+            <button class="recommend-btn" onclick="openRecommendModal()">recomendar</button>
+            <button class="bugs-btn" onclick="openBugsModal()">bugs</button>
+            <a href="https://www.youtube.com/@UnderLesss" target="_blank" rel="noopener noreferrer" class="youtube-btn"
+                aria-label="YouTube">
+                <svg viewBox="0 0 24 24" fill="white" width="20" height="20">
+                    <path
+                        d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z" />
+                </svg>
+            </a>
+        </div>
+
+        <!-- Header -->
+        <header class="game-header">
+            <h1 class="game-title"><span class="title-under">Under</span><span class="title-higher">/Higher</span></h1>
+            <p class="game-question">¿Cuál tiene <span class="highlight">MÁS</span> oyentes mensuales?</p>
+        </header>
+
+        <!-- Score -->
+        <div class="score-container">
+            <div class="score-circle" id="uoh-score-display">0</div>
+        </div>
+
+
+
+        <!-- Cards -->
+        <main class="cards-container" id="uoh-cards-container">
+            <!-- Inline Lose Screen (hidden by default, replaces artists) -->
+            <div class="uoh-lose-screen" id="uoh-lose-screen">
+                <h2 class="uoh-lose-title">PERDISTE</h2>
+                <p class="uoh-lose-subtitle">intentalo de nuevo si queres</p>
+                <div class="uoh-lose-score">
+                    <span class="uoh-lose-score-label">Tu racha:</span>
+                    <span class="uoh-lose-score-value" id="uoh-lose-score-value">0</span>
+                </div>
+                <div class="uoh-lose-buttons">
+                    <button class="uoh-lose-btn uoh-play-again-btn" onclick="UnderlessSidebar.playAgain()">Jugar de
+                        nuevo</button>
+                    <button class="uoh-lose-btn uoh-exit-btn" onclick="UnderlessSidebar.selectMode('normal')">Ir a
+                        UNDERLESS</button>
+                </div>
+            </div>
+
+            <!-- Card Left -->
+            <div class="artist-card" id="uoh-card-left">
+                <div class="card-image-container">
+                    <img class="card-image" id="uoh-img-left" src="" alt="Artista 1">
+                    <div class="result-overlay wrong" id="uoh-overlay-left-wrong"></div>
+                    <div class="result-overlay correct" id="uoh-overlay-left-correct"></div>
+                </div>
+                <div class="card-info">
+                    <div class="artist-name-section">
+                        <p class="artist-name" id="uoh-name-left">"Artista"</p>
+                    </div>
+                    <div class="listeners-section">
+                        <div class="listeners-container" id="uoh-listeners-left">
+                            <p class="listeners-count" id="uoh-count-left">0</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- VS Divider -->
+            <div class="vs-divider">VS</div>
+
+            <!-- Card Right -->
+            <div class="artist-card" id="uoh-card-right">
+                <div class="card-image-container">
+                    <img class="card-image" id="uoh-img-right" src="" alt="Artista 2">
+                    <div class="result-overlay wrong" id="uoh-overlay-right-wrong"></div>
+                    <div class="result-overlay correct" id="uoh-overlay-right-correct"></div>
+                </div>
+                <div class="card-info">
+                    <div class="artist-name-section">
+                        <p class="artist-name" id="uoh-name-right">"Artista"</p>
+                    </div>
+                    <div class="listeners-section">
+                        <div class="listeners-container" id="uoh-listeners-right">
+                            <p class="listeners-count" id="uoh-count-right">0</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+</div>
+
+<!-- SETTINGS MODAL - Reuses EXACT existing modal structure -->
+<div id="underless-settings-modal"
+    style="position:fixed;top:0;left:0;width:100%;height:100%;background-color:rgba(0,0,0,0.7);display:flex;justify-content:center;align-items:center;z-index:7000;opacity:0;visibility:hidden;pointer-events:none;transition:opacity 0.3s ease, visibility 0.3s ease;">
+    <div class="modal-box"
+        style="background-color:#242829;border:1px solid #575757;border-radius:12px;padding:30px 35px;max-width:400px;width:90%;text-align:center;font-family:'PoppinsFont',sans-serif;position:relative;transform:scale(0.9);transition:transform 0.3s cubic-bezier(0.175,0.885,0.32,1.275);">
+        <button class="close-x" onclick="UnderlessSidebar.closeSettingsModal()"
+            style="position:absolute;top:12px;right:15px;background:none;border:none;color:#b3b3b3;font-size:1.4em;cursor:pointer;line-height:1;padding:0;">x</button>
+        <h3 style="margin:0 0 20px 0;color:#ffffff;font-size:1.2em;">Configuracion</h3>
+        <div class="underless-settings-content" style="display:flex;flex-direction:column;gap:20px;margin-top:15px;">
+            <div class="underless-settings-row" style="display:flex;align-items:center;gap:12px;">
+                <img src="img/img_music.png" alt="musica" style="width:24px;height:24px;object-fit:contain;">
+                <label for="underless-music-vol"
+                    style="color:#b3b3b3;font-size:0.9rem;min-width:60px;text-align:left;">Musica</label>
+                <input type="range" id="underless-music-vol" min="0" max="1" step="0.05" value="1"
+                    style="flex:1;height:4px;accent-color:#55b725;cursor:pointer;">
+            </div>
+            <div class="underless-settings-row" style="display:flex;align-items:center;gap:12px;">
+                <img src="img/img_effects.png" alt="efectos" style="width:24px;height:24px;object-fit:contain;">
+                <label for="underless-sfx-vol"
+                    style="color:#b3b3b3;font-size:0.9rem;min-width:60px;text-align:left;">Efectos</label>
+                <input type="range" id="underless-sfx-vol" min="0" max="1" step="0.05" value="1"
+                    style="flex:1;height:4px;accent-color:#55b725;cursor:pointer;">
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- LOSE MODAL - Reuses EXACT existing modal structure -->
+<div id="underless-lose-modal"
+    style="position:fixed;top:0;left:0;width:100%;height:100%;background-color:rgba(0,0,0,0.7);display:flex;justify-content:center;align-items:center;z-index:7000;opacity:0;visibility:hidden;pointer-events:none;transition:opacity 0.3s ease, visibility 0.3s ease;">
+    <div class="modal-box"
+        style="background-color:#242829;border:1px solid #b42828;border-radius:12px;padding:30px 35px;max-width:400px;width:90%;text-align:center;font-family:'PoppinsFont',sans-serif;position:relative;transform:scale(0.9);transition:transform 0.3s cubic-bezier(0.175,0.885,0.32,1.275);">
+        <button class="close-x" onclick="UnderlessSidebar.hideLoseModal(); UnderlessSidebar.selectMode('normal');"
+            style="position:absolute;top:12px;right:15px;background:none;border:none;color:#b3b3b3;font-size:1.4em;cursor:pointer;line-height:1;padding:0;">x</button>
+        <h3 style="margin:0 0 20px 0;color:#b42828;font-size:1.2em;">Perdiste!</h3>
+        <p style="color:#b3b3b3;font-size:0.9em;margin:0 0 10px 0;">Tu racha final:</p>
+        <div class="underless-lose-streak-display"
+            style="font-size:3rem;font-weight:700;color:#55b725;margin:15px 0;font-family:'PoppinsFont',sans-serif;">0
+        </div>
+        <button class="underless-play-again-btn" onclick="UnderlessSidebar.playAgain()"
+            style="background:#55b725;border:none;border-radius:4px;color:#ffffff;padding:12px 25px;cursor:pointer;font-family:'PoppinsFont',sans-serif;font-weight:700;font-size:1rem;width:100%;margin-top:15px;">Jugar
+            de nuevo</button>
+    </div>
+</div>
+
+<!-- UnderLess Sidebar Scripts -->
+<script src="sample-artists.js"></script>
+<script src="underless-sidebar.js"></script>
 </body>
 
 </html>
