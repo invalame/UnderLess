@@ -3436,40 +3436,40 @@ const bibliotecaArtist = [
         "archivo": "musicartist/TURROBABY, LITTLE BOOGIE - Emotes.mp3"
     },
     {
-        "nombre": "",
-        "archivo": "musicartist/"
+        "nombre": "jovenalien - Ni ahi con tus quilombos",
+        "archivo": "musicartist/jovenalien - Ni ahi con tus quilombos.mp3"
     },
     {
-        "nombre": "",
-        "archivo": "musicartist/"
+        "nombre": "White! - Sombras",
+        "archivo": "musicartist/White! - Sombras.mp3"
     },
     {
-        "nombre": "",
-        "archivo": "musicartist/"
+        "nombre": "Nykoo0 - Barack Obama",
+        "archivo": "musicartist/Nykoo0 - Barack Obama.mp3"
     },
     {
-        "nombre": "",
-        "archivo": "musicartist/"
+        "nombre": "bic - selfish",
+        "archivo": "musicartist/bic - selfish.mp3"
     },
     {
-        "nombre": "",
-        "archivo": "musicartist/"
+        "nombre": "bic - como amar",
+        "archivo": "musicartist/bic - como amar.mp3"
     },
     {
-        "nombre": "",
-        "archivo": "musicartist/"
+        "nombre": "bic - silly",
+        "archivo": "musicartist/bic - silly.mp3"
     },
     {
-        "nombre": "",
-        "archivo": "musicartist/"
+        "nombre": "bic - new one",
+        "archivo": "musicartist/bic - new one.mp3"
     },
     {
-        "nombre": "",
-        "archivo": "musicartist/"
+        "nombre": "bic - tus recuerdos",
+        "archivo": "musicartist/bic - tus recuerdos.mp3"
     },
     {
-        "nombre": "",
-        "archivo": "musicartist/"
+        "nombre": "bic - dramas",
+        "archivo": "musicartist/bic - dramas.mp3"
     },
     {
         "nombre": "",
