@@ -92,10 +92,6 @@
         "archivo": "music/AGUSFORTNITE2008, Stiffy, NEO PISTEA - MEJORALITO.mp3"
     },
     {
-        "nombre": "Bhavi, Seven Kayne, Shako - K.O",
-        "archivo": "music/Bhavi, Seven Kayne, Shako - K.O.mp3"
-    },
-    {
         "nombre": "bic - letal",
         "archivo": "music/bic - letal.mp3"
     },
