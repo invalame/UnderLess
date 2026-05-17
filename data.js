@@ -7,6 +7,10 @@
         "nombre": "143LETI - EU TE AMO",
         "archivo": "music/143LETI - EU TE AMO.mp3"
     },
+      {
+        "nombre": "PANKKY - Flamingo star",
+        "archivo": "music/PANKKY - Flamingo star.mp3"
+    },
     {
         "nombre": "143LETI, VALUTO  - COSAS QUE ESTAN MAL",
         "archivo": "music/143LETI, VALUTO  - COSAS QUE ESTAN MAL.mp3"
