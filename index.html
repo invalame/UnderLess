@@ -1,7 +1,8 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="es">
 
 <head>
+    <script data-goatcounter="https://insalubre.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <!-- ANTI-CACHE: Forzar al navegador a siempre buscar la versión más nueva -->
@@ -3505,22 +3506,24 @@
                 audioPlayer.onloadedmetadata = null;
             };
 
-            // Cargar canciÃÂ³n con blob (ofuscaciÃÂ³n)
+            // Cargar canciÃƒÂ³n con blob (ofuscaciÃƒÂ³n)
             if (currentBlobUrl) {
                 URL.revokeObjectURL(currentBlobUrl);
                 currentBlobUrl = null;
             }
 
-            // BUGFIX: Skip fetch on file protocol to avoid console errors (spoilers)
+            // FIX: Use encodeURI to handle special chars (!, ó, ñ, etc.) in filenames
+            const encodedPath = encodeURI(currentSong.archivo);
             if (window.location.protocol !== 'file:') {
                 try {
-                    const response = await fetch(currentSong.archivo);
+                    const response = await fetch(encodedPath);
+                    if (!response.ok) throw new Error(`HTTP ${response.status}`);
                     const blob = await response.blob();
                     currentBlobUrl = URL.createObjectURL(blob);
                     audioPlayer.src = currentBlobUrl;
                 } catch (e) {
-                    console.error("Error loading audio blob:", e);
-                    audioPlayer.src = currentSong.archivo;
+                    console.error("Error loading audio blob (restore):", e);
+                    audioPlayer.src = encodedPath; // Fallback to direct path
                 }
             } else {
                 // Local file: use direct path
@@ -3530,13 +3533,31 @@
             audioPlayer.currentTime = gameStartTime;
             audioPlayer.load();
 
-            // Activar botón play cuando el audio esté listo
-            audioPlayer.oncanplaythrough = () => {
+            // FIX: Only enable play button when audio is actually ready
+            const enablePlayOnRestore = () => {
                 audioPlayer.currentTime = gameStartTime;
                 playButton.removeAttribute('disabled');
+                skipButton.disabled = false;
+                updatePlayIcon(false);
                 audioPlayer.oncanplaythrough = null;
+                audioPlayer.oncanplay = null;
+                audioPlayer.onerror = null;
             };
-            // No reproducimos automÃ¡ticamente, el usuario debe dar play
+
+            audioPlayer.oncanplaythrough = enablePlayOnRestore;
+            // Fallback: some browsers fire canplay but not canplaythrough
+            audioPlayer.oncanplay = enablePlayOnRestore;
+
+            // FIX: Handle audio load errors (e.g. 404, corrupted file)
+            audioPlayer.onerror = () => {
+                console.error("Audio error on restore for:", currentSong.archivo);
+                playButton.setAttribute('disabled', '');
+                updatePlayIcon(false);
+                audioPlayer.oncanplaythrough = null;
+                audioPlayer.oncanplay = null;
+                audioPlayer.onerror = null;
+            };
+            // No reproducimos automáticamente, el usuario debe dar play
         } else {
             // Si no habÃÂ­a canciÃÂ³n (ej. artista no seleccionado), resetear UI
             audioPlayer.src = "";
@@ -3563,8 +3584,8 @@
         } else {
             if (currentSong.archivo) {
                 document.getElementById('search-container').classList.remove('disabled');
-                playButton.removeAttribute('disabled');
-                skipButton.disabled = false;
+                // FIX: Do NOT enable play button here — wait for oncanplaythrough/oncanplay event
+                // which is already set above. Enabling prematurely causes play() to fail silently.
             }
         }
 
@@ -3833,14 +3854,14 @@
 
             saveModeState(currentMode);
 
-            // Limpiar listener para evitar ejecuciones mÃÂºltiples
+            // Limpiar listener para evitar ejecuciones mÃƒÂºltiples
             audioPlayer.onloadedmetadata = null;
         };
 
         audioPlayer.load(); // forzar la carga de la nueva fuente
 
-        // correcciÃÂ³n: usar oncanplaythrough para activar el botÃÂ³n solo cuando el audio estÃ¡ listo
-        audioPlayer.oncanplaythrough = () => {
+        // corrección: usar oncanplaythrough para activar el botón solo cuando el audio está listo
+        const enablePlayOnReset = () => {
             // re-establecer currentTime con el valor aleatorio calculado
             audioPlayer.currentTime = gameStartTime;
             playButton.removeAttribute('disabled');
@@ -3848,8 +3869,23 @@
             skipButton.disabled = false;
             // Restore play icon
             updatePlayIcon(false);
+            audioPlayer.oncanplaythrough = null;
+            audioPlayer.oncanplay = null;
+            audioPlayer.onerror = null;
+        };
 
-            audioPlayer.oncanplaythrough = null; // limpiar el listener
+        audioPlayer.oncanplaythrough = enablePlayOnReset;
+        // Fallback: some browsers fire canplay but not canplaythrough
+        audioPlayer.oncanplay = enablePlayOnReset;
+
+        // FIX: Handle audio load errors (e.g. 404, corrupted file) — prevents infinite loading spinner
+        audioPlayer.onerror = () => {
+            console.error("Audio load error for:", currentSong.archivo);
+            playButton.setAttribute('disabled', '');
+            updatePlayIcon(false);
+            audioPlayer.oncanplaythrough = null;
+            audioPlayer.oncanplay = null;
+            audioPlayer.onerror = null;
         };
 
         // Actualizar display de racha al reset

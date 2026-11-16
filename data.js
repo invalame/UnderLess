@@ -1,4 +1,4 @@
-﻿const biblioteca = [
+const biblioteca = [
     {
         "nombre": "143LETI - En mis sueños soy tu novia",
         "archivo": "music/143LETI - En mis sueños soy tu novia.mp3"
@@ -3723,8 +3723,6 @@ const albumsData = [
         "name": "Muchas gracias autotune",
         "cover": "albums/MUCHAS GRACIAS AUTOTUNE/img_graciastune.png",
         "songs": [
-            { "nombre": "TURROBABY - Ventilador", "archivo": "albums/MUCHAS GRACIAS AUTOTUNE/TURROBABY - Ventilador.mp3" },
-            { "nombre": "TURROBABY - Billetes De Cien", "archivo": "albums/MUCHAS GRACIAS AUTOTUNE/TURROBABY - Billetes De Cien.mp3" },
             { "nombre": "TURROBABY - Aca y Alla y En Todos Lados", "archivo": "albums/MUCHAS GRACIAS AUTOTUNE/TURROBABY - Aca y Alla y En Todos Lados.mp3" },
             { "nombre": "TURROBABY - Filmemos Una Peli", "archivo": "albums/MUCHAS GRACIAS AUTOTUNE/TURROBABY - Filmemos Una Peli.mp3" },
             { "nombre": "TURROBABY - Mañana Me Voy De Gira", "archivo": "albums/MUCHAS GRACIAS AUTOTUNE/TURROBABY - Mañana Me Voy De Gira.mp3" },
@@ -3866,7 +3864,6 @@ const albumsData = [
             { "nombre": "Jugo! - Esto es transitorio", "archivo": "albums/Sentimental Gangster 2/Jugo! - Esto es transitorio.mp3" },
             { "nombre": "Jugo! - Maradona", "archivo": "albums/Sentimental Gangster 2/Jugo! - Maradona.mp3" },
             { "nombre": "Jugo! - Me neutralice", "archivo": "albums/Sentimental Gangster 2/Jugo! - Me neutralice.mp3" },
-            { "nombre": "Jugo! - Quieren aparentar", "archivo": "albums/Sentimental Gangster 2/Jugo! - Quieren aparentar.mp3" },
             { "nombre": "Jugo! - Sube la sintonia", "archivo": "albums/Sentimental Gangster 2/Jugo! - Sube la sintonia.mp3" },
             { "nombre": "Jugo! - Tengo que hacerlo", "archivo": "albums/Sentimental Gangster 2/Jugo! - Tengo que hacerlo.mp3" },
             { "nombre": "Jugo! - Un solo cable", "archivo": "albums/Sentimental Gangster 2/Jugo! - Un solo cable.mp3" },
